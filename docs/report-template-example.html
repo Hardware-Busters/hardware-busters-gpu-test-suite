@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hardware Busters GPU Test Suite — Report Template</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0f1216;
+      --panel: #161b22;
+      --panel-2: #1c232c;
+      --line: #2a323d;
+      --text: #e6edf3;
+      --muted: #9aa7b4;
+      --accent: #5b8def;
+      --warning: #e9c07a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .wrap { width: min(1100px, calc(100% - 40px)); margin: 0 auto; }
+    header {
+      padding: 30px 0 24px;
+      background: linear-gradient(180deg, #1b2330, var(--bg));
+      border-bottom: 1px solid var(--line);
+    }
+    h1 { margin: 0 0 6px; font-size: 30px; }
+    h2 { margin: 30px 0 12px; padding-left: 12px; border-left: 4px solid var(--accent); }
+    .eyebrow { color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+    .banner {
+      margin-top: 18px;
+      padding: 12px 14px;
+      border: 1px solid #a83;
+      border-radius: 10px;
+      background: rgba(224, 161, 58, .12);
+      color: var(--warning);
+      font-weight: 700;
+    }
+    .meta, .cards { display: grid; gap: 14px; }
+    .meta { grid-template-columns: repeat(4, 1fr); margin-top: 20px; }
+    .cards { grid-template-columns: repeat(4, 1fr); margin-top: 20px; }
+    .card, .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+    .value { margin-top: 5px; font-size: 20px; font-weight: 700; }
+    table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+    th, td { padding: 10px; text-align: right; border-bottom: 1px solid var(--line); }
+    th:first-child, td:first-child { text-align: left; }
+    th { color: var(--muted); font-size: 12px; text-transform: uppercase; }
+    code { color: #a7c4ff; }
+    ul { color: var(--muted); }
+    footer { margin: 30px auto 50px; color: var(--muted); }
+    @media (max-width: 800px) {
+      .meta, .cards { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="eyebrow">Hardware Busters GPU Test Suite</div>
+      <h1>GPU Test Report Template</h1>
+      <p>This file demonstrates the structure of a generated report. Replace the placeholders only with data produced by a validated run.</p>
+      <div class="banner">TEMPLATE ONLY — contains no benchmark measurements and makes no hardware-performance claim.</div>
+      <div class="meta">
+        <div><div class="label">GPU</div><div class="value">[GPU model]</div></div>
+        <div><div class="label">Driver</div><div class="value">[Driver version]</div></div>
+        <div><div class="label">Suite</div><div class="value">[Suite version]</div></div>
+        <div><div class="label">Generated</div><div class="value">[UTC timestamp]</div></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="cards" aria-label="Summary placeholders">
+      <div class="card"><div class="label">Performance index</div><div class="value">—</div></div>
+      <div class="card"><div class="label">Performance per watt</div><div class="value">—</div></div>
+      <div class="card"><div class="label">Valid scenes</div><div class="value">—</div></div>
+      <div class="card"><div class="label">Valid runs</div><div class="value">—</div></div>
+    </section>
+
+    <h2>Measurement provenance</h2>
+    <section class="panel">
+      <table>
+        <thead><tr><th>Source</th><th>Provider</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Frame timing</td><td>[PresentMon / supported source]</td><td>[Live / unavailable]</td></tr>
+          <tr><td>Board power</td><td>[Powenetics V2 / supported source]</td><td>[Live / unavailable]</td></tr>
+          <tr><td>GPU telemetry</td><td>[Supported telemetry source]</td><td>[Live / unavailable]</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <h2>Benchmark scene</h2>
+    <section class="panel">
+      <table>
+        <thead>
+          <tr><th>Metric</th><th>1080p</th><th>1440p</th><th>4K</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Average FPS</td><td>—</td><td>—</td><td>—</td></tr>
+          <tr><td>1% low FPS</td><td>—</td><td>—</td><td>—</td></tr>
+          <tr><td>Average board power</td><td>—</td><td>—</td><td>—</td></tr>
+          <tr><td>Performance / watt</td><td>—</td><td>—</td><td>—</td></tr>
+          <tr><td>Run-to-run variance</td><td>—</td><td>—</td><td>—</td></tr>
+          <tr><td>Validation verdict</td><td>—</td><td>—</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <h2>Validation and methodology</h2>
+    <section class="panel">
+      <ul>
+        <li>Record the profile, scene, resolution, graphics settings, driver, and repeat count.</li>
+        <li>Identify every measurement source and mark missing or degraded data visibly.</li>
+        <li>Reject invalid runs; do not silently include them in averages.</li>
+        <li>Users must install each game or benchmark themselves and have a valid license or other legitimate access.</li>
+        <li>A profile does not bypass publisher licenses, accounts, anti-cheat systems, or terms of service.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="wrap">
+    Template supplied for documentation. The application generates its own self-contained HTML reports from validated run data.
+  </footer>
+</body>
+</html>

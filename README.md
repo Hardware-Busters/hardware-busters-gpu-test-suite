@@ -11,6 +11,16 @@ This public source release contains code, safe defaults, a curated Hardware Bust
 - **Automated game testing** — profile-driven game launch, navigation, capture, and benchmark orchestration.
 - **GPU Cooling Tester Evaluation** — controlled cooler test workflows with measurement and reporting support.
 
+## Game and benchmark requirements
+
+The suite and its profile packs do **not** include or redistribute commercial games, benchmark applications, downloadable content, accounts, or license keys. You must install every game or benchmark yourself and have a valid license or other legitimate access to it. A separate purchase is not required when the software is free or is lawfully available through a subscription you already hold.
+
+Using a profile does not bypass a publisher's license, account, anti-cheat, or terms-of-service requirements. Check the relevant software's rules before enabling unattended automation.
+
+## Report template
+
+The app generates self-contained HTML reports from run data. A measurement-free [report template](docs/report-template-example.html) is included to show the structure without presenting synthetic values as hardware conclusions.
+
 ## Build
 
 On Windows with the .NET 9 SDK:
