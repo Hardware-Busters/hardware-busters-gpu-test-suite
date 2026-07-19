@@ -1,0 +1,229 @@
+{
+    "id":  "assassins-creed-mirage",
+    "settingsFingerprintKeys":  [
+                                    {
+                                        "label":  "upscaler",
+                                        "configFilePath":  "%USERPROFILE%\\Documents\\Assassin\u0027s Creed Mirage\\ACMirage.ini",
+                                        "pattern":  "(?m)^UpsampleType=(\\d+)",
+                                        "valueMap":  {
+                                                         "0":  "Off",
+                                                         "1":  "DLSS",
+                                                         "2":  "FSR",
+                                                         "3":  "XeSS"
+                                                     }
+                                    },
+                                    {
+                                        "label":  "upscalerQuality",
+                                        "configFilePath":  "%USERPROFILE%\\Documents\\Assassin\u0027s Creed Mirage\\ACMirage.ini",
+                                        "pattern":  "(?m)^UpsampleQualityMode=(\\d+)",
+                                        "valueMap":  {
+                                                         "0":  "UltraPerformance",
+                                                         "1":  "Performance",
+                                                         "2":  "Balanced",
+                                                         "3":  "Quality",
+                                                         "4":  "DLAA"
+                                                     }
+                                    },
+                                    {
+                                        "label":  "adaptiveQuality",
+                                        "configFilePath":  "%USERPROFILE%\\Documents\\Assassin\u0027s Creed Mirage\\ACMirage.ini",
+                                        "pattern":  "(?m)^AdaptiveQuality=(\\d+)"
+                                    },
+                                    {
+                                        "label":  "frameGen",
+                                        "configFilePath":  "%USERPROFILE%\\Documents\\Assassin\u0027s Creed Mirage\\ACMirage.ini",
+                                        "pattern":  "(?m)^FrameGenerationType=(\\d+)",
+                                        "isFrameGen":  true,
+                                        "frameGenOffValues":  [
+                                                                  "0"
+                                                              ]
+                                    }
+                                ],
+    "name":  "Assassin\u0027s Creed Mirage",
+    "engine":  "AnvilNext 2",
+    "enabled":  true,
+    "repeats":  3,
+    "supportedResolutions":  [
+                                 "1080p",
+                                 "1440p",
+                                 "4K"
+                             ],
+    "graphicsPreset":  "Ultra High",
+    "settings":  [
+                     {
+                         "key":  "upscaler",
+                         "label":  "Upscaling Method",
+                         "options":  [
+                                         "Off",
+                                         "DLSS",
+                                         "FSR",
+                                         "XeSS"
+                                     ],
+                         "default":  "DLSS",
+                         "apply":  {
+                                       "method":  "config-file",
+                                       "configFilePath":  "%USERPROFILE%\\Documents\\Assassin\u0027s Creed Mirage\\ACMirage.ini",
+                                       "valueMap":  {
+                                                        "Off":  "0",
+                                                        "DLSS":  "1",
+                                                        "FSR":  "2",
+                                                        "XeSS":  "3"
+                                                    },
+                                       "edits":  [
+                                                     {
+                                                         "pattern":  "(UpsampleType\\s*=\\s*)[0-9]+",
+                                                         "replacement":  "${1}{VALUE}"
+                                                     }
+                                                 ]
+                                   }
+                     },
+                     {
+                         "key":  "upscalerQuality",
+                         "label":  "Upscaler Quality",
+                         "options":  [
+                                         "Quality",
+                                         "Balanced",
+                                         "Performance",
+                                         "UltraPerformance",
+                                         "DLAA"
+                                     ],
+                         "default":  "Quality",
+                         "apply":  {
+                                       "method":  "config-file",
+                                       "configFilePath":  "%USERPROFILE%\\Documents\\Assassin\u0027s Creed Mirage\\ACMirage.ini",
+                                       "valueMap":  {
+                                                        "UltraPerformance":  "0",
+                                                        "Performance":  "1",
+                                                        "Balanced":  "2",
+                                                        "Quality":  "3",
+                                                        "DLAA":  "4"
+                                                    },
+                                       "edits":  [
+                                                     {
+                                                         "pattern":  "(UpsampleQualityMode\\s*=\\s*)[0-9]+",
+                                                         "replacement":  "${1}{VALUE}"
+                                                     }
+                                                 ]
+                                   }
+                     },
+                     {
+                         "key":  "frameGen",
+                         "label":  "Frame Generation",
+                         "options":  [
+                                         "On",
+                                         "Off"
+                                     ],
+                         "default":  "Off",
+                         "apply":  {
+                                       "method":  "config-file",
+                                       "configFilePath":  "%USERPROFILE%\\Documents\\Assassin\u0027s Creed Mirage\\ACMirage.ini",
+                                       "valueMap":  {
+                                                        "On":  "1",
+                                                        "Off":  "0"
+                                                    },
+                                       "edits":  [
+                                                     {
+                                                         "pattern":  "(FrameGenerationType\\s*=\\s*)[0-9]+",
+                                                         "replacement":  "${1}{VALUE}"
+                                                     }
+                                                 ]
+                                   }
+                     }
+                 ],
+    "variants":  [
+                     {
+                         "id":  "as-set",
+                         "name":  "As configured in-game",
+                         "enabled":  true,
+                         "settings":  {
+
+                                      }
+                     },
+                     {
+                         "id":  "raster",
+                         "name":  "Raster (native, no RT)",
+                         "enabled":  false,
+                         "settings":  {
+                                          "upscaler":  "Off",
+                                          "frameGen":  "Off"
+                                      }
+                     },
+                     {
+                         "id":  "dlss-q",
+                         "name":  "DLSS Quality (no RT)",
+                         "enabled":  false,
+                         "settings":  {
+                                          "upscaler":  "DLSS",
+                                          "upscalerQuality":  "Quality",
+                                          "frameGen":  "Off"
+                                      }
+                     }
+                 ],
+    "captureProcessName":  "ACMirage.exe",
+    "frameProvider":  "presentmon",
+    "startupGraceSeconds":  120,
+    "launch":  {
+                   "store":  "Uplay",
+                   "gameId":  "6100",
+                   "processStabilizationSeconds":  15
+               },
+    "resolutionApply":  {
+                            "method":  "config-file",
+                            "switchDesktopMode":  true,
+                            "configFilePath":  "%USERPROFILE%\\Documents\\Assassin\u0027s Creed Mirage\\ACMirage.ini",
+                            "edits":  [
+                                          {
+                                              "pattern":  "WindowedWidth=\\d+",
+                                              "replacement":  "WindowedWidth={WIDTH}"
+                                          },
+                                          {
+                                              "pattern":  "WindowedHeight=\\d+",
+                                              "replacement":  "WindowedHeight={HEIGHT}"
+                                          },
+                                          {
+                                              "pattern":  "FullscreenWidth=\\d+",
+                                              "replacement":  "FullscreenWidth={WIDTH}"
+                                          },
+                                          {
+                                              "pattern":  "FullscreenHeight=\\d+",
+                                              "replacement":  "FullscreenHeight={HEIGHT}"
+                                          },
+                                          {
+                                              "pattern":  "VSyncMode=\\d+",
+                                              "replacement":  "VSyncMode=0"
+                                          },
+                                          {
+                                              "pattern":  "WindowMode=\\d+",
+                                              "replacement":  "WindowMode=3"
+                                          },
+                                          {
+                                              "pattern":  "RefreshRate=\\d+",
+                                              "replacement":  "RefreshRate=60"
+                                          },
+                                          {
+                                              "pattern":  "IsFpsLimitEnabled=\\d+",
+                                              "replacement":  "IsFpsLimitEnabled=0"
+                                          }
+                                      ]
+                        },
+    "settingsVerify":  {
+                           "method":  "config-file",
+                           "configFilePath":  "%USERPROFILE%\\Documents\\Assassin\u0027s Creed Mirage\\ACMirage.ini",
+                           "expectedPattern":  "WindowedWidth={WIDTH}"
+                       },
+    "scenes":  [
+                   {
+                       "id":  "builtin-benchmark",
+                       "name":  "Built-in Benchmark",
+                       "kind":  "BotDriven",
+                       "captureSeconds":  340,
+                       "warmupSeconds":  0,
+                       "readinessTimeoutSeconds":  360,
+                       "botScript":  "acmirage_benchmark_nav",
+                       "completion":  {
+                                          "method":  "duration",
+                                          "gameplayBandCeilingFps":  500
+                                      }
+                   }
+               ]
+}

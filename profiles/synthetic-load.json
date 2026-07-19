@@ -1,0 +1,29 @@
+{
+  "id": "synthetic-load",
+  "name": "Synthetic Pipeline Test (not a real game)",
+  "engine": "n/a",
+  "notes": "Placeholder workload used ONLY to exercise the framework end-to-end with no game installed. It simulates a launch and produces synthetic frames/power so capture\u2192validation\u2192aggregation\u2192report can be verified. Real game profiles replace this.",
+  "captureProcessName": "",
+  "startupGraceSeconds": 1,
+  "launch": {
+    "store": "Standalone",
+    "gameId": "",
+    "target": "",
+    "arguments": ""
+  },
+  "resolutionApply": {
+    "method": "none",
+    "edits": []
+  },
+  "scenes": [
+    {
+      "id": "fixed-window",
+      "name": "Fixed Capture Window",
+      "kind": "FixedWindow",
+      "captureSeconds": 20,
+      "warmupSeconds": 3,
+      "readinessTimeoutSeconds": 30
+    }
+  ],
+  "enabled": false
+}

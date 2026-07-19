@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows10.0.19041.0</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>GpuSuite.App</RootNamespace>
+    <AssemblyName>GpuSuite.App</AssemblyName>
+    <Platforms>x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+
+    <!-- Reuse the shared build version for DISPLAY only — SkipVersionIncrement=true so this project
+         does NOT bump build/version.json's revision (only the CLI does). Mirrors GpuSuite.Cli's target. -->
+    <BuildInfoFile>$(BaseIntermediateOutputPath)$(Configuration)\BuildInfo.g.cs</BuildInfoFile>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+    <SkipVersionIncrement>true</SkipVersionIncrement>
+    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+  </PropertyGroup>
+
+  <!-- Regenerate BuildInfo.g.cs before every compile (no revision bump — see SkipVersionIncrement). -->
+  <Target Name="UpdateBuildInfo" BeforeTargets="CoreCompile">
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildProjectDirectory)\..\..\build\Update-BuildInfo.ps1&quot; -OutputFile &quot;$(BuildInfoFile)&quot;" />
+  </Target>
+
+  <ItemGroup>
+    <Compile Include="$(BuildInfoFile)" Link="BuildInfo.g.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GpuSuite.Core\GpuSuite.Core.csproj" />
+    <ProjectReference Include="..\GpuSuite.Measurement\GpuSuite.Measurement.csproj" />
+    <ProjectReference Include="..\GpuSuite.Engine\GpuSuite.Engine.csproj" />
+    <ProjectReference Include="..\GpuSuite.Authoring\GpuSuite.Authoring.csproj" />
+    <ProjectReference Include="..\GpuSuite.Reporting\GpuSuite.Reporting.csproj" />
+    <ProjectReference Include="..\GpuSuite.Load\GpuSuite.Load.csproj" />
+  </ItemGroup>
+
+</Project>

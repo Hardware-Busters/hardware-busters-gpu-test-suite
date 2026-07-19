@@ -1,0 +1,362 @@
+{
+    "id":  "f1-25",
+    "settingsFingerprintKeys":  [
+                                    {
+                                        "label":  "dlss",
+                                        "configFilePath":  "%USERPROFILE%\\Documents\\My Games\\F1 25\\hardwaresettings\\hardware_settings_config.xml",
+                                        "pattern":  "\\bdlss=\"(\\w+)\""
+                                    },
+                                    {
+                                        "label":  "aaQuality",
+                                        "configFilePath":  "%USERPROFILE%\\Documents\\My Games\\F1 25\\hardwaresettings\\hardware_settings_config.xml",
+                                        "pattern":  "\u003caa_quality value=\"(\\d+)\"",
+                                        "valueMap":  {
+                                                         "0":  "Quality",
+                                                         "1":  "Balanced",
+                                                         "2":  "Performance",
+                                                         "3":  "UltraPerformance",
+                                                         "4":  "DLAA"
+                                                     }
+                                    },
+                                    {
+                                        "label":  "pathTracing",
+                                        "configFilePath":  "%USERPROFILE%\\Documents\\My Games\\F1 25\\hardwaresettings\\hardware_settings_config.xml",
+                                        "pattern":  "\u003crt_pathtrace enabled=\"(\\w+)\""
+                                    },
+                                    {
+                                        "label":  "multiFrameGen",
+                                        "configFilePath":  "%USERPROFILE%\\Documents\\My Games\\F1 25\\hardwaresettings\\hardware_settings_config.xml",
+                                        "pattern":  "\u003cmulti_frame_gen value=\"(\\d+)\""
+                                    },
+                                    {
+                                        "label":  "frameGen",
+                                        "configFilePath":  "%USERPROFILE%\\Documents\\My Games\\F1 25\\hardwaresettings\\hardware_settings_config.xml",
+                                        "pattern":  "\u003cframe_gen mode=\"(\\d+)\"",
+                                        "isFrameGen":  true,
+                                        "frameGenOffValues":  [
+                                                                  "0"
+                                                              ]
+                                    }
+                                ],
+    "name":  "F1 25",
+    "engine":  "EGO Engine (Codemasters)",
+    "enabled":  true,
+    "repeats":  3,
+    "frameProvider":  "presentmon",
+    "startupGraceSeconds":  240,
+    "supportedResolutions":  [
+                                 "1080p",
+                                 "1440p",
+                                 "4K"
+                             ],
+    "graphicsPreset":  "Ultra High",
+    "settings":  [
+                     {
+                         "key":  "upscaler",
+                         "label":  "Anti-Aliasing / Upscaling",
+                         "options":  [
+                                         "Off",
+                                         "DLSS",
+                                         "FSR",
+                                         "XeSS"
+                                     ],
+                         "default":  "DLSS",
+                         "apply":  {
+                                       "method":  "config-file",
+                                       "configFilePath":  "%USERPROFILE%\\Documents\\My Games\\F1 25\\hardwaresettings\\hardware_settings_config.xml",
+                                       "edits":  [
+                                                     {
+                                                         "pattern":  "(\\btaa=\")[^\"]*(\")",
+                                                         "replacement":  "${1}{VALUE}${2}",
+                                                         "valueMap":  {
+                                                                          "Off":  "true",
+                                                                          "DLSS":  "false",
+                                                                          "FSR":  "false",
+                                                                          "XeSS":  "false"
+                                                                      }
+                                                     },
+                                                     {
+                                                         "pattern":  "(\\bdlss=\")[^\"]*(\")",
+                                                         "replacement":  "${1}{VALUE}${2}",
+                                                         "valueMap":  {
+                                                                          "Off":  "false",
+                                                                          "DLSS":  "true",
+                                                                          "FSR":  "false",
+                                                                          "XeSS":  "false"
+                                                                      }
+                                                     },
+                                                     {
+                                                         "pattern":  "(\\bfsr3=\")\\d+(\")",
+                                                         "replacement":  "${1}{VALUE}${2}",
+                                                         "valueMap":  {
+                                                                          "Off":  "0",
+                                                                          "DLSS":  "0",
+                                                                          "FSR":  "1",
+                                                                          "XeSS":  "0"
+                                                                      }
+                                                     },
+                                                     {
+                                                         "pattern":  "(\\bxess=\")[^\"]*(\")",
+                                                         "replacement":  "${1}{VALUE}${2}",
+                                                         "valueMap":  {
+                                                                          "Off":  "false",
+                                                                          "DLSS":  "false",
+                                                                          "FSR":  "false",
+                                                                          "XeSS":  "true"
+                                                                      }
+                                                     }
+                                                 ]
+                                   }
+                     },
+                     {
+                         "key":  "upscalerQuality",
+                         "label":  "Upscaler Quality",
+                         "options":  [
+                                         "Quality",
+                                         "Balanced",
+                                         "Performance",
+                                         "UltraPerformance",
+                                         "DLAA"
+                                     ],
+                         "default":  "Quality",
+                         "apply":  {
+                                       "method":  "config-file",
+                                       "configFilePath":  "%USERPROFILE%\\Documents\\My Games\\F1 25\\hardwaresettings\\hardware_settings_config.xml",
+                                       "edits":  [
+                                                     {
+                                                         "pattern":  "(\u003caa_quality\\s+value=\")\\d+(\")",
+                                                         "replacement":  "${1}{VALUE}${2}",
+                                                         "valueMap":  {
+                                                                          "Quality":  "0",
+                                                                          "Balanced":  "1",
+                                                                          "Performance":  "2",
+                                                                          "UltraPerformance":  "3",
+                                                                          "DLAA":  "4"
+                                                                      }
+                                                     }
+                                                 ]
+                                   }
+                     },
+                     {
+                         "key":  "rt",
+                         "label":  "Ray Tracing",
+                         "options":  [
+                                         "On",
+                                         "Off"
+                                     ],
+                         "default":  "On",
+                         "apply":  {
+                                       "method":  "config-file",
+                                       "configFilePath":  "%USERPROFILE%\\Documents\\My Games\\F1 25\\hardwaresettings\\hardware_settings_config.xml",
+                                       "edits":  [
+                                                     {
+                                                         "pattern":  "(\u003crt_shadows\\s+enabled=\")[^\"]*(\")",
+                                                         "replacement":  "${1}{VALUE}${2}",
+                                                         "valueMap":  {
+                                                                          "On":  "true",
+                                                                          "Off":  "false"
+                                                                      }
+                                                     },
+                                                     {
+                                                         "pattern":  "(\u003crt_reflections\\s+enabled=\")[^\"]*(\")",
+                                                         "replacement":  "${1}{VALUE}${2}",
+                                                         "valueMap":  {
+                                                                          "On":  "true",
+                                                                          "Off":  "false"
+                                                                      }
+                                                     },
+                                                     {
+                                                         "pattern":  "(\u003crt_transparent_reflections\\s+enabled=\")[^\"]*(\")",
+                                                         "replacement":  "${1}{VALUE}${2}",
+                                                         "valueMap":  {
+                                                                          "On":  "true",
+                                                                          "Off":  "false"
+                                                                      }
+                                                     },
+                                                     {
+                                                         "pattern":  "(\u003crt_ao\\s+enabled=\")[^\"]*(\")",
+                                                         "replacement":  "${1}{VALUE}${2}",
+                                                         "valueMap":  {
+                                                                          "On":  "true",
+                                                                          "Off":  "false"
+                                                                      }
+                                                     },
+                                                     {
+                                                         "pattern":  "(\u003crt_ddgi\\s+enabled=\")[^\"]*(\")",
+                                                         "replacement":  "${1}{VALUE}${2}",
+                                                         "valueMap":  {
+                                                                          "On":  "true",
+                                                                          "Off":  "false"
+                                                                      }
+                                                     }
+                                                 ]
+                                   }
+                     },
+                     {
+                         "key":  "frameGen",
+                         "label":  "Frame Generation",
+                         "options":  [
+                                         "On",
+                                         "Off"
+                                     ],
+                         "default":  "Off",
+                         "apply":  {
+                                       "method":  "config-file",
+                                       "configFilePath":  "%USERPROFILE%\\Documents\\My Games\\F1 25\\hardwaresettings\\hardware_settings_config.xml",
+                                       "edits":  [
+                                                     {
+                                                         "pattern":  "(\u003cframe_gen\\s+mode=\")\\d+(\")",
+                                                         "replacement":  "${1}{VALUE}${2}",
+                                                         "valueMap":  {
+                                                                          "Off":  "0",
+                                                                          "On":  "1"
+                                                                      }
+                                                     }
+                                                 ]
+                                   }
+                     },
+                     {
+                         "key":  "pathTracing",
+                         "label":  "Path Tracing",
+                         "options":  [
+                                         "On",
+                                         "Off"
+                                     ],
+                         "default":  "",
+                         "apply":  {
+                                       "method":  "config-file",
+                                       "configFilePath":  "%USERPROFILE%\\Documents\\My Games\\F1 25\\hardwaresettings\\hardware_settings_config.xml",
+                                       "edits":  [
+                                                     {
+                                                         "pattern":  "(\u003crt_pathtrace\\s+enabled=\")[^\"]*(\")",
+                                                         "replacement":  "${1}{VALUE}${2}",
+                                                         "valueMap":  {
+                                                                          "On":  "true",
+                                                                          "Off":  "false"
+                                                                      }
+                                                     }
+                                                 ]
+                                   }
+                     }
+                 ],
+    "variants":  [
+                     {
+                         "id":  "as-set",
+                         "name":  "As configured in-game",
+                         "enabled":  true,
+                         "settings":  {
+
+                                      }
+                     },
+                     {
+                         "id":  "ultra-dlss-q",
+                         "name":  "Ultra High + RT (no PT) + DLSS Quality",
+                         "enabled":  false,
+                         "settings":  {
+                                          "rt":  "On",
+                                          "pathTracing":  "Off",
+                                          "upscaler":  "DLSS",
+                                          "upscalerQuality":  "Quality",
+                                          "frameGen":  "Off"
+                                      }
+                     },
+                     {
+                         "id":  "ultra-dlss-fg",
+                         "name":  "Ultra High + RT (no PT) + DLSS Quality + FG",
+                         "enabled":  false,
+                         "settings":  {
+                                          "rt":  "On",
+                                          "pathTracing":  "Off",
+                                          "upscaler":  "DLSS",
+                                          "upscalerQuality":  "Quality",
+                                          "frameGen":  "On"
+                                      }
+                     },
+                     {
+                         "id":  "ultra-native",
+                         "name":  "Ultra High + RT (no PT, native TAA)",
+                         "enabled":  false,
+                         "settings":  {
+                                          "rt":  "On",
+                                          "pathTracing":  "Off",
+                                          "upscaler":  "Off",
+                                          "frameGen":  "Off"
+                                      }
+                     },
+                     {
+                         "id":  "raster",
+                         "name":  "Ultra High raster (no RT/PT, native TAA)",
+                         "enabled":  false,
+                         "settings":  {
+                                          "rt":  "Off",
+                                          "pathTracing":  "Off",
+                                          "upscaler":  "Off",
+                                          "frameGen":  "Off"
+                                      }
+                     },
+                     {
+                         "id":  "pt-dlss-q",
+                         "name":  "PATH TRACING + DLSS Quality (pinned as-set)",
+                         "enabled":  false,
+                         "settings":  {
+                                          "rt":  "On",
+                                          "pathTracing":  "On",
+                                          "upscaler":  "DLSS",
+                                          "upscalerQuality":  "Quality",
+                                          "frameGen":  "Off"
+                                      }
+                     }
+                 ],
+    "captureProcessName":  "F1_25.exe",
+    "launch":  {
+                   "store":  "EA",
+                   "gameId":  "16425845"
+               },
+    "resolutionApply":  {
+                            "method":  "config-file",
+                            "configFilePath":  "%USERPROFILE%\\Documents\\My Games\\F1 25\\hardwaresettings\\hardware_settings_config.xml",
+                            "edits":  [
+                                          {
+                                              "pattern":  "(\u003cresolution\\s+width=\")\\d+(\"\\s+height=\")\\d+(\")",
+                                              "replacement":  "${1}{WIDTH}${2}{HEIGHT}${3}"
+                                          },
+                                          {
+                                              "pattern":  "(\\bvsync=\")[^\"]*(\")",
+                                              "replacement":  "${1}false${2}"
+                                          }
+                                      ]
+                        },
+    "settingsVerify":  {
+                           "method":  "none"
+                       },
+    "scenes":  [
+                   {
+                       "id":  "builtin-benchmark",
+                       "name":  "Benchmark Mode (Game Settings \u003e Graphics)",
+                       "kind":  "BuiltInBenchmark",
+                       "captureSeconds":  400,
+                       "warmupSeconds":  0,
+                       "readinessTimeoutSeconds":  360,
+                       "benchmarkStart":  "bot",
+                       "startBotScript":  "f1_25_benchmark_nav",
+                       "singleLaunchRepeats":  true,
+                       "reRunBotScript":  "f1_25_rerun",
+                       "warmupRepeats":  1,
+                       "measuredMotionDelaySeconds":  25,
+                       "completion":  {
+                                          "method":  "result-file",
+                                          "resultDirPath":  "%USERPROFILE%\\Documents\\My Games\\F1 25\\benchmark",
+                                          "resultFileGlob":  "Benchmark_*.xml",
+                                          "resultFpsPattern":  "avg_fps=\"([0-9.]+)\"",
+                                          "resultWidthPattern":  "\u003cresolution width=\"(\\d+)\"",
+                                          "resultHeightPattern":  "\u003cresolution width=\"\\d+\" height=\"(\\d+)\"",
+                                          "frametimesCsvDir":  "%USERPROFILE%\\Documents\\My Games\\F1 25\\benchmark",
+                                          "frametimesCsvGlob":  "Benchmark_*_frametimes.csv",
+                                          "minValidSeconds":  30,
+                                          "maxTimeoutSeconds":  380,
+                                          "fallbackToActivity":  true,
+                                          "activityIdleSeconds":  6
+                                      }
+                   }
+               ]
+}

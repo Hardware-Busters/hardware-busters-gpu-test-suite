@@ -1,0 +1,1448 @@
+{
+    "files":  [
+                  {
+                      "path":  ".gitattributes",
+                      "sha256":  "c0285d3fbb122f1ffd9808a98cff91fc88cd4eaa2f0e91e24bf6ae1ab75c7b8d",
+                      "bytes":  82
+                  },
+                  {
+                      "path":  ".github/CODEOWNERS",
+                      "sha256":  "078ec30bd625e6cacc1b1cce45b2e07ed3cd0b4b477bc144ef965da422dab3d5",
+                      "bytes":  82
+                  },
+                  {
+                      "path":  ".github/dependabot.yml",
+                      "sha256":  "7e3f8d204d63283962d4862abceab6a84f410568e9da09d35bbcec8ba3faa417",
+                      "bytes":  199
+                  },
+                  {
+                      "path":  ".github/FUNDING.yml",
+                      "sha256":  "5dbfdb37047fc277ebee345a07a15cfd343dc7409f062167a70d6f30e45e13c4",
+                      "bytes":  25
+                  },
+                  {
+                      "path":  ".github/ISSUE_TEMPLATE/bug_report.yml",
+                      "sha256":  "1eac41d732ea20187dc4c8017eb9741698d1ffbb0339e0cb67c602c0b0dca92a",
+                      "bytes":  500
+                  },
+                  {
+                      "path":  ".github/ISSUE_TEMPLATE/config.yml",
+                      "sha256":  "199dc73eb1277b725035b50a0990dce253766646cdbd2e91a3236bfbbeb52d9c",
+                      "bytes":  234
+                  },
+                  {
+                      "path":  ".github/ISSUE_TEMPLATE/feature_request.yml",
+                      "sha256":  "378c3d52373c906b915841894ed8a68de2cbb55147d3b76b50a9f512ed7eda9b",
+                      "bytes":  256
+                  },
+                  {
+                      "path":  ".github/pull_request_template.md",
+                      "sha256":  "a9b445e169cdbd1b78c5a1d0d7f54f3bcfb8044571c05e96f2996dbfc4c2f1d4",
+                      "bytes":  314
+                  },
+                  {
+                      "path":  ".github/scripts/Test-PublicRepositoryPolicy.ps1",
+                      "sha256":  "fd76c37279efbf6486f78a59dd5467eb3d24850b97c0395db7067fe62628f1eb",
+                      "bytes":  5764
+                  },
+                  {
+                      "path":  ".github/workflows/ci.yml",
+                      "sha256":  "82c808b88b7250f83aa018372bc070cc069e4ae393ab6e92cb7688def82e5dd4",
+                      "bytes":  605
+                  },
+                  {
+                      "path":  ".github/workflows/codeql.yml",
+                      "sha256":  "9e25504d150c2c93efd76c1c0e2cc78c15b96a444f350d389c26d40956174838",
+                      "bytes":  634
+                  },
+                  {
+                      "path":  ".github/workflows/dco.yml",
+                      "sha256":  "65d834c688f9ef3b845de92551cdeed994cc8e7f9c44703e1775ac2d7f24647e",
+                      "bytes":  774
+                  },
+                  {
+                      "path":  ".github/workflows/dependency-review.yml",
+                      "sha256":  "4b375d303f3d74abf0a2ba81d086d561ed332ae3e882fb657935584904677674",
+                      "bytes":  359
+                  },
+                  {
+                      "path":  ".github/workflows/release.yml",
+                      "sha256":  "ae1b429645910b0373b07903562c258980f90e8e6fc926510bcde37abd3a36eb",
+                      "bytes":  4064
+                  },
+                  {
+                      "path":  ".gitignore",
+                      "sha256":  "661a7335cb34d5c860bfa29b97c8348f6baad63ca6e51f97d0112c1b31e00427",
+                      "bytes":  89
+                  },
+                  {
+                      "path":  "build/Update-BuildInfo.ps1",
+                      "sha256":  "ad8fe154c48ecf31d787288fd7735c103accbd65217c148e141f0ce1899bd4df",
+                      "bytes":  729
+                  },
+                  {
+                      "path":  "CODE_OF_CONDUCT.md",
+                      "sha256":  "2c27bd67b4e3592177ffca6bab97405a8d6d6556a750c4bd1c744d7830e981d9",
+                      "bytes":  408
+                  },
+                  {
+                      "path":  "CONTRIBUTING.md",
+                      "sha256":  "82e1d658a254fc304d2a052b9aaed1d04c85a01f39e8de9b559f134b9b6a2106",
+                      "bytes":  1032
+                  },
+                  {
+                      "path":  "DCO.md",
+                      "sha256":  "058c0d077b92d7d05d24fcbad126c1f46c3a3659d4e56e44f88c01cc329e0120",
+                      "bytes":  948
+                  },
+                  {
+                      "path":  "docs/LICENSE-POLICY.md",
+                      "sha256":  "1d824c4b29212adfec1a896dcb248d070dc9209466eeae3e3b84ebbc7e14cc68",
+                      "bytes":  1184
+                  },
+                  {
+                      "path":  "docs/RELEASE-RUNBOOK.md",
+                      "sha256":  "578e430542b8e21eded99f78208607a80bc909caa083cb15f6262719a77bc331",
+                      "bytes":  646
+                  },
+                  {
+                      "path":  "docs/TRADEMARKS-AND-ENTITY.md",
+                      "sha256":  "ddb6cf77e37996b4de84a0a844b528c820da93c0bfd7ce5b887fca1cfa461afa",
+                      "bytes":  693
+                  },
+                  {
+                      "path":  "GOVERNANCE.md",
+                      "sha256":  "bcfe3feacc05c934a16fd6c2ed2cc344a63518dd06abe92fc49cb536968a10e4",
+                      "bytes":  655
+                  },
+                  {
+                      "path":  "GpuTestSuite.sln",
+                      "sha256":  "b15649a8accfc5d8bb295c4ea5d57a757306b2226e9d213e2a6987b3e4facfcf",
+                      "bytes":  12800
+                  },
+                  {
+                      "path":  "installer/GpuTestSuite.iss",
+                      "sha256":  "9c41c46ece61a9d23a015ed91e517118dce7fddb3abe86c3bab2389b809ad6b1",
+                      "bytes":  750
+                  },
+                  {
+                      "path":  "LICENSE",
+                      "sha256":  "45af5dbab0c711657968266113c4f47b7c40903568a6da9de580072aab2beae5",
+                      "bytes":  9891
+                  },
+                  {
+                      "path":  "LICENSES/CC-BY-4.0.txt",
+                      "sha256":  "9ba9550ad48438d0836ddab3da480b3b69ffa0aac7b7878b5a0039e7ab429411",
+                      "bytes":  18657
+                  },
+                  {
+                      "path":  "NOTICE",
+                      "sha256":  "61c815cd8d2abba44107db6cd72fbfddf07b3b1a15987dbde25dfdc161cae979",
+                      "bytes":  1041
+                  },
+                  {
+                      "path":  "profiles/alan-wake-2.json",
+                      "sha256":  "81f22e8b27514f6bf0aaa0b3428e5b2cbb5f323bc34e7db13f41a106d0bca9aa",
+                      "bytes":  25794
+                  },
+                  {
+                      "path":  "profiles/assassins-creed-mirage.json",
+                      "sha256":  "792cdc930c213932e0c4827986d1230420be749259ff9604cfa621e6f8372740",
+                      "bytes":  12580
+                  },
+                  {
+                      "path":  "profiles/black-myth-wukong.json",
+                      "sha256":  "07617f8fee2429216df04edc35440417d50e97241ba4b7e5e4228c923277a09b",
+                      "bytes":  19200
+                  },
+                  {
+                      "path":  "profiles/bots/acmirage_benchmark_nav.json",
+                      "sha256":  "f67c14b258abfd7c8ed1f02d0cb0070ddd3243a18b9abb922a898c022aea1b97",
+                      "bytes":  6403
+                  },
+                  {
+                      "path":  "profiles/bots/alan_wake_2_scene_smart.json",
+                      "sha256":  "e950e6eeff3ce5215934f9ea8b5e1d917f5730e472f3a6995db61eee1a6f124d",
+                      "bytes":  21649
+                  },
+                  {
+                      "path":  "profiles/bots/blackmyth_continue_scene_smart.json",
+                      "sha256":  "72a08292e75800e64ff4604472d0118d21ed2c70a56339804418044ff65647d9",
+                      "bytes":  6946
+                  },
+                  {
+                      "path":  "profiles/bots/doom_benchmark_nav.json",
+                      "sha256":  "ffd928e1dcbc31e8655ec76ce22499ffd6a1d649fd143a318b3d9a0cce910d83",
+                      "bytes":  5543
+                  },
+                  {
+                      "path":  "profiles/bots/f1_25_benchmark_nav.json",
+                      "sha256":  "1ea62902a0fe249c3460915b87246c6a6365a6628ab47a1b0aa1c16b151a1ded",
+                      "bytes":  6543
+                  },
+                  {
+                      "path":  "profiles/bots/f1_25_rerun.json",
+                      "sha256":  "c552929feed1b9e256e67918cff8506d7b57e9a9d69edf2cc6454aa5e4c7b545",
+                      "bytes":  5973
+                  },
+                  {
+                      "path":  "profiles/bots/forza_benchmark_nav_smart.json",
+                      "sha256":  "b206209e5d1e73334311d929e03aca6d6631ab774a98b9adf949687e5aed34cb",
+                      "bytes":  6679
+                  },
+                  {
+                      "path":  "profiles/bots/forzahorizon6_benchmark_nav.json",
+                      "sha256":  "1edf2e8a23f18e1e6ce1c73b9e6ad1616d012bbda7ee456e96d532d2b4dea4ac",
+                      "bytes":  5826
+                  },
+                  {
+                      "path":  "profiles/bots/forzahorizon6_rerun.json",
+                      "sha256":  "737d2f36eb02e415cb83d55bd4399ef6181bbd1561d11c774980ae4e31f22600",
+                      "bytes":  1266
+                  },
+                  {
+                      "path":  "profiles/bots/msfs2024_dynamic_flight.json",
+                      "sha256":  "859d90c7a4d2f156a02efc1b7df4382d5b3c10bb2554faee6640816dfc7a2ca3",
+                      "bytes":  17306
+                  },
+                  {
+                      "path":  "profiles/bots/msfs2024_landing_nav.json",
+                      "sha256":  "d7e41bc38026681aeb2d657138ea0ffe6bb2325575748208df8ab2cd9130f4be",
+                      "bytes":  11323
+                  },
+                  {
+                      "path":  "profiles/bots/msfs2024_measure_only.json",
+                      "sha256":  "21f8b4e8f625601d69c175076050b2f27c4b4a8b4ccd4198f47c3515126fe776",
+                      "bytes":  856
+                  },
+                  {
+                      "path":  "profiles/bots/ratchet_smart_measured.json",
+                      "sha256":  "43f80750484082d5efd1a121050321345b7a522d664832d66045098022d575fe",
+                      "bytes":  885
+                  },
+                  {
+                      "path":  "profiles/bots/ratchet_warmup.json",
+                      "sha256":  "f731dee0b46c986f17ac858b05f17af08c6f1169289ef71b25d0c4038ccf3ffa",
+                      "bytes":  5297
+                  },
+                  {
+                      "path":  "profiles/bots/rerequiem_continue_scene_smart.json",
+                      "sha256":  "6644803c0876df211e0f0587f3e6d2d496d3ced12e583b48cc160c7543c3da65",
+                      "bytes":  5896
+                  },
+                  {
+                      "path":  "profiles/bots/tlou_continue_scene_smart.json",
+                      "sha256":  "e0c7106e88eb9d319a8b8e64079d6a6e620bda7e8c96cd0f335feec000e68ecd",
+                      "bytes":  6825
+                  },
+                  {
+                      "path":  "profiles/cyberpunk-2077.json",
+                      "sha256":  "43eebb5d60598d665ce2b75d25800782e7843c861be8553e4feb58019e7cfd8f",
+                      "bytes":  17088
+                  },
+                  {
+                      "path":  "profiles/doom-the-dark-ages.json",
+                      "sha256":  "6cf98f926079dc51501e9567dcfba5e05b6adf74c5aab87ce08b0bc8c67ada40",
+                      "bytes":  18509
+                  },
+                  {
+                      "path":  "profiles/example-steam-game.json",
+                      "sha256":  "0cc722a0776e0ef422867ea60196e57a22696914666ee4896aefb3a697407a38",
+                      "bytes":  1469
+                  },
+                  {
+                      "path":  "profiles/f1-25.json",
+                      "sha256":  "d59ed65960c5b541f1a65d6bab4fd362f28c6b0788f3f13c4463a8ede8289a3e",
+                      "bytes":  22425
+                  },
+                  {
+                      "path":  "profiles/forza-horizon-6.json",
+                      "sha256":  "7f5d4472bc43094e3257b1cd2d8ac7ec636d3ff6337cef60737b01500ce7d6da",
+                      "bytes":  12220
+                  },
+                  {
+                      "path":  "profiles/forza-motorsport.json",
+                      "sha256":  "0db93f950fd8b8899d9971a5d802de9b061626b3e7b71474085e1934a8d5da6f",
+                      "bytes":  17177
+                  },
+                  {
+                      "path":  "profiles/microsoft-flight-simulator-2024.json",
+                      "sha256":  "bd6bd76d33b27b3463bcb1e37a18d7c3cc5e99fbf3d699584cae118caa3d783f",
+                      "bytes":  12056
+                  },
+                  {
+                      "path":  "profiles/profile-pack.json",
+                      "sha256":  "e16e1f6e9346e7c4198a624ea54c397cfdd12e9b222c39d53c0283ce72e99738",
+                      "bytes":  1012
+                  },
+                  {
+                      "path":  "profiles/PROVENANCE.md",
+                      "sha256":  "79eea4e62745e9478478750444d96951bb83ad3edb383b282183344887fb1369",
+                      "bytes":  3456
+                  },
+                  {
+                      "path":  "profiles/ratchet-clank-rift-apart.json",
+                      "sha256":  "87feedde31c77d612dfba9679252f41b3e099e714c170af712b3a5f0c3bc1d30",
+                      "bytes":  18534
+                  },
+                  {
+                      "path":  "profiles/README.md",
+                      "sha256":  "95c2a92fd4166542bdc5f200edfd02f15e49948dfaad6f0f23eec81bca1ad671",
+                      "bytes":  590
+                  },
+                  {
+                      "path":  "profiles/resident-evil-requiem.json",
+                      "sha256":  "44335c819fb975aae7b7a07ffcc50b695dac16e2069e0512606a156ae623447c",
+                      "bytes":  11047
+                  },
+                  {
+                      "path":  "profiles/synthetic-benchmark.json",
+                      "sha256":  "d4f4803b46c723623c2efd09e1ee02cc0abc3fc2cd916d056d75cab67b1b56c5",
+                      "bytes":  1203
+                  },
+                  {
+                      "path":  "profiles/synthetic-load.json",
+                      "sha256":  "a2f4f98b542671b46fe0fea928657bfb52d036cf45e327360d1056a8f7d2ef4a",
+                      "bytes":  860
+                  },
+                  {
+                      "path":  "profiles/templates/cyberpunk-2077.UserSettings.template.json",
+                      "sha256":  "16937674a3af60710be47ff8925129d50f9d539db7dae34d6a7a7d83b7f411ac",
+                      "bytes":  185
+                  },
+                  {
+                      "path":  "profiles/the-last-of-us-part-1.json",
+                      "sha256":  "2b1e2ebde67086a1c9aba167939480d169abb27194b87c53478fbffc6017582f",
+                      "bytes":  10168
+                  },
+                  {
+                      "path":  "PUBLIC_RELEASE_WORKFLOW.md",
+                      "sha256":  "ed187f2a2e19d564a5c37a3dd4265a84cda7b9d18f9e6f82c0fd0411f3e8adb5",
+                      "bytes":  1589
+                  },
+                  {
+                      "path":  "README.md",
+                      "sha256":  "a9cd3eb0f214a57cf55ec68dec29211bf533aae1e10730e1ada359731a29b1f9",
+                      "bytes":  1660
+                  },
+                  {
+                      "path":  "SECURITY.md",
+                      "sha256":  "2e2ea641d054cdc104a4109ae1daf0f29ccfd082959a968694827588e1f52578",
+                      "bytes":  556
+                  },
+                  {
+                      "path":  "settings.example.json",
+                      "sha256":  "7191115c324c0015bde7b596475196079994742dab5924f90faa16e5d3cc376c",
+                      "bytes":  764
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/app.manifest",
+                      "sha256":  "9bc6077b16c7a980e2648f1292834b7aae91fef7fa044333ba3fd72970d7a724",
+                      "bytes":  1327
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/App.xaml",
+                      "sha256":  "fcf0fda4857321f13a991a7e1d6128c3d04bf867f4a0391d0426bac9b17de207",
+                      "bytes":  1180
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/App.xaml.cs",
+                      "sha256":  "0f013af40f77e716c7cfe4dc4a0247ad1ecb169c71341e0fe7b8964edbcf870c",
+                      "bytes":  6361
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Converters/Converters.cs",
+                      "sha256":  "1d8fc3b50927f1a96a9d5ee7ee650c92a5beb91e477ad431a592876efdbe6e41",
+                      "bytes":  5333
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/DisclaimerWindow.xaml",
+                      "sha256":  "7ed17042e1aeedad1926de71409d5e5ad4eb646fc9c0bd5a2746e14abf7de1ec",
+                      "bytes":  12057
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/DisclaimerWindow.xaml.cs",
+                      "sha256":  "fec4c6b60cc6b61249d8c6fbf152f44f38a4958be6d25b5f6b71e071e6af856e",
+                      "bytes":  1435
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/GpuSuite.App.csproj",
+                      "sha256":  "2000cf3a331b01a1265d4f09be25374fc5fa24bea3d56e72a4a8e5801958d30d",
+                      "bytes":  2463
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/MainWindow.xaml",
+                      "sha256":  "fadbb8c012bd6a63df706d54c30d5942742bbb24f4e94287e3bd6ad4527bdde1",
+                      "bytes":  9234
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/MainWindow.xaml.cs",
+                      "sha256":  "47807d90deaac577f704209c492fa66144c3f3165ec6f222714a07a88b89e71a",
+                      "bytes":  1338
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Properties/AssemblyInfo.cs",
+                      "sha256":  "35aa8c8e1f63d68f09fbaeceab39729434c4e604fb9c2b9420b2f706f2728c34",
+                      "bytes":  92
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Services/BotDiagnosticsService.cs",
+                      "sha256":  "924c63f95dc792d1374bf6389b4a037781960472dded45bcc2dd083320fcca48",
+                      "bytes":  8079
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Services/ConfigService.cs",
+                      "sha256":  "a9c1b0ad165134c1f3f47e97020d96ba3453b7b30b4b835d108144038e2deaf1",
+                      "bytes":  520
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Services/CoolerService.cs",
+                      "sha256":  "5f30fd2273ed3c1eb7ad91872c51fc1ab354a3cc34947721c39bedd2bf201705",
+                      "bytes":  7173
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Services/DisclaimerService.cs",
+                      "sha256":  "1e478d76b11221a7c4aaa649096ab29d2ba3ada75b426720e568487ec21467aa",
+                      "bytes":  4176
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Services/DiscoveryService.cs",
+                      "sha256":  "330bf79a09c826c325ea8bef6ad1d7946a40599cb761d75cbdd76dc71d3bbc7b",
+                      "bytes":  1363
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Services/ExternalLinkService.cs",
+                      "sha256":  "ae2277ce154e432d30166f4e3c577da5cb9bd81427df1d327b7ebc5fc8285c7e",
+                      "bytes":  869
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Services/FeedbackService.cs",
+                      "sha256":  "f83bb3ba596e0f9ac5164c795038c2725d61b873e4f766abc07ba4e129c97a02",
+                      "bytes":  625
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Services/FullPreflightService.cs",
+                      "sha256":  "af34fab8fdf6eda378abbc1853ae6b1de522be6d7ba0c0336eda271750f6ff7b",
+                      "bytes":  6819
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Services/Gx10ProbeService.cs",
+                      "sha256":  "2b6ec05840ceef97b0e8ed48a01eecddf7ef5415aa4a5a3e215295edc60b9bbf",
+                      "bytes":  863
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Services/ProbeService.cs",
+                      "sha256":  "0f0ea1e5ee3d11be63c5d68c15bd539ab518716f5839ebeab2ead08e917550e2",
+                      "bytes":  2136
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Services/ProfilePackService.cs",
+                      "sha256":  "7b3bebc82d61eaae5a955e15fe8b86760c4f545e7f6f3f8f03e8a6b0f420304a",
+                      "bytes":  1196
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Services/ProfileService.cs",
+                      "sha256":  "a5196fca36393e77fb8c59e169e681ec16962cbe2b1c9805031fd1f491de42cb",
+                      "bytes":  738
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Services/ResultsService.cs",
+                      "sha256":  "e943e22d86d9816179af89455f48fcea32f289c1d0ef4908058306b5f186af11",
+                      "bytes":  7117
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Services/RosterSmokeService.cs",
+                      "sha256":  "e8978256a708835a4ae7d602622e13aae515fda616f8de56e2dfe1a3dfcde18f",
+                      "bytes":  13147
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Services/RunService.cs",
+                      "sha256":  "ecc7542fbe0fc9f2deb018c533c6b48fd8070de8aca53cbab201ee3c5ad22b04",
+                      "bytes":  4822
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Services/Workspace.cs",
+                      "sha256":  "e1b9e6b187228345628eb5641a4134b00aa52c535f030b9196683f930085fb8b",
+                      "bytes":  3389
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/StartupLifecycleCoordinator.cs",
+                      "sha256":  "1746f4de82a6e72266fb1f607abaef2a593200d41ee0e7b7fb90340f3ec5652b",
+                      "bytes":  2235
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Themes/Colors.xaml",
+                      "sha256":  "ed24d247ab994ea64542390900d2b0c8971a890759956d4994b6b6328253636c",
+                      "bytes":  3806
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Themes/Controls.xaml",
+                      "sha256":  "34be29c4819940a7f8d12a4da90ee4c01662db1929811f98e5762ba917ddb385",
+                      "bytes":  29513
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/ViewModels/AuthorStudioAdvancedViewModel.cs",
+                      "sha256":  "68ed0418ec5538030647e56f4d6986aec24e5aa70bcdab8bec22c40a61a5d6fd",
+                      "bytes":  49577
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/ViewModels/AuthorStudioViewModel.cs",
+                      "sha256":  "753488b19f664c9c07c17e78ea34fb4f4ea474def51f5db5c65726f6b90a31ea",
+                      "bytes":  31252
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/ViewModels/BotDiagnosticsViewModel.cs",
+                      "sha256":  "484e6ef2efc84539948461c669d181e7e1dd0199dee4380ede1e4e7389e71e04",
+                      "bytes":  2710
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/ViewModels/CatalogViewModel.cs",
+                      "sha256":  "f18fd35f47a63d3203883f4d683cda4992b20f680721ae28690358bf1814e13a",
+                      "bytes":  2131
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/ViewModels/CoolerViewModel.cs",
+                      "sha256":  "276557f2b167b3b222a205e106d7124bd0ee424a3cfa418aec779aa36cfa13a7",
+                      "bytes":  6445
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/ViewModels/DashboardViewModel.cs",
+                      "sha256":  "cf0ca87954ec60c9cb392e914f09db69cded2146d10e1a1a04c8b9c483dd21e1",
+                      "bytes":  3120
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/ViewModels/GameDetailViewModel.cs",
+                      "sha256":  "f03d92e2ccf357fa0b2ca7b848fc1a292616d43b58d09d9f4c27f39fc3271269",
+                      "bytes":  7525
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/ViewModels/GameListViewModel.cs",
+                      "sha256":  "568091fc4c4e2d7e42959208ee052f7e238510786d390089e80f8081e243bff0",
+                      "bytes":  3468
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/ViewModels/GameRowViewModel.cs",
+                      "sha256":  "d83711fa06e62764aa5dae8ef7e94b176e2b5690cdd865721d91a8e7f6373dd8",
+                      "bytes":  2644
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/ViewModels/HelpViewModel.cs",
+                      "sha256":  "533d551df39f6f3ad1073c8033568a9b83dfbd0ea615e44b50a8c565264582f7",
+                      "bytes":  11906
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/ViewModels/MainViewModel.cs",
+                      "sha256":  "bfedd7304cde2ba50dc159ba2526afca52900900a72ac19ba5df9861c8c14b12",
+                      "bytes":  5672
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/ViewModels/ProfilePacksViewModel.cs",
+                      "sha256":  "45a6d7f7557592e92fb9cd8e1cfb93096c8ae9b1973b7a84db2ae5a31daab79e",
+                      "bytes":  8628
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/ViewModels/ResultsViewModel.cs",
+                      "sha256":  "475cad5d542d2f83b66b23bfc0029a692f57b799e3dcf1635da7dadc00b0a950",
+                      "bytes":  6599
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/ViewModels/RunViewModel.cs",
+                      "sha256":  "46a259cee0e10427c90ba74a495ccb2144589c856b0caa605efee6a7e9d4dae2",
+                      "bytes":  38826
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/ViewModels/SettingsViewModel.cs",
+                      "sha256":  "a3deebde22785d52c7c9852fc18670b387f421214d22c82dfc7119ed34f39adf",
+                      "bytes":  13500
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Views/AuthorStudioView.xaml",
+                      "sha256":  "c14d8ff4a9f19826a9ece7ec6c3a1919a5c4388c51d7efe0801fbfad6c69d096",
+                      "bytes":  70026
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Views/AuthorStudioView.xaml.cs",
+                      "sha256":  "db88d0dd222631deca22d49599ee3dac619a90820b8f84cfc339f5d15af19195",
+                      "bytes":  9730
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Views/BotDiagnosticsView.xaml",
+                      "sha256":  "9d908c70e7647cc4b882922db0c9947046b14f111cec122ea07a49a5d93c534c",
+                      "bytes":  8478
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Views/BotDiagnosticsView.xaml.cs",
+                      "sha256":  "bf2e474487a1720292b49a58be99314850d3eb7342b6765b813907bb58278590",
+                      "bytes":  187
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Views/CatalogView.xaml",
+                      "sha256":  "553a920c9111552cee37e51d33d79cd260df9efb2141930dbe9ab1e1ed62ac84",
+                      "bytes":  7419
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Views/CatalogView.xaml.cs",
+                      "sha256":  "023a132dc3418de01d3911b050382b58aa05cae981aaa12bceab909f3c55a6ed",
+                      "bytes":  173
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Views/CoolerView.xaml",
+                      "sha256":  "eacecc81b441b1c372e67ddc8eff94dca91ffcbbcab6f8b49c3c5b501776dc81",
+                      "bytes":  10251
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Views/CoolerView.xaml.cs",
+                      "sha256":  "e7a411e7ae383584b002b7d00b4a4256e93f3a6fcb56b81ac7309dfb610b1838",
+                      "bytes":  504
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Views/DashboardView.xaml",
+                      "sha256":  "679f70b4ae986f26efe5bd14e3b22ae2cc31fe6e8456acd8b2a07454ab5af57c",
+                      "bytes":  8612
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Views/DashboardView.xaml.cs",
+                      "sha256":  "db6ddbb6df3bd3f415d8a389e394514bbac501277cb73e7d8cba1e4096c07c03",
+                      "bytes":  177
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Views/GameDetailView.xaml",
+                      "sha256":  "f34afab7f7d7891339d9582cdf6e2574f4e3975f5aea3b70d424a35b3871e69e",
+                      "bytes":  38795
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Views/GameDetailView.xaml.cs",
+                      "sha256":  "676dc75ccb822ee32bd398b653a5e839f2d2992b2fc0b026ab93fac88133283b",
+                      "bytes":  179
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Views/GameListView.xaml",
+                      "sha256":  "ca904c424c5af19224d80b8d2927a0f5f9ba198c60cee0be55c01ad5f2e37334",
+                      "bytes":  7159
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Views/GameListView.xaml.cs",
+                      "sha256":  "149a7bb3305349cdaadeb0fe3adac5840a1f9772c868e95f28ff95765177b4c0",
+                      "bytes":  175
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Views/HelpView.xaml",
+                      "sha256":  "f20dbb2d3fed10b87bb32e7358db93c0ce1163d08d4cf798599f4bf11521a53d",
+                      "bytes":  3533
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Views/HelpView.xaml.cs",
+                      "sha256":  "63fa1d841ac5219a30c2d3dbd5d663733b04b7022aa2198864d0da8d7c334f35",
+                      "bytes":  357
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Views/ProfilePacksView.xaml",
+                      "sha256":  "d6ad7080954b4eaf61bf05b15e7bb83eb5353f89af014437bdb0532e6bd391f8",
+                      "bytes":  9987
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Views/ProfilePacksView.xaml.cs",
+                      "sha256":  "9a26f19f72e93f6f322de319ab41dd8a35b21a5399a40fd778d41ad1295978a6",
+                      "bytes":  183
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Views/ResultsView.xaml",
+                      "sha256":  "9f9c7f08e2114529cbd5e474a20bb90bdc8ac212f55ed5996dc87f5fb1493740",
+                      "bytes":  16676
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Views/ResultsView.xaml.cs",
+                      "sha256":  "fe9b237b2048741bca3149481b399aa25857934229b5e7e67907131dd73e35bb",
+                      "bytes":  173
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Views/RunView.xaml",
+                      "sha256":  "c71062f5ea8a9794f7ae1b6f6b631e261b49e356c5f7d85e15e9bd3047601cab",
+                      "bytes":  32545
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Views/RunView.xaml.cs",
+                      "sha256":  "fae9d2bbe8e096d87e96751e37176095ee5616a8d2abfe8e8d0e758d2cd2eb93",
+                      "bytes":  548
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Views/SettingsView.xaml",
+                      "sha256":  "da0794535c51003fcd3ebd464b179357a4e043eaf6632e4624963d1d9f91d173",
+                      "bytes":  25157
+                  },
+                  {
+                      "path":  "src/GpuSuite.App/Views/SettingsView.xaml.cs",
+                      "sha256":  "31dea27f0af99aa868689fef6cd8e52409793a875482e479c7b33d4c77ab5bfe",
+                      "bytes":  688
+                  },
+                  {
+                      "path":  "src/GpuSuite.Authoring/AuthoringEditCommitCoordinator.cs",
+                      "sha256":  "1f94adfef64ff6e9eed6858ae0e6c86e0150efd675ee883016eda5e023398f5a",
+                      "bytes":  1638
+                  },
+                  {
+                      "path":  "src/GpuSuite.Authoring/AuthoringFileOperations.cs",
+                      "sha256":  "8c7b5bdbe709c0a495f005d9fbd8ac9e1da09b0cf6acd353f38dc9bb0483c218",
+                      "bytes":  1027
+                  },
+                  {
+                      "path":  "src/GpuSuite.Authoring/DraftDocuments.cs",
+                      "sha256":  "c29a8053d71b1a807f758f3529da985ce3e8a5d0e719d65a1febde4bd7d3724f",
+                      "bytes":  2339
+                  },
+                  {
+                      "path":  "src/GpuSuite.Authoring/DraftPackDocumentsService.cs",
+                      "sha256":  "98bbc9c1998281e428b9d822a2db05e2803c3ac0818e80335a9c4e4228c3ce4d",
+                      "bytes":  32074
+                  },
+                  {
+                      "path":  "src/GpuSuite.Authoring/DraftPackModels.cs",
+                      "sha256":  "711009996d996de20f43a52290bb5964efd9adf432ffd8b1b4c9d98b5ddebe9c",
+                      "bytes":  3452
+                  },
+                  {
+                      "path":  "src/GpuSuite.Authoring/DraftPackService.cs",
+                      "sha256":  "6327a79ce48ac1a8495ae8fb8f09e0c2ccb21511763c034432d1b4301a8643dc",
+                      "bytes":  40916
+                  },
+                  {
+                      "path":  "src/GpuSuite.Authoring/DraftRouteAndFileService.cs",
+                      "sha256":  "7c7733749ed416c699a1a5b08fee70663d57a0b7d9fde8012e76530ba05a6414",
+                      "bytes":  24940
+                  },
+                  {
+                      "path":  "src/GpuSuite.Authoring/DraftUndoHistory.cs",
+                      "sha256":  "2679f27e2c6897b6ce75854e03cada7924957e1ef805d9ad1326fe18ad472c9a",
+                      "bytes":  1112
+                  },
+                  {
+                      "path":  "src/GpuSuite.Authoring/GpuSuite.Authoring.csproj",
+                      "sha256":  "44085108ace77337f242b9f7a21ea8c6e2cb7eb71036355596478852a4f1fe33",
+                      "bytes":  593
+                  },
+                  {
+                      "path":  "src/GpuSuite.Calibration/CalibrationSession.cs",
+                      "sha256":  "e6238e20dbcc996b76a932af0e09562063217912457a10280a697f369611026b",
+                      "bytes":  29877
+                  },
+                  {
+                      "path":  "src/GpuSuite.Calibration/Confidence/Confidence.cs",
+                      "sha256":  "1e89490d08aef574be13632a1e11decefc9d35d0ae25144ebd7bdc9e5b1f754b",
+                      "bytes":  10411
+                  },
+                  {
+                      "path":  "src/GpuSuite.Calibration/Decisions/DecisionLog.cs",
+                      "sha256":  "6a3c1d58471b6b25ae4a29e3da7c82dc63a4377e24611a4ec8d09833b4a4ac41",
+                      "bytes":  6587
+                  },
+                  {
+                      "path":  "src/GpuSuite.Calibration/GpuSuite.Calibration.csproj",
+                      "sha256":  "98c1bbc5248b149f96e500c2b8e481c63da8b9e323e60be01d9a85b9dddc0ed1",
+                      "bytes":  1284
+                  },
+                  {
+                      "path":  "src/GpuSuite.Calibration/Graph/MenuGraphBuilder.cs",
+                      "sha256":  "541bd02bd936b425e370086e006164e2bd4bcb0c65c16059d9c92101741cf99c",
+                      "bytes":  4024
+                  },
+                  {
+                      "path":  "src/GpuSuite.Calibration/Llm/Gx10Reasoner.cs",
+                      "sha256":  "8379f34ff429c5e5b52cf20247b6a69c318c390d0a68ceb1c4eeb06bd94d573b",
+                      "bytes":  20693
+                  },
+                  {
+                      "path":  "src/GpuSuite.Calibration/Llm/ILLMReasoner.cs",
+                      "sha256":  "129492330c6fe64043254a0cec0156df89812b600a254462dd14f23339b45884",
+                      "bytes":  4211
+                  },
+                  {
+                      "path":  "src/GpuSuite.Calibration/Modules/AdvisoryModules.cs",
+                      "sha256":  "c724edd4b60279ad6abd55795f37b047c89223b0b6c5ab5679d23fe0deba7044",
+                      "bytes":  31399
+                  },
+                  {
+                      "path":  "src/GpuSuite.Calibration/Modules/Phase5Modules.cs",
+                      "sha256":  "43f2d4c661812c327f0ab98be5e186688239ea338ced3e18758b40e8ce7848aa",
+                      "bytes":  21256
+                  },
+                  {
+                      "path":  "src/GpuSuite.Calibration/Observation/Observation.cs",
+                      "sha256":  "2bf81eb3f821d87d3efd8ac08808e98f9b5c4c25649d1f538c7a27c662744513",
+                      "bytes":  6577
+                  },
+                  {
+                      "path":  "src/GpuSuite.Calibration/Persistence/ICalibrationDatabase.cs",
+                      "sha256":  "8c8470bf02baaa942a572d330236fec4b22d767dc76598e24633d6bd8c60290d",
+                      "bytes":  3184
+                  },
+                  {
+                      "path":  "src/GpuSuite.Calibration/Persistence/JsonCalibrationDatabase.cs",
+                      "sha256":  "570e1b41bfcea363d2758b4fed4fc028c1853b4f7aad605bedee6ec227d54461",
+                      "bytes":  10522
+                  },
+                  {
+                      "path":  "src/GpuSuite.Calibration/Plugins/CyberpunkCalibrationPlugin.cs",
+                      "sha256":  "1ad05c57ffd6f3c3628de424ad3e1765f1630d6e5af3002afe9ae08c0cb65125",
+                      "bytes":  7568
+                  },
+                  {
+                      "path":  "src/GpuSuite.Calibration/Plugins/IGameCalibrationPlugin.cs",
+                      "sha256":  "aaeb92b6642149ba213ba4a15b62eab3a5190c61bc3a76b0224b6ceac3468e47",
+                      "bytes":  3772
+                  },
+                  {
+                      "path":  "src/GpuSuite.Calibration/Plugins/ProfileCalibrationPlugin.cs",
+                      "sha256":  "a152afdf44d64728eec27f8ed2cf2e4b736de7826f36c65617a03d25fbb9b4a0",
+                      "bytes":  3076
+                  },
+                  {
+                      "path":  "src/GpuSuite.Calibration/Reporting/CalibrationReport.cs",
+                      "sha256":  "f36e6b4777167b308f951b8ff626867e2f2616c36fb059c97cd0b832e19a43c3",
+                      "bytes":  13665
+                  },
+                  {
+                      "path":  "src/GpuSuite.Calibration/Schema/Advisory.cs",
+                      "sha256":  "9d65594cff6ee6a0c35e5750993e42fad1fafccbf3fda6fa9e33fba597e4deb7",
+                      "bytes":  9613
+                  },
+                  {
+                      "path":  "src/GpuSuite.Calibration/Schema/MenuGraph.cs",
+                      "sha256":  "33c9681eed77ea69069123266beacb9cff4fe2373dfdf9a48b501077bb63660a",
+                      "bytes":  7751
+                  },
+                  {
+                      "path":  "src/GpuSuite.Calibration/Schema/Phase5.cs",
+                      "sha256":  "f4642176f63572388d3725540aa66086822b08d296a4d5566e4062032dca7f63",
+                      "bytes":  3486
+                  },
+                  {
+                      "path":  "src/GpuSuite.Calibration/Schema/Primitives.cs",
+                      "sha256":  "a064de66785c37312fdf1096adeb243b8ac9009cbe10bca230035fc0b4b49343",
+                      "bytes":  3679
+                  },
+                  {
+                      "path":  "src/GpuSuite.Cli/AutonomousCommand.cs",
+                      "sha256":  "16100107c199534b6ccef35edd9acd0e213bd9222f854c6b29dea499196e2eaa",
+                      "bytes":  10029
+                  },
+                  {
+                      "path":  "src/GpuSuite.Cli/BandSelfTest.cs",
+                      "sha256":  "210a8d76328ef23cc3675390b73215d6678ebc58cd7539824412e40aa8268408",
+                      "bytes":  5478
+                  },
+                  {
+                      "path":  "src/GpuSuite.Cli/CalibrateCommand.cs",
+                      "sha256":  "4f19c1598f5bde1bc1d2a067623d90ec72a614e6c2fc057703f6e3aaa98bc207",
+                      "bytes":  17600
+                  },
+                  {
+                      "path":  "src/GpuSuite.Cli/CalibrationLiveObserver.cs",
+                      "sha256":  "493a668ba1475dc2507d1ca802e63feeb8c313ff7473a77e92dc44cf4f90f5e2",
+                      "bytes":  9037
+                  },
+                  {
+                      "path":  "src/GpuSuite.Cli/GpuSuite.Cli.csproj",
+                      "sha256":  "d62df5e6beb902c7daa39a45dd31491d9aa5f97a5e208abf4042353772cdb6d7",
+                      "bytes":  2148
+                  },
+                  {
+                      "path":  "src/GpuSuite.Cli/Gx10Command.cs",
+                      "sha256":  "6bf3ba9a9c69350f081ea9da0af70ca22346c50a28df2bc5f1e23a56db0570c3",
+                      "bytes":  10159
+                  },
+                  {
+                      "path":  "src/GpuSuite.Cli/OcrGuardSelfTest.cs",
+                      "sha256":  "45785027a603b8d7887c5d1df06c6dc8257d818135ddf88c419238ae310623a9",
+                      "bytes":  3139
+                  },
+                  {
+                      "path":  "src/GpuSuite.Cli/Program.cs",
+                      "sha256":  "58ec86ec652f74fc9dde297e35dcc1629d6f8563689c9db57fb66d828422fd10",
+                      "bytes":  159705
+                  },
+                  {
+                      "path":  "src/GpuSuite.Cli/ResilienceSelfTest.cs",
+                      "sha256":  "9285031626f04d7ea358e3b43983fef4353eea94c3ede8d01a368cc93a34f3d9",
+                      "bytes":  9933
+                  },
+                  {
+                      "path":  "src/GpuSuite.Core/Config/RunPlan.cs",
+                      "sha256":  "f0a260322ab0774d080288f03ef58ed2311357f7661554f620f006c5577a7656",
+                      "bytes":  2482
+                  },
+                  {
+                      "path":  "src/GpuSuite.Core/Config/SuiteConfig.cs",
+                      "sha256":  "ffe61458a50d8f0e60d2a1079bc798ed953e8fd26756cd5a3f3d2f2ff4fe88a3",
+                      "bytes":  29218
+                  },
+                  {
+                      "path":  "src/GpuSuite.Core/Diagnostics/RunLogger.cs",
+                      "sha256":  "0706ded543a9f42132ecdb46e7605e035a69183657305f125e1d2e637d99e109",
+                      "bytes":  3925
+                  },
+                  {
+                      "path":  "src/GpuSuite.Core/GpuSuite.Core.csproj",
+                      "sha256":  "08f6312a86c9ea901c1f6d478fd0bcc9b666c69582b383b56eb4b738733f13a6",
+                      "bytes":  352
+                  },
+                  {
+                      "path":  "src/GpuSuite.Core/Io/Json.cs",
+                      "sha256":  "7a08b783c80fa2e8bd3bfdd6139ee9344a0ce1682b1ed233e73cddcb4df3dd6b",
+                      "bytes":  1003
+                  },
+                  {
+                      "path":  "src/GpuSuite.Core/Io/RawCsv.cs",
+                      "sha256":  "946ec5ca375b47790491333aab433e458c206626857a2184ea8d3a67c4f135e7",
+                      "bytes":  6165
+                  },
+                  {
+                      "path":  "src/GpuSuite.Core/Io/RunPaths.cs",
+                      "sha256":  "e1bec0b36a563def043523a0f1f12634b3602a1c80446900f2e9464f149a8704",
+                      "bytes":  3980
+                  },
+                  {
+                      "path":  "src/GpuSuite.Core/Models/Catalog.cs",
+                      "sha256":  "6f62b5428307c1150fd430f15d9f9e4eb2a7d2f373dc42bf2e0e04d7e404b32e",
+                      "bytes":  5871
+                  },
+                  {
+                      "path":  "src/GpuSuite.Core/Models/CoolerSweep.cs",
+                      "sha256":  "a6d0a95a82062d34f1e6643c4bc6386172c6c5881232c4ff1d961f866363e9cf",
+                      "bytes":  3912
+                  },
+                  {
+                      "path":  "src/GpuSuite.Core/Models/HardwareValidation.cs",
+                      "sha256":  "93937e3cb44570d5bf10e6a6dced6eb30218d1edd360f2ae0bf2436796147f48",
+                      "bytes":  3430
+                  },
+                  {
+                      "path":  "src/GpuSuite.Core/Models/Outcomes.cs",
+                      "sha256":  "2bfbe19b40fe8e357d3bcff4c1aa9722ad425c30bb05561d11e20689bf00070c",
+                      "bytes":  4081
+                  },
+                  {
+                      "path":  "src/GpuSuite.Core/Models/Primitives.cs",
+                      "sha256":  "bbc605d68fe24119e8db1acfe0c82a1d199b9cf477c5a97f8ae82eafa28e80d7",
+                      "bytes":  1940
+                  },
+                  {
+                      "path":  "src/GpuSuite.Core/Models/Profiles.cs",
+                      "sha256":  "69ff5ba0fb708a9574b8456e555cefa11e5f2019ccfb71b17fb1b1d890243e99",
+                      "bytes":  49142
+                  },
+                  {
+                      "path":  "src/GpuSuite.Core/Models/Results.cs",
+                      "sha256":  "7614cfa23ebfbe113390417e613d636f4062ad997f66f5c8e36671fdf7218dee",
+                      "bytes":  18166
+                  },
+                  {
+                      "path":  "src/GpuSuite.Core/Models/ResumeState.cs",
+                      "sha256":  "d07720038d10cceb62cfae1ce88dd6912704115e17d4290095d36d6310e79466",
+                      "bytes":  3000
+                  },
+                  {
+                      "path":  "src/GpuSuite.Core/Models/RuntimeHealth.cs",
+                      "sha256":  "a007cea1be64e3a1d35bdf28bcfb6e75e4d92ea906358d4b228e857f91a1c53b",
+                      "bytes":  5636
+                  },
+                  {
+                      "path":  "src/GpuSuite.Core/Models/Samples.cs",
+                      "sha256":  "ca4c2cff50a56d764822367a1f69a3641f87166fc945847516e33c0d96499be6",
+                      "bytes":  3705
+                  },
+                  {
+                      "path":  "src/GpuSuite.Core/Models/Warmup.cs",
+                      "sha256":  "40ad414770b9fb41bdd50d69ad0ae21f1573b45293fdc87b34b5a86b68417313",
+                      "bytes":  1861
+                  },
+                  {
+                      "path":  "src/GpuSuite.Core/PhysicalInputGuard.cs",
+                      "sha256":  "4444bc444780f54cb4d611d70cc8db97446ae1b5b8fba03b8d38086df5fc8b07",
+                      "bytes":  11788
+                  },
+                  {
+                      "path":  "src/GpuSuite.Core/Remote/Gx10Client.cs",
+                      "sha256":  "3947ab06acce0084a22103e214fea80e4696a3a3411036715a69ae5588a1d859",
+                      "bytes":  14338
+                  },
+                  {
+                      "path":  "src/GpuSuite.Core/RunHeartbeat.cs",
+                      "sha256":  "42fc675c615cdd8c2903b625bc99580ea8a76a39609966d6a87b63a9ac86ba57",
+                      "bytes":  3243
+                  },
+                  {
+                      "path":  "src/GpuSuite.Core/Security/ApiKeyStore.cs",
+                      "sha256":  "2b3213d8fb6f3ee82f5d98b96faa67b88e1b658b478e77d27d5f3c175b86153b",
+                      "bytes":  3886
+                  },
+                  {
+                      "path":  "src/GpuSuite.Core/Stats/Statistics.cs",
+                      "sha256":  "d2bab175cc0d6e579604f6003880da2e0af5837c29249cf479259873fc914c99",
+                      "bytes":  14389
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Aggregation/ResultAggregator.cs",
+                      "sha256":  "588e8a55781db0a8b34820c94fa4f444d4006aad6d340f74a11452d35e306943",
+                      "bytes":  5260
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Automation/BotScript.cs",
+                      "sha256":  "7f0d75b7d8d92d393fcf1179c771fe4fa31c90c16af466681f21e7621fe6d811",
+                      "bytes":  26833
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Automation/BotScriptLibrary.cs",
+                      "sha256":  "bef5c0b2dd6031cd5f32901cbb4876e66309d13fdfa13df663dd24bee4dcc242",
+                      "bytes":  1212
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Automation/Gamepad.cs",
+                      "sha256":  "0e12575289122b3a72ab7ad351b92c0f2c83b08e4a16527991eeb87c02ad210d",
+                      "bytes":  7451
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Automation/GameplayBandTracker.cs",
+                      "sha256":  "d4aae52d4a3ebe152960690a800a8ad5180460b9e20b84bb1865bb8b21be0e27",
+                      "bytes":  4827
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Automation/GameWindowManager.cs",
+                      "sha256":  "72a0fbf3654e0accb1212ae8123b6fc20b3ff0dcb5578ca9df6ac7553dda6b2c",
+                      "bytes":  11401
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Automation/Gx10InWorldNavigator.cs",
+                      "sha256":  "cf327b934e4151038bff4aeb25ec9a40c1a46f16249de357e1d244805e1d80ca",
+                      "bytes":  10896
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Automation/InputAutomationEngine.cs",
+                      "sha256":  "9e49b938944f9e796d2f4986d5cc6260333c0724bb565953afb8e4cb3595390c",
+                      "bytes":  127531
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Automation/MeasuredWindowGate.cs",
+                      "sha256":  "7fcaf5aa53eb342bd8806169277e3c42edf9a2bd65992c70ccd733ebd7fd40a5",
+                      "bytes":  2089
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Automation/NavGraph.cs",
+                      "sha256":  "7d0851e148d737c3d478a02d61f71a2e56fe5b84339484f276bb402e280a9c7d",
+                      "bytes":  10406
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Automation/OllamaNavSupervisor.cs",
+                      "sha256":  "b5a1eeb79f259ad35099f3e245aaf95292e162da4ecd4769f0f8f72212bca970",
+                      "bytes":  5108
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Automation/RecordedRoute.cs",
+                      "sha256":  "aa717b4e03d439b3fd15b5aaf77b4089f71e46e828e3e9049b05d420f39cb7da",
+                      "bytes":  5270
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Automation/StuckReflex.cs",
+                      "sha256":  "52e5ac030c4b2e2ec0d80f88eebeec834a9c96a88804026b859512ae1a204087",
+                      "bytes":  4150
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Automation/VisionNavSupervisor.cs",
+                      "sha256":  "630f746646e21ee72b93daef0b8a3e1f8abacd186f6c0edcba8514c1024276d0",
+                      "bytes":  25653
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Diagnostics/DoctorService.cs",
+                      "sha256":  "2a37f8857d485acda99a8b4d5eaebf6805ce35b5fc0b2be587e1cf0903ff23f7",
+                      "bytes":  20806
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Diagnostics/GameReadinessChecker.cs",
+                      "sha256":  "9561438bdc07c525e188ee896d0296672398b17835d7d030cd6dc400f7867be5",
+                      "bytes":  53257
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Diagnostics/LauncherSessionPrimer.cs",
+                      "sha256":  "df63984aee9943d8b30d592a224d4a923a71e660c868c16f76244e37d23d9266",
+                      "bytes":  4378
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Diagnostics/SmokeFrameClassifier.cs",
+                      "sha256":  "d2394aede53f6c3af4be117c41d483747fb1d22d88514d6c8ee2d97de5620175",
+                      "bytes":  2784
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Diagnostics/WindowsSqliteReader.cs",
+                      "sha256":  "a194a52105773eb0ebdcbde2405e84a64e5a4e92b08547ff3e2cad05667acc7f",
+                      "bytes":  4089
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Discovery/CatalogService.cs",
+                      "sha256":  "d8e945d2db530e27cd4734f0071ae39e8807181c77ab02359be8f247a93cf57f",
+                      "bytes":  7720
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Discovery/GameKnowledgeBase.cs",
+                      "sha256":  "0a191bd83aee0fa05ef37cfe3b8a8e114f9650644849537def52058a9f20adc9",
+                      "bytes":  14427
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Discovery/LauncherDiscovery.cs",
+                      "sha256":  "ae77e0b64941164805813d40f12304c7dc04c9597f182b2718cdbd3266acab98",
+                      "bytes":  24058
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Discovery/TestPlanResolver.cs",
+                      "sha256":  "282b17006bb7ddc11b50665b5909d456a661e920821e0672666f6b04e40d466a",
+                      "bytes":  4463
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Display/CaptureSyncGuard.cs",
+                      "sha256":  "09f34f3ad3160cad21d5d589a064739719be628734061dbd4a77ec244a244953",
+                      "bytes":  5123
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Display/DisplayController.cs",
+                      "sha256":  "c3a571894dca485749ee1d46c5499137be4952c85e2dc18ffa6c9eb83ea2b8d9",
+                      "bytes":  7701
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Display/RefreshGuard.cs",
+                      "sha256":  "fc51f2282faceacdf781a2f4b567973f8b74f31565334e0f58ed7e6ac44df13a",
+                      "bytes":  8489
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/GpuSuite.Engine.csproj",
+                      "sha256":  "b2e7b24a0195c13f2fe0480352fc4782ef40c8c499db18d28c62dae301f22a67",
+                      "bytes":  970
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Launch/GameLauncher.cs",
+                      "sha256":  "ca77eb718258f4c18be6f1c9c91434826d340d4429543f4d5faab7687aa682ee",
+                      "bytes":  67374
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Launch/ScreenTidy.cs",
+                      "sha256":  "4cec89efddff9bbc38ee0be3b40f22c0ce880b44418fb7554131e5c75766d0c3",
+                      "bytes":  10395
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Launch/SettingsFingerprinter.cs",
+                      "sha256":  "0b7795eb1f0254d8cff1e1a38c77ccca5b4ba52b50b15c9d4e915b124a3b1c9c",
+                      "bytes":  4966
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Orchestration/FailureClassifier.cs",
+                      "sha256":  "3962848ed7de9fae401eff9c28d437eae83c5523fee3ec3f5b15d767c57cc211",
+                      "bytes":  5605
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Orchestration/RunStateManager.cs",
+                      "sha256":  "de977427d31a6f893a1ba00802f48033dae64b3b47d344fa7004f42c61141c22",
+                      "bytes":  10323
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Orchestration/TestOrchestrator.cs",
+                      "sha256":  "757f31ffcaf749be25a2359832e17e8fccc369be698d41d3450f164a25b0de15",
+                      "bytes":  70535
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Profiles/ProfileAssetLocator.cs",
+                      "sha256":  "4ef373b3f883b72b09a57d067f8e70274aefadac3eb3c4c6550961f9d72a561c",
+                      "bytes":  2685
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Profiles/ProfileManager.cs",
+                      "sha256":  "4571bceac8c4a3a758ba2df423d48b7637730f2fb05c80ec614b9e4ecbeb329c",
+                      "bytes":  1950
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Profiles/ProfilePackManager.cs",
+                      "sha256":  "4f65925e41da7aac2c766745b3e64222e2340294ea99e372fadc3d9ed6088d65",
+                      "bytes":  22393
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Profiles/ProfilePackModels.cs",
+                      "sha256":  "d47668256f7878d43cca3c9fbac07184843d33e6fc217754217d25c173d8d9f5",
+                      "bytes":  2537
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Properties/AssemblyInfo.cs",
+                      "sha256":  "35aa8c8e1f63d68f09fbaeceab39729434c4e604fb9c2b9420b2f706f2728c34",
+                      "bytes":  92
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Scenes/BenchmarkOsd.cs",
+                      "sha256":  "ed8403777158fcfbc50e9d0335752ff6232312bbf78a64524abf928bee4b2582",
+                      "bytes":  7488
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Scenes/CompletionDetector.cs",
+                      "sha256":  "9e08e64c8c82fd9f4d0be47a7562dad4baf931c4999913141438206a90bc4f7d",
+                      "bytes":  20797
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Scenes/RuntimeHealthMonitor.cs",
+                      "sha256":  "f6c81e46078b0a37cfc861db3abb40ac865023fe49ff304a8bfffc0167279fbe",
+                      "bytes":  18590
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Scenes/SceneRunner.cs",
+                      "sha256":  "e0158528140a6eb08f72d988e0c11349ae4915607c12baea28adf50fd50c6da8",
+                      "bytes":  74745
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Scenes/SettingsNavigator.cs",
+                      "sha256":  "140561c49004f1358a2366afbf135192c9381681b3ba46c49cf7844d93b0eaae",
+                      "bytes":  4982
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Scenes/VisionMenuApplier.cs",
+                      "sha256":  "a0fab505799bb1db3fa0c1f12032b64a76360a839cc11fefa024ded130f92c2e",
+                      "bytes":  38172
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Scenes/WarmupEngine.cs",
+                      "sha256":  "53615c36032435f846108d6b7c023f1f3124f5ee8acdfe06e3d4d303348ceb84",
+                      "bytes":  4538
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Validation/HardwareValidator.cs",
+                      "sha256":  "6379ed9214541072c157b9b353b9c4b05ea297328a3d3c1f1f65ec48bd88b87d",
+                      "bytes":  13689
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Validation/RunValidator.cs",
+                      "sha256":  "c819ce036cfe50fbae1210cc16d1d4cc338a9a2e207cdb0d6bf3eeece2d01139",
+                      "bytes":  12399
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Vision/CaptureCardGrabber.cs",
+                      "sha256":  "833165840d52334ea30f6c14a43d0b9c146bcc83f71117dc2af2bf7a6bbe77f4",
+                      "bytes":  12949
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Vision/DesktopDetector.cs",
+                      "sha256":  "31e8731a56f075d481c4b39f95b2ef1d11cf81f47609a8e4cb3bd8f671f6c1e7",
+                      "bytes":  2113
+                  },
+                  {
+                      "path":  "src/GpuSuite.Engine/Vision/ScreenReader.cs",
+                      "sha256":  "000bf749521dc5c5e50f7e86294cdaecdbe0caf9b80110dcccdb17496393b747",
+                      "bytes":  24217
+                  },
+                  {
+                      "path":  "src/GpuSuite.Load/ComputeSharpGpuLoad.cs",
+                      "sha256":  "11aec103ae8ec872a33535ae83d7c23d69afcbac6793e64b9dc8102bcd953d15",
+                      "bytes":  11723
+                  },
+                  {
+                      "path":  "src/GpuSuite.Load/CoolerMath.cs",
+                      "sha256":  "73fb94883d76bce569d007a5949e18ef8846c98ac6ade94302860906b5612941",
+                      "bytes":  2692
+                  },
+                  {
+                      "path":  "src/GpuSuite.Load/CoolerResultQuality.cs",
+                      "sha256":  "c4d96b8d51ffecfe3869a31a72471a378aa61b05eba0d8cb05d9721edfd46284",
+                      "bytes":  2931
+                  },
+                  {
+                      "path":  "src/GpuSuite.Load/CoolerTestRunner.cs",
+                      "sha256":  "a51103d54200ed803dc3ce6c3fc63a8873687d15a80c7631199efb0efcc84c3f",
+                      "bytes":  15995
+                  },
+                  {
+                      "path":  "src/GpuSuite.Load/GpuSuite.Load.csproj",
+                      "sha256":  "a10170d09b022889e0b2894eb1c6d2683f9489d64996eba4c8082d5376ccb973",
+                      "bytes":  788
+                  },
+                  {
+                      "path":  "src/GpuSuite.Load/IGpuLoad.cs",
+                      "sha256":  "0bf7c86eed3ee55bd81c530cf4a02ca34c4f8a91e56297b3927c2a59c8b180ba",
+                      "bytes":  647
+                  },
+                  {
+                      "path":  "src/GpuSuite.Load/NvidiaClockLock.cs",
+                      "sha256":  "59b1abf3abcd7c67ee64029f8cdd1e6138d577531f8d18bea191f68e8665378d",
+                      "bytes":  1939
+                  },
+                  {
+                      "path":  "src/GpuSuite.Load/PowerController.cs",
+                      "sha256":  "feba12591714c79a97648e8c2dff6d0f71a1ac3c87dff761b62b7a08770984d9",
+                      "bytes":  5718
+                  },
+                  {
+                      "path":  "src/GpuSuite.Measurement/Abstractions.cs",
+                      "sha256":  "66eb6ecac0ae8e1f089eaa4238c9dc4fc74fed7fcb03400c275620190b175b5d",
+                      "bytes":  3182
+                  },
+                  {
+                      "path":  "src/GpuSuite.Measurement/GpuSuite.Measurement.csproj",
+                      "sha256":  "174630048973d85ef7683871d538de704923ae5c3e997b21026edf0b2ab323a0",
+                      "bytes":  1013
+                  },
+                  {
+                      "path":  "src/GpuSuite.Measurement/MeasurementFactory.cs",
+                      "sha256":  "8718e3a37998f0fd363f9423f0db2fc9edeb25a2698c26fc9ded5160da280abd",
+                      "bytes":  23288
+                  },
+                  {
+                      "path":  "src/GpuSuite.Measurement/Properties/AssemblyInfo.cs",
+                      "sha256":  "35aa8c8e1f63d68f09fbaeceab39729434c4e604fb9c2b9420b2f706f2728c34",
+                      "bytes":  92
+                  },
+                  {
+                      "path":  "src/GpuSuite.Measurement/Real/GpuFanController.cs",
+                      "sha256":  "d8f307626c0e7a0c9473c0df8b657f1ac4bc942629fd4148b98412bfa34c5236",
+                      "bytes":  6938
+                  },
+                  {
+                      "path":  "src/GpuSuite.Measurement/Real/LateRtssFrameProvider.cs",
+                      "sha256":  "a82e7e4230e6e39206bbb6940744e2a5e1089a3b056ceaa529c5ce7fc38ee6b5",
+                      "bytes":  5819
+                  },
+                  {
+                      "path":  "src/GpuSuite.Measurement/Real/LhmPowerProvider.cs",
+                      "sha256":  "594ddfc0865d4bffc40c8b4dda8bec84bc87738ae279ef0afa43f4296781c490",
+                      "bytes":  4154
+                  },
+                  {
+                      "path":  "src/GpuSuite.Measurement/Real/LhmTelemetryProvider.cs",
+                      "sha256":  "44ece37f6711e01d77d62823c123adca04c82e92a3db3746e0e4a983d2b15840",
+                      "bytes":  17861
+                  },
+                  {
+                      "path":  "src/GpuSuite.Measurement/Real/Powenetics/PoweneticsProtocol.cs",
+                      "sha256":  "a579af29e2e6f7e02c5a880e0fbd1486e73409d85ca6fd20719271eb7002444b",
+                      "bytes":  6711
+                  },
+                  {
+                      "path":  "src/GpuSuite.Measurement/Real/Powenetics/PoweneticsSerialClient.cs",
+                      "sha256":  "13afd14f9031b70c9a22236a7a04fddfff208c8434fca45b29a7468d454e8281",
+                      "bytes":  5883
+                  },
+                  {
+                      "path":  "src/GpuSuite.Measurement/Real/PoweneticsPowerProvider.cs",
+                      "sha256":  "a5f0e78ea0adea920d559ed04d4aedde2f0d169156501056d3800e5e3752ecd1",
+                      "bytes":  7501
+                  },
+                  {
+                      "path":  "src/GpuSuite.Measurement/Real/PresentMonFrameProvider.cs",
+                      "sha256":  "08f2170700b6760b965198f9d63b5ce127ad6495e217ba5abc7d8840d917af98",
+                      "bytes":  18612
+                  },
+                  {
+                      "path":  "src/GpuSuite.Measurement/Real/RtssFrameProvider.cs",
+                      "sha256":  "b20254abc115603ddb0b40671d8608a9575c9ccf15a2ad8177f059a1cf28b733",
+                      "bytes":  12679
+                  },
+                  {
+                      "path":  "src/GpuSuite.Measurement/Real/RtssOsdWriter.cs",
+                      "sha256":  "52545e3a779ada37d657b43f4418066422494be4a1c15edc408b7b406f3963c2",
+                      "bytes":  6628
+                  },
+                  {
+                      "path":  "src/GpuSuite.Measurement/Synthetic/SyntheticProviders.cs",
+                      "sha256":  "865e0bca19031ab9e6909e90c85d75c9f1224d37400f259320b61b183840c74d",
+                      "bytes":  10530
+                  },
+                  {
+                      "path":  "src/GpuSuite.Reporting/CoolerReportGenerator.cs",
+                      "sha256":  "510fefbd63aa2eb82f5f387d21710c935574b08b69ae263e66b84cdf6c85671f",
+                      "bytes":  11259
+                  },
+                  {
+                      "path":  "src/GpuSuite.Reporting/GpuSuite.Reporting.csproj",
+                      "sha256":  "fdeb3d6aee50f47fe1443232af27ebc053caa32cc5af862dd39f21d74c4bfb8a",
+                      "bytes":  469
+                  },
+                  {
+                      "path":  "src/GpuSuite.Reporting/HtmlReportGenerator.cs",
+                      "sha256":  "f38f09f1adff0a1d3853fd715cd7470d78704467252f9c5a891ffe1c50e79307",
+                      "bytes":  29503
+                  },
+                  {
+                      "path":  "src/GpuSuite.Reporting/SvgCharts.cs",
+                      "sha256":  "d8808e6558696e9fa03dbfdf81282dbaac872692e7f6a7328df34a3ca9b5e7ac",
+                      "bytes":  8810
+                  },
+                  {
+                      "path":  "tests/GpuSuite.Tests/AssemblyInfo.cs",
+                      "sha256":  "80161f189f46e5f485049fe75f6f7afa2b3fecb3fffbc5d18bebb2ca98cf03d8",
+                      "bytes":  184
+                  },
+                  {
+                      "path":  "tests/GpuSuite.Tests/AuthorStudioViewXamlTests.cs",
+                      "sha256":  "5fb6b9c63e7b24d2221ad3e785762c82d31e9721b4d27b3bf8e666b9b294d9e1",
+                      "bytes":  805
+                  },
+                  {
+                      "path":  "tests/GpuSuite.Tests/DisclaimerServiceTests.cs",
+                      "sha256":  "d1cb5d0fbda1bba3d2d78a14a3b832c20cc1720900373135b3371752318e62ef",
+                      "bytes":  3751
+                  },
+                  {
+                      "path":  "tests/GpuSuite.Tests/DraftDocumentServiceTests.cs",
+                      "sha256":  "f5b92d0d54f45116586ff1d7090b9f76b0270d8cde648f10e495028056a5369c",
+                      "bytes":  12205
+                  },
+                  {
+                      "path":  "tests/GpuSuite.Tests/DraftPackServiceTests.cs",
+                      "sha256":  "7d97f9d1c8cbaf1143a89deaa78d992a34712aa15d75a65da4eb42780545cef9",
+                      "bytes":  27077
+                  },
+                  {
+                      "path":  "tests/GpuSuite.Tests/DraftRouteAndFileTests.cs",
+                      "sha256":  "f2053d75ad3f90bedd10c75df89ade61e7ef6ee1b565d20bea88f9d1fecac61d",
+                      "bytes":  21835
+                  },
+                  {
+                      "path":  "tests/GpuSuite.Tests/GpuSuite.Tests.csproj",
+                      "sha256":  "7c5e0c205a51713e6774f0f1b5030cc4036daaed62ebaef91d096ab1ec2964fd",
+                      "bytes":  1630
+                  },
+                  {
+                      "path":  "tests/GpuSuite.Tests/PowerMeasurementTests.cs",
+                      "sha256":  "74b709f0f53a33c1770a5b89d7340e24e30ebbb8c3b1ccd444a6036a8e1dad52",
+                      "bytes":  8668
+                  },
+                  {
+                      "path":  "tests/GpuSuite.Tests/ProfilePackTests.cs",
+                      "sha256":  "81e57934c17b4941d8da54b8b5b3b22c11cc443ba10a8037ad50e868e4d5c5c7",
+                      "bytes":  8691
+                  },
+                  {
+                      "path":  "tests/GpuSuite.Tests/SmokeFrameClassifierTests.cs",
+                      "sha256":  "92cf918417c291e9b11c4d690003639c87df34029d2f6ec86080bf78ca1a35f4",
+                      "bytes":  1996
+                  },
+                  {
+                      "path":  "tests/GpuSuite.Tests/StartupLifecycleTests.cs",
+                      "sha256":  "55ad6bbb1c39fbcdea6fa60d861918d28b0fe3b7c81945253a4d3f011b6cec50",
+                      "bytes":  3725
+                  },
+                  {
+                      "path":  "tools/Generate-ThirdPartyNotices.ps1",
+                      "sha256":  "6a71db0f3cecff82be1373efc6097478c956532e4e77a2bcd62915e02958de6a",
+                      "bytes":  6294
+                  },
+                  {
+                      "path":  "tools/PresentMon/Install-PresentMon.ps1",
+                      "sha256":  "e82c8aee04af54b9454caede20bb016b28106ee68b3076a0203b4bb376fdf7a7",
+                      "bytes":  782
+                  },
+                  {
+                      "path":  "tools/PresentMon/README.md",
+                      "sha256":  "1d4bdfa182bcfece94d7319c5c75d94cabe0fa7f05d2068fd07a5bc7739853ad",
+                      "bytes":  464
+                  },
+                  {
+                      "path":  "tools/Test-InstallerAttribution.ps1",
+                      "sha256":  "254e6869a352111fb79f0742863b9aa94fa832c1cfabf5114a6e9ab25b1e0e40",
+                      "bytes":  2137
+                  }
+              ],
+    "schema":  1,
+    "generatedUtc":  "2026-07-19T20:29:47.6064586Z",
+    "publicRepository":  "https://github.com/crmaris/hardware-busters-gpu-test-suite",
+    "sourceRevision":  "retained privately"
+}

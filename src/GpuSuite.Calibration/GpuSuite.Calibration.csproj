@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The AI-assisted Calibration & Validation plane (the "AI Calibration Engineer").
+    See docs/ai-calibration-architecture.md.
+
+    DELIBERATE DEPENDENCY DISCIPLINE (the sidecar boundary, principle P1/P2):
+      * References GpuSuite.Core ONLY. Nothing in the deterministic execution path
+        (Engine / Orchestrator / SceneRunner) references THIS project, and this project
+        references nothing in it. The calibration plane can be deleted or fail to load
+        and every benchmark run still works exactly as before.
+      * Targets plain net9.0 (not net9.0-windows) on purpose — it is pure, portable,
+        advisory logic with no OS/UI coupling. The CLI (the composition root) is what
+        supplies a real capture-card observer; the library itself stays decoupled.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>GpuSuite.Calibration</AssemblyName>
+    <RootNamespace>GpuSuite.Calibration</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GpuSuite.Core\GpuSuite.Core.csproj" />
+  </ItemGroup>
+
+</Project>

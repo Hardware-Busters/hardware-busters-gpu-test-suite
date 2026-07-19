@@ -1,0 +1,220 @@
+{
+    "id":  "forza-horizon-6",
+    "settingsFingerprintKeys":  [
+                                    {
+                                        "label":  "dlssMode",
+                                        "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                        "pattern":  "\u003coption id=\"DLSSMode\" value=\"(\\d+)\"",
+                                        "valueMap":  {
+                                                         "0":  "Off",
+                                                         "1":  "On"
+                                                     }
+                                    },
+                                    {
+                                        "label":  "fsr3Mode",
+                                        "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                        "pattern":  "\u003coption id=\"FSR3Mode\" value=\"(\\d+)\"",
+                                        "valueMap":  {
+                                                         "0":  "Off"
+                                                     }
+                                    },
+                                    {
+                                        "label":  "taa",
+                                        "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                        "pattern":  "\u003coption id=\"TAA\" value=\"(\\d+)\"",
+                                        "valueMap":  {
+                                                         "0":  "Off",
+                                                         "1":  "On"
+                                                     }
+                                    },
+                                    {
+                                        "label":  "resScaling",
+                                        "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                        "pattern":  "\u003coption id=\"ResolutionScaling\" value=\"(\\d+)\""
+                                    },
+                                    {
+                                        "label":  "rtReflection",
+                                        "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                        "pattern":  "\u003coption id=\"RTReflectionQuality\" value=\"(\\d+)\""
+                                    },
+                                    {
+                                        "label":  "rtgi",
+                                        "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                        "pattern":  "\u003coption id=\"RTGIQuality\" value=\"(\\d+)\""
+                                    },
+                                    {
+                                        "label":  "frameGen",
+                                        "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                        "pattern":  "\u003coption id=\"DLSSGMode\" value=\"(\\d+)\"",
+                                        "isFrameGen":  true,
+                                        "frameGenOffValues":  [
+                                                                  "0"
+                                                              ]
+                                    }
+                                ],
+    "name":  "Forza Horizon 6",
+    "engine":  "ForzaTech",
+    "enabled":  true,
+    "repeats":  3,
+    "supportedResolutions":  [
+                                 "1080p",
+                                 "1440p",
+                                 "4K"
+                             ],
+    "graphicsPreset":  "Extreme",
+    "variants":  [
+                     {
+                         "id":  "as-set",
+                         "name":  "As configured in-game",
+                         "enabled":  true,
+                         "settings":  {
+
+                                      }
+                     },
+                     {
+                         "id":  "dlss-auto",
+                         "name":  "NVIDIA DLSS (Super Resolution Auto)",
+                         "enabled":  false,
+                         "settings":  {
+                                          "dlssMode":  "On",
+                                          "taa":  "Off",
+                                          "resolutionScaling":  "Off"
+                                      }
+                     }
+                 ],
+    "settings":  [
+                     {
+                         "key":  "dlssMode",
+                         "label":  "NVIDIA DLSS",
+                         "options":  [
+                                         "Off",
+                                         "On"
+                                     ],
+                         "default":  "",
+                         "apply":  {
+                                       "method":  "config-file",
+                                       "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                       "valueMap":  {
+                                                        "Off":  "0",
+                                                        "On":  "1"
+                                                    },
+                                       "edits":  [
+                                                     {
+                                                         "pattern":  "(\u003coption id=\"DLSSMode\" value=\")\\d+",
+                                                         "replacement":  "${1}{VALUE}"
+                                                     }
+                                                 ]
+                                   }
+                     },
+                     {
+                         "key":  "taa",
+                         "label":  "TAA",
+                         "options":  [
+                                         "Off",
+                                         "On"
+                                     ],
+                         "default":  "",
+                         "apply":  {
+                                       "method":  "config-file",
+                                       "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                       "valueMap":  {
+                                                        "Off":  "0",
+                                                        "On":  "1"
+                                                    },
+                                       "edits":  [
+                                                     {
+                                                         "pattern":  "(\u003coption id=\"TAA\" value=\")\\d+",
+                                                         "replacement":  "${1}{VALUE}"
+                                                     }
+                                                 ]
+                                   }
+                     },
+                     {
+                         "key":  "resolutionScaling",
+                         "label":  "Resolution Scaling",
+                         "options":  [
+                                         "Off",
+                                         "On"
+                                     ],
+                         "default":  "",
+                         "apply":  {
+                                       "method":  "config-file",
+                                       "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                       "valueMap":  {
+                                                        "Off":  "0",
+                                                        "On":  "1"
+                                                    },
+                                       "edits":  [
+                                                     {
+                                                         "pattern":  "(\u003coption id=\"ResolutionScaling\" value=\")\\d+",
+                                                         "replacement":  "${1}{VALUE}"
+                                                     }
+                                                 ]
+                                   }
+                     }
+                 ],
+    "captureProcessName":  "forzahorizon6.exe",
+    "frameProvider":  "rtss",
+    "startupGraceSeconds":  240,
+    "launch":  {
+                   "store":  "Xbox",
+                   "gameId":  "Microsoft.ForteBaseGame_8wekyb3d8bbwe!Forzahorizon6"
+               },
+    "resolutionApply":  {
+                            "method":  "config-file",
+                            "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                            "edits":  [
+                                          {
+                                              "pattern":  "\u003cResolutionWidth value=\"\\d+\"/\u003e",
+                                              "replacement":  "\u003cResolutionWidth value=\"{WIDTH}\"/\u003e"
+                                          },
+                                          {
+                                              "pattern":  "\u003cResolutionHeight value=\"\\d+\"/\u003e",
+                                              "replacement":  "\u003cResolutionHeight value=\"{HEIGHT}\"/\u003e"
+                                          },
+                                          {
+                                              "pattern":  "\u003cFullscreen value=\"\\d+\"/\u003e",
+                                              "replacement":  "\u003cFullscreen value=\"1\"/\u003e"
+                                          },
+                                          {
+                                              "pattern":  "\u003cPresentInterval value=\"\\d+\"/\u003e",
+                                              "replacement":  "\u003cPresentInterval value=\"0\"/\u003e"
+                                          },
+                                          {
+                                              "pattern":  "(\u003cAllowScreenTearing[^/]*value=\")\\d+",
+                                              "replacement":  "${1}1"
+                                          },
+                                          {
+                                              "pattern":  "\u003coption id=\"FrameRate\" value=\"\\d+\"/\u003e",
+                                              "replacement":  "\u003coption id=\"FrameRate\" value=\"4\"/\u003e"
+                                          },
+                                          {
+                                              "pattern":  "\u003coption id=\"VSync\" value=\"\\d+\"/\u003e",
+                                              "replacement":  "\u003coption id=\"VSync\" value=\"0\"/\u003e"
+                                          }
+                                      ]
+                        },
+    "settingsVerify":  {
+                           "method":  "config-file",
+                           "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                           "expectedPattern":  "\u003cResolutionWidth value=\"{WIDTH}\"/\u003e"
+                       },
+    "scenes":  [
+                   {
+                       "id":  "builtin-benchmark",
+                       "name":  "Benchmark Mode (Settings \u003e Graphics \u0026 Performance)",
+                       "kind":  "BotDriven",
+                       "captureSeconds":  300,
+                       "warmupSeconds":  0,
+                       "readinessTimeoutSeconds":  300,
+                       "botScript":  "forzahorizon6_benchmark_nav",
+                       "warmupRepeats":  1,
+                       "singleLaunchRepeats":  true,
+                       "reRunBotScript":  "forzahorizon6_rerun",
+                       "completion":  {
+                                          "method":  "duration",
+                                          "gameplayBandCeilingFps":  2000
+                                      }
+                   }
+               ]
+}

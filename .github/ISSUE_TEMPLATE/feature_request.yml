@@ -1,0 +1,11 @@
+name: Feature request
+description: Propose a scoped, reproducible improvement
+title: "feature: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem and proposed outcome
+    validations:
+      required: true

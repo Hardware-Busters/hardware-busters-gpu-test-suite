@@ -1,0 +1,105 @@
+<UserControl x:Class="GpuSuite.App.Views.CatalogView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:GpuSuite.App.ViewModels"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance vm:CatalogViewModel}"
+             Background="Transparent">
+
+    <Grid Margin="28,24,28,24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,14">
+            <StackPanel>
+                <TextBlock Text="Installed Games" Style="{StaticResource H1TextStyle}"/>
+                <TextBlock Text="{Binding Summary}" Style="{StaticResource CaptionTextStyle}" Margin="0,4,0,0"/>
+                <TextBlock Text="Discovering installed games…" Foreground="{StaticResource AccentBrush}" FontSize="12"
+                           Margin="0,4,0,0" Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"/>
+            </StackPanel>
+            <Button Content="Rescan" Style="{StaticResource PrimaryButtonStyle}" Command="{Binding LoadCommand}"
+                    HorizontalAlignment="Right" VerticalAlignment="Top"/>
+        </Grid>
+
+        <!-- Recommendation banner -->
+        <Border Grid.Row="1" Background="{StaticResource AccentSoftBrush}" BorderBrush="{StaticResource AccentBrush}"
+                BorderThickness="1" CornerRadius="8" Padding="14,12" Margin="0,0,0,14"
+                Visibility="{Binding HasRecommended, Converter={StaticResource BoolToVis}}">
+            <StackPanel>
+                <TextBlock Text="RECOMMENDED FIRST TARGET" Style="{StaticResource LabelTextStyle}" Foreground="{StaticResource AccentBrush}"/>
+                <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                    <TextBlock Text="{Binding Recommended.Game.Name}" FontWeight="SemiBold" FontSize="15"/>
+                    <TextBlock Text="{Binding Recommended.Game.Store, StringFormat='  ·  {0}'}" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding Recommended.Score, StringFormat='  ·  score {0:0}'}" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                </StackPanel>
+                <TextBlock Text="{Binding Recommended.Knowledge.Notes}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,4,0,0" TextWrapping="Wrap"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Table -->
+        <Border Grid.Row="2" Style="{StaticResource CardBorderStyle}" Padding="14,12">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <!-- Column header -->
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="95"/>
+                            <ColumnDefinition Width="85"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="95"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="GAME" Style="{StaticResource LabelTextStyle}" Margin="0"/>
+                        <TextBlock Grid.Column="1" Text="STORE" Style="{StaticResource LabelTextStyle}" Margin="0"/>
+                        <TextBlock Grid.Column="2" Text="BENCH" Style="{StaticResource LabelTextStyle}" Margin="0"/>
+                        <TextBlock Grid.Column="3" Text="AUTO" Style="{StaticResource LabelTextStyle}" Margin="0"/>
+                        <TextBlock Grid.Column="4" Text="GPU FIT" Style="{StaticResource LabelTextStyle}" Margin="0"/>
+                        <TextBlock Grid.Column="5" Text="NOTES" Style="{StaticResource LabelTextStyle}" Margin="0"/>
+                    </Grid>
+
+                    <ItemsControl ItemsSource="{Binding Rows}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Padding="0,9">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="95"/>
+                                            <ColumnDefinition Width="85"/>
+                                            <ColumnDefinition Width="80"/>
+                                            <ColumnDefinition Width="95"/>
+                                            <ColumnDefinition Width="3*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding Game.Name}" FontWeight="SemiBold"
+                                                   TextTrimming="CharacterEllipsis" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding Game.Store}" Foreground="{StaticResource TextSecondaryBrush}"
+                                                   FontSize="12" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding BenchLabel}" Foreground="{StaticResource TextSecondaryBrush}"
+                                                   FontSize="12" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="3" Text="{Binding AutomationLabel}" Foreground="{StaticResource TextSecondaryBrush}"
+                                                   FontSize="12" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="4" Text="{Binding SuitabilityLabel}" Foreground="{StaticResource TextSecondaryBrush}"
+                                                   FontSize="12" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="5" Text="{Binding Knowledge.Notes}" Foreground="{StaticResource TextMutedBrush}"
+                                                   FontSize="12" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <TextBlock Text="No installed games discovered. Install a game, or check that its launcher is present."
+                               Style="{StaticResource CaptionTextStyle}" Margin="0,10,0,0"
+                               Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVis}}"/>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>

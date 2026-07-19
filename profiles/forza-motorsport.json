@@ -1,0 +1,321 @@
+{
+    "id":  "forza-motorsport",
+    "settingsFingerprintKeys":  [
+                                    {
+                                        "label":  "dlssMode",
+                                        "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                        "pattern":  "\u003coption id=\"IDS_DLSSMode_Label\" value=\"([^\"]+)\""
+                                    },
+                                    {
+                                        "label":  "taa",
+                                        "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                        "pattern":  "\u003coption id=\"IDS_TAA_Label\" value=\"([^\"]+)\""
+                                    },
+                                    {
+                                        "label":  "resScale",
+                                        "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                        "pattern":  "\u003coption id=\"IDS_ResolutionScale_Label\" value=\"([^\"]+)\""
+                                    },
+                                    {
+                                        "label":  "rayTracing",
+                                        "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                        "pattern":  "\u003coption id=\"IDS_RaytracingQuality_Label\" value=\"([^\"]+)\""
+                                    },
+                                    {
+                                        "label":  "renderQuality",
+                                        "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                        "pattern":  "\u003coption id=\"IDS_DynamicRenderQuality_Label\" value=\"([^\"]+)\""
+                                    },
+                                    {
+                                        "label":  "frameGen",
+                                        "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                        "pattern":  "\u003cDLSSGEnabled value=\"([\\d.]+)\"",
+                                        "isFrameGen":  true,
+                                        "frameGenOffValues":  [
+                                                                  "0.000000",
+                                                                  "0"
+                                                              ]
+                                    },
+                                    {
+                                        "label":  "outputW",
+                                        "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                        "pattern":  "\u003coption id=\"IDS_Resolution_Label\" value=\"(\\d+)x\\d+\""
+                                    },
+                                    {
+                                        "label":  "outputH",
+                                        "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                        "pattern":  "\u003coption id=\"IDS_Resolution_Label\" value=\"\\d+x(\\d+)\""
+                                    }
+                                ],
+    "name":  "Forza Motorsport",
+    "engine":  "ForzaTech",
+    "enabled":  true,
+    "repeats":  3,
+    "supportedResolutions":  [
+                                 "1080p",
+                                 "1440p",
+                                 "4K"
+                             ],
+    "graphicsPreset":  "Ultra",
+    "variants":  [
+                     {
+                         "id":  "as-set",
+                         "name":  "Ultra (as configured in-game)",
+                         "enabled":  true,
+                         "settings":  {
+
+                                      }
+                     },
+                     {
+                         "id":  "dlss-q",
+                         "name":  "DLSS Quality, FG off",
+                         "enabled":  false,
+                         "settings":  {
+                                          "dlssMode":  "Quality",
+                                          "frameGen":  "Off"
+                                      }
+                     },
+                     {
+                         "id":  "dlss-p",
+                         "name":  "DLSS Performance, FG off (pinned as-set)",
+                         "enabled":  false,
+                         "settings":  {
+                                          "dlssMode":  "Performance",
+                                          "frameGen":  "Off"
+                                      }
+                     },
+                     {
+                         "id":  "native",
+                         "name":  "Native (no upscaling), FG off",
+                         "enabled":  false,
+                         "settings":  {
+                                          "dlssMode":  "Off",
+                                          "frameGen":  "Off"
+                                      }
+                     },
+                     {
+                         "id":  "rt-full",
+                         "name":  "RT Full reflections + RTGI",
+                         "enabled":  false,
+                         "settings":  {
+                                          "rt":  "FullReflectionsRtgi"
+                                      }
+                     },
+                     {
+                         "id":  "rt-off",
+                         "name":  "RT explicitly Off",
+                         "enabled":  false,
+                         "settings":  {
+                                          "rt":  "Off"
+                                      }
+                     }
+                 ],
+    "settings":  [
+                     {
+                         "key":  "dlssMode",
+                         "label":  "DLSS Mode (method + tier in one knob)",
+                         "options":  [
+                                         "Off",
+                                         "Quality",
+                                         "Performance"
+                                     ],
+                         "default":  "",
+                         "apply":  {
+                                       "method":  "config-file",
+                                       "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                       "valueMap":  {
+                                                        "Off":  "IDS_Off",
+                                                        "Quality":  "IDS_DLSS_Quality",
+                                                        "Performance":  "IDS_DLSS_Performance"
+                                                    },
+                                       "edits":  [
+                                                     {
+                                                         "pattern":  "(\u003coption id=\"IDS_DLSSMode_Label\" value=\")[^\"]+",
+                                                         "replacement":  "${1}{VALUE}"
+                                                     }
+                                                 ]
+                                   }
+                     },
+                     {
+                         "key":  "rt",
+                         "label":  "Raytracing quality",
+                         "options":  [
+                                         "Auto",
+                                         "Off",
+                                         "CarReflections",
+                                         "CarReflectionsRtao",
+                                         "FullReflectionsRtao",
+                                         "FullReflectionsRtgi"
+                                     ],
+                         "default":  "",
+                         "apply":  {
+                                       "method":  "config-file",
+                                       "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                       "valueMap":  {
+                                                        "Off":  "IDS_Off",
+                                                        "FullReflectionsRtgi":  "IDS_RaytracingFullReflectionsAndRTGI"
+                                                    },
+                                       "edits":  [
+                                                     {
+                                                         "pattern":  "(\u003coption id=\"IDS_RaytracingQuality_Label\" value=\")[^\"]+",
+                                                         "replacement":  "${1}{VALUE}"
+                                                     }
+                                                 ],
+                                       "verifyPattern":  "\u003coption id=\"IDS_RaytracingQuality_Label\" value=\"{VALUE}\""
+                                   }
+                     },
+                     {
+                         "key":  "frameGen",
+                         "label":  "Frame Generation (DLSS-G)",
+                         "options":  [
+                                         "On",
+                                         "Off"
+                                     ],
+                         "default":  "",
+                         "apply":  {
+                                       "method":  "config-file",
+                                       "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                       "valueMap":  {
+                                                        "On":  "1.000000",
+                                                        "Off":  "0.000000"
+                                                    },
+                                       "edits":  [
+                                                     {
+                                                         "pattern":  "(\u003cDLSSGEnabled value=\")[\\d.]+",
+                                                         "replacement":  "${1}{VALUE}"
+                                                     }
+                                                 ]
+                                   }
+                     }
+                 ],
+    "menuMap":  {
+                    "inputDevice":  "keyboard",
+                    "settleMs":  700,
+                    "anchorLabel":  "RTAO quality",
+                    "anchorNavKey":  "]",
+                    "anchorNavMax":  8,
+                    "focusHeader":  {
+                                        "xMin":  0.72,
+                                        "yMin":  0.24,
+                                        "xMax":  0.97,
+                                        "yMax":  0.30
+                                    },
+                    "open":  [
+                                 {
+                                     "type":  "waitText",
+                                     "key":  "ACCESSIBILITY",
+                                     "ms":  1800000
+                                 },
+                                 {
+                                     "type":  "tap",
+                                     "key":  "F",
+                                     "ms":  200
+                                 },
+                                 {
+                                     "type":  "wait",
+                                     "ms":  3000
+                                 }
+                             ],
+                    "back":  [
+                                 {
+                                     "type":  "tap",
+                                     "key":  "V",
+                                     "ms":  200
+                                 },
+                                 {
+                                     "type":  "wait",
+                                     "ms":  1500
+                                 },
+                                 {
+                                     "type":  "tap",
+                                     "key":  "Enter",
+                                     "ms":  200
+                                 },
+                                 {
+                                     "type":  "wait",
+                                     "ms":  1200
+                                 },
+                                 {
+                                     "type":  "tap",
+                                     "key":  "Esc",
+                                     "ms":  200
+                                 },
+                                 {
+                                     "type":  "wait",
+                                     "ms":  1000
+                                 }
+                             ],
+                    "controls":  [
+                                     {
+                                         "settingKey":  "rt",
+                                         "label":  "Raytracing quality",
+                                         "rowValueLabel":  "Raytracing quality",
+                                         "actuation":  "cycle",
+                                         "cycleRight":  "Right",
+                                         "cycleLeft":  "Left",
+                                         "maxCycles":  6,
+                                         "maxSteps":  25,
+                                         "optionOrder":  [
+                                                             "Auto",
+                                                             "Off",
+                                                             "CarReflections",
+                                                             "CarReflectionsRtao",
+                                                             "FullReflectionsRtao",
+                                                             "FullReflectionsRtgi"
+                                                         ],
+                                         "optionLabels":  {
+                                                              "Auto":  "Auto",
+                                                              "Off":  "Off",
+                                                              "CarReflections":  "Car reflections",
+                                                              "CarReflectionsRtao":  "Car reflections + RTAO",
+                                                              "FullReflectionsRtao":  "Full reflections + RTAO",
+                                                              "FullReflectionsRtgi":  "Full reflections + RTGI"
+                                                          }
+                                     }
+                                 ]
+                },
+    "captureProcessName":  "forza_gaming.desktop.x64_release_final.exe",
+    "frameProvider":  "rtss",
+    "startupGraceSeconds":  240,
+    "launch":  {
+                   "store":  "Xbox",
+                   "gameId":  "Microsoft.ForzaMotorsport_8wekyb3d8bbwe!ReleaseFinal"
+               },
+    "resolutionApply":  {
+                            "method":  "config-file",
+                            "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                            "switchDesktopMode":  true,
+                            "fingerprintWidthLabel":  "outputW",
+                            "fingerprintHeightLabel":  "outputH",
+                            "edits":  [
+                                          {
+                                              "pattern":  "(\u003coption id=\"IDS_Resolution_Label\" value=\")[^\"]+",
+                                              "replacement":  "${1}{WIDTH}x{HEIGHT}"
+                                          }
+                                      ]
+                        },
+    "settingsVerify":  {
+                           "method":  "none"
+                       },
+    "scenes":  [
+                   {
+                       "id":  "builtin-benchmark",
+                       "name":  "Benchmark Mode",
+                       "kind":  "BuiltInBenchmark",
+                       "captureSeconds":  100,
+                       "warmupSeconds":  0,
+                       "readinessTimeoutSeconds":  1860,
+                       "benchmarkStart":  "bot",
+                       "startBotScript":  "forza_benchmark_nav_smart",
+                       "completion":  {
+                                          "method":  "activity",
+                                          "minValidSeconds":  30,
+                                          "maxTimeoutSeconds":  75,
+                                          "gameplayBandCeilingFps":  200,
+                                          "measuredWarmupSeconds":  12,
+                                          "fallbackToActivity":  true,
+                                          "activityIdleSeconds":  5
+                                      }
+                   }
+               ]
+}

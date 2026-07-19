@@ -1,0 +1,113 @@
+{
+    "id":  "rerequiem_continue_scene_smart",
+    "inputDevice":  "Gamepad",
+    "loop":  false,
+    "graph":  {
+                  "timeoutSeconds":  320,
+                  "pollMs":  3000,
+                  "lostMs":  8000,
+                  "recoverKey":  "A",
+                  "maxRecoveries":  30,
+                  "screens":  [
+                                  {
+                                      "id":  "CONTINUE_SUBMENU",
+                                      "anyOf":  [
+                                                    "Continue"
+                                                ],
+                                      "noneOf":  [
+                                                     "Main Story"
+                                                 ],
+                                      "do":  [
+
+                                             ],
+                                      "goal":  true
+                                  },
+                                  {
+                                      "id":  "TITLE_MENU",
+                                      "anyOf":  [
+                                                    "Main Story"
+                                                ],
+                                      "do":  [
+                                                 {
+                                                     "key":  "A",
+                                                     "holdMs":  150,
+                                                     "gapMs":  1500
+                                                 }
+                                             ]
+                                  },
+                                  {
+                                      "id":  "DISCLAIMER",
+                                      "anyOf":  [
+                                                    "do not turn off",
+                                                    "Autosaving",
+                                                    "Saving",
+                                                    "Loading"
+                                                ],
+                                      "noneOf":  [
+                                                     "Main Story",
+                                                     "Continue"
+                                                 ],
+                                      "do":  [
+
+                                             ]
+                                  }
+                              ]
+              },
+    "visionGoal":  "Reach the Resident Evil Requiem CONTINUE submenu. Cold launch shows studio logos, then a loading/shader-compile screen (with a progress bar), then the TITLE: a rainy night-city street that is the menu BACKDROP (its menu options can be small/low-contrast over the scene). Rules: answer WAIT ONLY while a studio logo, or a loading/compiling screen with a progress bar or spinner, or a \u0027Saving / do not turn off\u0027 disclaimer is shown. Once a steady rendered scene is shown with NO progress bar (the title backdrop), answer CONFIRM to advance the title menu and select Main Story - this opens the Continue / Load Game / New Game submenu. Answer DONE the instant the word \u0027Continue\u0027 is visible as a menu option. Do not press again once Continue is visible (New Game is the third row).",
+    "visionHoldMs":  150,
+    "visionTimeoutSeconds":  450,
+    "actions":  [
+                    {
+                        "type":  "Wait",
+                        "durationMs":  900
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "A",
+                        "durationMs":  150
+                    },
+                    {
+                        "type":  "WaitForText",
+                        "text":  "Move",
+                        "durationMs":  50000,
+                        "pollMs":  2000,
+                        "required":  true
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  3500
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  1500
+                    },
+                    {
+                        "type":  "Gx10Traverse",
+                        "durationMs":  45000,
+                        "stuckThreshold":  0.06,
+                        "stuckTriggerCount":  2,
+                        "maxRecoveryTurns":  8,
+                        "minHealthyMotionRatio":  0.25,
+                        "goal":  "Keep Grace moving through the rainy city street toward open traversable space. Follow the road and sidewalk, steer around cars, debris, walls, and dead ends, and keep translating instead of standing or pushing into an obstacle."
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  2000
+                    },
+                    {
+                        "type":  "MarkStart"
+                    },
+                    {
+                        "type":  "Gx10Traverse",
+                        "durationMs":  35000,
+                        "stuckThreshold":  0.06,
+                        "stuckTriggerCount":  2,
+                        "maxRecoveryTurns":  6,
+                        "minHealthyMotionRatio":  0.25,
+                        "goal":  "Keep Grace moving through the rainy city street toward open traversable space. Follow the road and sidewalk, steer around cars, debris, walls, and dead ends, and keep translating instead of standing or pushing into an obstacle."
+                    },
+                    {
+                        "type":  "MarkEnd"
+                    }
+                ]
+}

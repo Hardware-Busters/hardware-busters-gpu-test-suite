@@ -1,0 +1,218 @@
+{
+    "id":  "resident-evil-requiem",
+    "settingsFingerprintKeys":  [
+                                    {
+                                        "label":  "upscaler",
+                                        "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                        "pattern":  "(?m)^UpscalingAlgorithm=([^\\r\\n]+)"
+                                    },
+                                    {
+                                        "label":  "upscalerQuality",
+                                        "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                        "pattern":  "(?m)^UpscalingQuality_DLSS=([^\\r\\n]+)"
+                                    },
+                                    {
+                                        "label":  "rayTracing",
+                                        "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                        "pattern":  "(?m)^RayTracingSetting=([^\\r\\n]+)"
+                                    },
+                                    {
+                                        "label":  "preset",
+                                        "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                        "pattern":  "(?m)^DrawQualityPreset=([^\\r\\n]+)"
+                                    },
+                                    {
+                                        "label":  "frameGen",
+                                        "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                        "pattern":  "(?m)^FrameGeneration=([^\\r\\n]+)",
+                                        "isFrameGen":  true,
+                                        "frameGenOffValues":  [
+                                                                  "Off",
+                                                                  "None"
+                                                              ]
+                                    }
+                                ],
+    "name":  "Resident Evil Requiem",
+    "engine":  "RE Engine",
+    "enabled":  true,
+    "repeats":  3,
+    "supportedResolutions":  [
+                                 "1080p",
+                                 "1440p",
+                                 "4K"
+                             ],
+    "graphicsPreset":  "Max",
+    "settings":  [
+                     {
+                         "key":  "upscaler",
+                         "label":  "Upscaling Method",
+                         "options":  [
+                                         "Off",
+                                         "DLSS",
+                                         "FSR",
+                                         "XeSS"
+                                     ],
+                         "default":  "DLSS",
+                         "apply":  {
+                                       "method":  "config-file",
+                                       "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                       "valueMap":  {
+                                                        "Off":  "None"
+                                                    },
+                                       "edits":  [
+                                                     {
+                                                         "pattern":  "(UpscalingAlgorithm\\s*=\\s*)[A-Za-z0-9]+",
+                                                         "replacement":  "${1}{VALUE}"
+                                                     }
+                                                 ]
+                                   }
+                     },
+                     {
+                         "key":  "upscalerQuality",
+                         "label":  "Upscaler Quality",
+                         "options":  [
+                                         "Quality",
+                                         "Balanced",
+                                         "Performance",
+                                         "UltraPerformance",
+                                         "DLAA"
+                                     ],
+                         "default":  "Quality",
+                         "apply":  {
+                                       "method":  "config-file",
+                                       "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                       "edits":  [
+                                                     {
+                                                         "pattern":  "(UpscalingQuality_DLSS\\s*=\\s*)[A-Za-z0-9]+",
+                                                         "replacement":  "${1}{VALUE}"
+                                                     }
+                                                 ]
+                                   }
+                     },
+                     {
+                         "key":  "rt",
+                         "label":  "Ray Tracing",
+                         "options":  [
+                                         "On",
+                                         "Off"
+                                     ],
+                         "default":  "On",
+                         "apply":  {
+                                       "method":  "config-file",
+                                       "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                       "edits":  [
+                                                     {
+                                                         "pattern":  "(RayTracingSetting\\s*=\\s*)[A-Za-z0-9]+",
+                                                         "replacement":  "${1}{VALUE}"
+                                                     }
+                                                 ]
+                                   }
+                     },
+                     {
+                         "key":  "frameGen",
+                         "label":  "Frame Generation",
+                         "options":  [
+                                         "On",
+                                         "Off"
+                                     ],
+                         "default":  "",
+                         "apply":  {
+                                       "method":  "config-file",
+                                       "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                                       "valueMap":  {
+                                                        "On":  "DLSS 2x",
+                                                        "Off":  "None"
+                                                    },
+                                       "edits":  [
+                                                     {
+                                                         "pattern":  "(FrameGeneration\\s*=\\s*)[^\\r\\n]+",
+                                                         "replacement":  "${1}{VALUE}"
+                                                     }
+                                                 ]
+                                   }
+                     }
+                 ],
+    "variants":  [
+                     {
+                         "id":  "as-set",
+                         "name":  "As configured in-game",
+                         "enabled":  true,
+                         "settings":  {
+
+                                      }
+                     },
+                     {
+                         "id":  "rt-native",
+                         "name":  "RT (native, no upscaling), FG off",
+                         "enabled":  false,
+                         "settings":  {
+                                          "rt":  "On",
+                                          "upscaler":  "Off",
+                                          "frameGen":  "Off"
+                                      }
+                     },
+                     {
+                         "id":  "rt-dlss-q",
+                         "name":  "RT + DLSS Quality, FG off",
+                         "enabled":  false,
+                         "settings":  {
+                                          "rt":  "On",
+                                          "upscaler":  "DLSS",
+                                          "upscalerQuality":  "Quality",
+                                          "frameGen":  "Off"
+                                      }
+                     },
+                     {
+                         "id":  "dlss-q-2xfg",
+                         "name":  "DLSS Quality + Frame Gen 2x",
+                         "enabled":  false,
+                         "settings":  {
+                                          "upscaler":  "DLSS",
+                                          "upscalerQuality":  "Quality",
+                                          "frameGen":  "On"
+                                      }
+                     }
+                 ],
+    "captureProcessName":  "re9.exe",
+    "frameProvider":  "presentmon",
+    "startupGraceSeconds":  120,
+    "launch":  {
+                   "store":  "Steam",
+                   "gameId":  "3764200"
+               },
+    "resolutionApply":  {
+                            "method":  "config-file",
+                            "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
+                            "edits":  [
+                                          {
+                                              "pattern":  "(\\bResolution=)\\d+x\\d+",
+                                              "replacement":  "${1}{WIDTH}x{HEIGHT}"
+                                          },
+                                          {
+                                              "pattern":  "VSync=\\w+",
+                                              "replacement":  "VSync=False"
+                                          },
+                                          {
+                                              "pattern":  "RefreshRate=\\d+",
+                                              "replacement":  "RefreshRate=60"
+                                          }
+                                      ]
+                        },
+    "settingsVerify":  {
+                           "method":  "none"
+                       },
+    "scenes":  [
+                   {
+                       "id":  "scripted-scene",
+                       "name":  "Scripted Gameplay Scene",
+                       "kind":  "BotDriven",
+                       "captureSeconds":  420,
+                       "warmupSeconds":  0,
+                       "readinessTimeoutSeconds":  300,
+                       "botScript":  "rerequiem_continue_scene_smart",
+                       "completion":  {
+                                          "method":  "duration"
+                                      }
+                   }
+               ]
+}

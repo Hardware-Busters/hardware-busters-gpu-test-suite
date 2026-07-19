@@ -1,0 +1,137 @@
+{
+    "id":  "blackmyth_continue_scene_smart",
+    "inputDevice":  "Gamepad",
+    "loop":  false,
+    "graph":  {
+                  "timeoutSeconds":  360,
+                  "pollMs":  3000,
+                  "lostMs":  8000,
+                  "recoverKey":  "A",
+                  "maxRecoveries":  40,
+                  "screens":  [
+                                  {
+                                      "id":  "MAIN_MENU",
+                                      "anyOf":  [
+                                                    "Continue Journey",
+                                                    "Continue"
+                                                ],
+                                      "do":  [
+
+                                             ],
+                                      "goal":  true
+                                  },
+                                  {
+                                      "id":  "NEW_JOURNEY_MENU",
+                                      "anyOf":  [
+                                                    "New Journey"
+                                                ],
+                                      "do":  [
+
+                                             ],
+                                      "goal":  true
+                                  },
+                                  {
+                                      "id":  "TITLE_LOGO_ADVANCE",
+                                      "noneOf":  [
+                                                     "Continue Journey",
+                                                     "Continue",
+                                                     "New Journey"
+                                                 ],
+                                      "anyOf":  [
+                                                    "Press",
+                                                    "BLACK MYTH",
+                                                    "WUKONG"
+                                                ],
+                                      "do":  [
+                                                 {
+                                                     "key":  "A",
+                                                     "holdMs":  280,
+                                                     "gapMs":  2500
+                                                 }
+                                             ]
+                                  }
+                              ]
+              },
+    "visionGoal":  "Reach the Black Myth: Wukong MAIN MENU, which shows \u0027Continue Journey\u0027 as the highlighted top row (with \u0027New Journey\u0027 below it). Choose ONE action: answer DONE only when \u0027Continue Journey\u0027 or \u0027New Journey\u0027 is visible as a menu option; answer CONFIRM to advance a studio or title logo, or the stylized press-a-button title screen (these are stylized art with little readable text - if you see a logo or a press-to-start prompt, press CONFIRM); answer WAIT only on a plain loading or shader-compiling screen that has a progress indicator and no prompt. Do not answer DONE for a logo or a title screen.",
+    "visionHoldMs":  300,
+    "visionTimeoutSeconds":  720,
+    "actions":  [
+                    {
+                        "type":  "PressUntilText",
+                        "key":  "A",
+                        "text":  "CONTINUE JOURNEY",
+                        "durationMs":  120000,
+                        "pollMs":  3000,
+                        "maxPresses":  4,
+                        "required":  true
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  800
+                    },
+                    {
+                        "type":  "PressUntilText",
+                        "key":  "A",
+                        "text":  "CONTINUE JOURNEY",
+                        "waitForAbsent":  true,
+                        "minConsecutive":  2,
+                        "durationMs":  45000,
+                        "pollMs":  2000,
+                        "maxPresses":  2,
+                        "required":  true
+                    },
+                    {
+                        "type":  "WaitForGameplayBand",
+                        "ceilingFps":  1000,
+                        "floorFps":  20,
+                        "sustainMs":  6000,
+                        "durationMs":  180000,
+                        "pollMs":  1000,
+                        "required":  true
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  3500
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  1500
+                    },
+                    {
+                        "type":  "AssertWorldMotion",
+                        "durationMs":  90000,
+                        "stuckThreshold":  0.3,
+                        "required":  true
+                    },
+                    {
+                        "type":  "Gx10Traverse",
+                        "durationMs":  45000,
+                        "pollMs":  700,
+                        "goal":  "Keep the Destined One translating through open traversable ground in the Black Wind Mountain forest. Follow the visible trail and gaps between rocks and trees; steer or strafe around walls, foliage, enemies, ledges, and dead ends; back out or jump when blocked; never stand still or keep pushing into an obstacle.",
+                        "stuckThreshold":  0.08,
+                        "stuckTriggerCount":  2,
+                        "maxRecoveryTurns":  8,
+                        "minHealthyMotionRatio":  0.25
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  2000
+                    },
+                    {
+                        "type":  "MarkStart"
+                    },
+                    {
+                        "type":  "Gx10Traverse",
+                        "durationMs":  35000,
+                        "pollMs":  700,
+                        "goal":  "Keep the Destined One translating through open traversable ground in the Black Wind Mountain forest. Follow the visible trail and gaps between rocks and trees; steer or strafe around walls, foliage, enemies, ledges, and dead ends; back out or jump when blocked; never stand still or keep pushing into an obstacle.",
+                        "stuckThreshold":  0.08,
+                        "stuckTriggerCount":  2,
+                        "maxRecoveryTurns":  6,
+                        "minHealthyMotionRatio":  0.25
+                    },
+                    {
+                        "type":  "MarkEnd"
+                    }
+                ]
+}

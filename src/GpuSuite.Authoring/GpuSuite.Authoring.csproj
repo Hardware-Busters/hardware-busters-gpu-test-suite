@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0-windows10.0.19041.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>GpuSuite.Authoring</AssemblyName>
+    <RootNamespace>GpuSuite.Authoring</RootNamespace>
+    <Platforms>x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GpuSuite.Core\GpuSuite.Core.csproj" />
+    <ProjectReference Include="..\GpuSuite.Engine\GpuSuite.Engine.csproj" />
+  </ItemGroup>
+</Project>

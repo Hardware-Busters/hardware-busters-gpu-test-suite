@@ -1,0 +1,45 @@
+{
+  "id": "example-steam-game",
+  "name": "Example Steam Game (template — disabled)",
+  "engine": "n/a",
+  "notes": "Reference entry showing every BenchmarkGame field. Disabled so it never runs. Copy this to make a real entry: set enabled=true, the real Steam appId, captureProcessName, and the benchmark log-file path/patterns.",
+  "enabled": false,
+  "repeats": 3,
+  "supportedResolutions": [ "1080p", "1440p", "4K" ],
+  "graphicsPreset": "Ultra",
+  "settingsBotScript": "settings_nav_example",
+  "captureProcessName": "Game.exe",
+  "startupGraceSeconds": 60,
+  "launch": {
+    "store": "Steam",
+    "gameId": "000000",
+    "arguments": ""
+  },
+  "resolutionApply": { "method": "bot" },
+  "scenes": [
+    {
+      "id": "builtin-benchmark",
+      "name": "Built-in Benchmark",
+      "kind": "BuiltInBenchmark",
+      "captureSeconds": 30,
+      "warmupSeconds": 5,
+      "readinessTimeoutSeconds": 180,
+      "completion": {
+        "method": "log-file",
+        "logFilePath": "%LOCALAPPDATA%\\Game\\benchmark_result.json",
+        "startPattern": "Benchmark started",
+        "finishPattern": "Benchmark complete"
+      }
+    },
+    {
+      "id": "playable-scene",
+      "name": "Playable Scene (bot)",
+      "kind": "BotDriven",
+      "captureSeconds": 30,
+      "warmupSeconds": 5,
+      "readinessTimeoutSeconds": 180,
+      "botScript": "camera_path_basic",
+      "completion": { "method": "duration" }
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+bin/
+obj/
+Results/
+artifacts/
+settings.json
+tools/PresentMon/PresentMon.exe
+*.user
+*.log

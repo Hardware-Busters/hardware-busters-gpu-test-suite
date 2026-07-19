@@ -1,0 +1,402 @@
+<UserControl x:Class="GpuSuite.App.Views.RunView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:GpuSuite.App.ViewModels"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance vm:RunViewModel}"
+             Background="Transparent">
+
+    <!-- The Run page can legitimately be taller than a compact window once full pre-flight evidence is shown.
+         Keep a page-level scroll path separate from the roster and log, so neither panel can clip the rest. -->
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                  CanContentScroll="False" Padding="0,0,10,0">
+    <Grid Margin="28,24,18,24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,14">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0">
+                <TextBlock Text="Run" Style="{StaticResource H1TextStyle}"/>
+                <TextBlock Text="{Binding StatusText}" Style="{StaticResource CaptionTextStyle}" Margin="0,4,0,0"/>
+            </StackPanel>
+            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+                <Button Content="{Binding PreflightButtonText}" Command="{Binding CheckReadinessCommand}" Margin="0,0,8,0"
+                        ToolTip="Checks machine services, live benchmark hardware, every installed game, launcher login, update confidence, automation, and settings. Start sweep repeats this automatically."/>
+                <Button Content="Smoke-test roster" Command="{Binding SmokeTestCommand}" Margin="0,0,8,0"
+                        ToolTip="Launches each selected game once, saves a capture-card screenshot, checks visible update/login/first-run prompts, and closes it. No bot route or benchmark measurement is run."/>
+                <Button Content="Qualification 1×" Command="{Binding StartQualificationCommand}" Margin="0,0,8,0"
+                        ToolTip="Runs one real repeat per scene for every runnable game at the highest resolution with profile-default models. Diagnostic only; publishable sweeps still require at least 3 repeats."/>
+                <Button Content="Open report" Command="{Binding OpenReportCommand}" Margin="0,0,8,0"
+                        ToolTip="Opens the latest generated HTML benchmark report. This becomes available after a run produces a report."/>
+                <Button Content="Cancel" Command="{Binding CancelCommand}" Margin="0,0,8,0"
+                        ToolTip="Requests a safe cancellation of the active smoke test, qualification, or benchmark sweep."/>
+                <Button Content="Start sweep" Style="{StaticResource PrimaryButtonStyle}" Command="{Binding StartCommand}"
+                        ToolTip="Runs the selected games, settings sets, resolutions, and repeats. A full pre-flight is performed automatically before launch."/>
+            </StackPanel>
+
+            <Border Grid.Row="1" Background="{StaticResource SurfaceAltBrush}" BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1" CornerRadius="8" Padding="12,9" Margin="0,12,0,0"
+                    Visibility="{Binding HasProgress, Converter={StaticResource BoolToVis}}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="{Binding ProgressHeadline}" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding ProgressDetail}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                    </StackPanel>
+                    <TextBlock Grid.Column="1" Text="{Binding EtaText}" FontSize="11" Foreground="{StaticResource AccentBrush}"
+                               VerticalAlignment="Center" Margin="16,0,0,0"/>
+                    <ProgressBar Grid.Row="1" Grid.ColumnSpan="2" Height="4" Minimum="0" Maximum="100"
+                                 Value="{Binding ProgressPercent}" Margin="0,8,0,0"/>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Config -->
+        <Grid Grid.Row="1" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="300"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Games -->
+            <Border Grid.Column="0" Style="{StaticResource CardBorderStyle}" Margin="0,0,16,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- Fill the card height made available by the presets column. The minimum preserves a
+                             real finite viewport in compact windows, while * consumes the otherwise blank space
+                             in maximized windows and keeps the roster scrollbar fully useful. -->
+                        <RowDefinition Height="*" MinHeight="260"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="GAMES (runnable) — tick the settings-sets (models) each game runs; defaults mirror each variant's Enabled toggle" Style="{StaticResource LabelTextStyle}" TextWrapping="Wrap"/>
+                    <ScrollViewer Grid.Row="1" x:Name="GameRosterScroll" VerticalScrollBarVisibility="Visible"
+                                  HorizontalScrollBarVisibility="Disabled" Margin="0,2,0,0"
+                                  CanContentScroll="False">
+                        <ItemsControl ItemsSource="{Binding Games}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="0,5">
+                                        <CheckBox Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding Selected, Mode=TwoWay}">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+                                                <TextBlock Text="{Binding StoreLabel, StringFormat='  ·  {0}'}" Foreground="{StaticResource TextMutedBrush}" FontSize="12" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </CheckBox>
+                                        <!-- Per-run variant (settings-set) picks — shown while the game is selected; profiles are untouched. -->
+                                        <ItemsControl ItemsSource="{Binding Variants}" Margin="46,2,0,0"
+                                                      Visibility="{Binding Selected, Converter={StaticResource BoolToVis}}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <CheckBox Margin="0,2" IsChecked="{Binding Selected, Mode=TwoWay}"
+                                                              ToolTip="Runs this settings-set for this sweep only — the profile's Enabled toggle is not changed.">
+                                                        <TextBlock Text="{Binding Label}" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                                    </CheckBox>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                    <TextBlock Grid.Row="2" Text="No runnable games (need enabled + installed + valid)."
+                               Style="{StaticResource CaptionTextStyle}" Margin="0,4,0,0"
+                               Visibility="{Binding Games.Count, Converter={StaticResource InverseBoolToVis}, FallbackValue=Collapsed}"/>
+                </Grid>
+            </Border>
+
+            <!-- Resolutions + repeats -->
+            <Border Grid.Column="1" Style="{StaticResource CardBorderStyle}">
+                <StackPanel>
+                    <TextBlock Text="PRESETS" Style="{StaticResource LabelTextStyle}"/>
+                    <UniformGrid Columns="3" Margin="0,4,0,12">
+                        <Button Content="Quick" Command="{Binding ApplyQuickPresetCommand}" Margin="0,0,4,0"
+                                ToolTip="All runnable games at the highest configured resolution, profile-default models, 3 repeats."/>
+                        <Button Content="Standard" Command="{Binding ApplyStandardPresetCommand}" Margin="2,0"
+                                ToolTip="All runnable games and configured resolutions, profile-default models, 3 repeats."/>
+                        <Button Content="Full" Command="{Binding ApplyFullPresetCommand}" Margin="4,0,0,0"
+                                ToolTip="All runnable games, resolutions, and models, 5 repeats."/>
+                    </UniformGrid>
+                    <TextBlock Text="RESOLUTIONS" Style="{StaticResource LabelTextStyle}"/>
+                    <ItemsControl ItemsSource="{Binding Resolutions}" Margin="0,2,0,0">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox Style="{StaticResource ToggleSwitchStyle}" Margin="0,5" Content="{Binding Name}"
+                                          IsChecked="{Binding Selected, Mode=TwoWay}"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <StackPanel Margin="0,12,0,0" Width="160" HorizontalAlignment="Left">
+                        <TextBlock Text="REPEATS / SCENE (min 3)" Style="{StaticResource LabelTextStyle}"/>
+                        <TextBox Text="{Binding Repeats, UpdateSourceTrigger=LostFocus}"
+                                 ToolTip="Runs per game × resolution for THIS sweep (baseline). A game set higher in its detail page keeps its larger count; minimum 3."/>
+                    </StackPanel>
+
+                    <!-- Saved run plans: name the current selection (games + variant picks + resolutions) and reuse it. -->
+                    <StackPanel Margin="0,12,0,0">
+                        <TextBlock Text="RUN PLAN (saved setting group)" Style="{StaticResource LabelTextStyle}"/>
+                        <ComboBox IsEditable="True" Margin="0,2,0,0"
+                                  ItemsSource="{Binding PlanNames}"
+                                  Text="{Binding PlanName, UpdateSourceTrigger=PropertyChanged}"
+                                  ToolTip="Pick a saved plan or type a new name. Save stores the CURRENT games + settings-set picks + resolutions to plans.json; Load applies a saved plan to the checkboxes. Also runnable headless: gpusuite run --plan &lt;name&gt;."/>
+                        <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                            <Button Content="Load" Command="{Binding LoadPlanCommand}" Margin="0,0,6,0"/>
+                            <Button Content="Save" Command="{Binding SavePlanCommand}" Margin="0,0,6,0"/>
+                            <Button Content="Delete" Command="{Binding DeletePlanCommand}"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <TextBlock Text="{Binding SelectionText}" Style="{StaticResource CaptionTextStyle}" Margin="0,12,0,0"/>
+
+                    <!-- Plain-language timing guidance: measured windows are deliberately separate from
+                         launch/navigation overhead so a long capture value is not mistaken for a hang. -->
+                    <Border Background="{StaticResource SurfaceAltBrush}" BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1" CornerRadius="8" Padding="10,9" Margin="0,12,0,0">
+                        <StackPanel>
+                            <Grid>
+                                <TextBlock Text="RUN TIME" Style="{StaticResource LabelTextStyle}" Margin="0"/>
+                                <TextBlock Text="{Binding EstimatedDurationText}" HorizontalAlignment="Right"
+                                           Foreground="{StaticResource AccentBrush}" FontSize="12" FontWeight="SemiBold"/>
+                            </Grid>
+                            <TextBlock Text="{Binding EstimatedDurationDetail}" TextWrapping="Wrap" FontSize="11"
+                                       Foreground="{StaticResource TextSecondaryBrush}" Margin="0,5,0,0"/>
+                            <TextBlock Text="Fixed scenes measure Capture directly. Marker-driven bots measure only MarkStart→MarkEnd; their longer scene limit covers launch/navigation and is never reported as GPU time. Warm-up is discarded."
+                                       TextWrapping="Wrap" FontSize="11" Foreground="{StaticResource TextMutedBrush}" Margin="0,5,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Full pre-flight (collapsible; appears after Run full pre-flight) -->
+        <Border Grid.Row="2" Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16"
+                Visibility="{Binding HasReadiness, Converter={StaticResource BoolToVis}}">
+            <StackPanel>
+                <Grid Margin="0,0,0,2">
+                    <TextBlock Text="FULL PRE-FLIGHT" Style="{StaticResource LabelTextStyle}" Margin="0"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <TextBlock Text="{Binding LastCheckedText}" FontSize="11" Foreground="{StaticResource TextMutedBrush}"
+                                   VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <TextBlock Text="{Binding ReadinessSummary}" FontSize="12" FontWeight="SemiBold"
+                                   Foreground="{Binding ReadinessVerdict, Converter={StaticResource CheckStatusToBrush}}"/>
+                    </StackPanel>
+                </Grid>
+                <TextBlock Text="One launch-clearance pass across the machine, live measurement bench, launcher login/update state, and whole benchmark roster. Start runs this automatically; long campaigns recheck each game immediately before its turn. No game is launched and no profile is changed."
+                           Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" Margin="0,0,0,6"/>
+                <CheckBox IsChecked="{Binding AllowBlockedStart, Mode=TwoWay}" Margin="0,5,0,6"
+                          Visibility="{Binding HasBlockingPreflight, Converter={StaticResource BoolToVis}}"
+                          Content="Override blockers and allow Start (advanced)"
+                          ToolTip="Start is blocked after a failed pre-flight. Use this only when you understand and accept every listed blocker."/>
+
+                <!-- Signature clearance strip: three independent verdicts instead of one opaque green light. -->
+                <Grid Margin="0,4,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" Background="{StaticResource SurfaceAltBrush}" CornerRadius="8" Padding="10,8" Margin="0,0,4,0">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding MachineVerdict, Converter={StaticResource CheckStatusToGlyph}}"
+                                           Foreground="{Binding MachineVerdict, Converter={StaticResource CheckStatusToBrush}}" FontWeight="Bold" Margin="0,0,6,0"/>
+                                <TextBlock Text="MACHINE" Style="{StaticResource LabelTextStyle}" Margin="0"/>
+                            </StackPanel>
+                            <TextBlock Text="{Binding MachineSummary}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,3,0,0"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="1" Background="{StaticResource SurfaceAltBrush}" CornerRadius="8" Padding="10,8" Margin="4,0">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding BenchVerdict, Converter={StaticResource CheckStatusToGlyph}}"
+                                           Foreground="{Binding BenchVerdict, Converter={StaticResource CheckStatusToBrush}}" FontWeight="Bold" Margin="0,0,6,0"/>
+                                <TextBlock Text="BENCH" Style="{StaticResource LabelTextStyle}" Margin="0"/>
+                            </StackPanel>
+                            <TextBlock Text="{Binding BenchSummary}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,3,0,0"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="2" Background="{StaticResource SurfaceAltBrush}" CornerRadius="8" Padding="10,8" Margin="4,0,0,0">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding GamesVerdict, Converter={StaticResource CheckStatusToGlyph}}"
+                                           Foreground="{Binding GamesVerdict, Converter={StaticResource CheckStatusToBrush}}" FontWeight="Bold" Margin="0,0,6,0"/>
+                                <TextBlock Text="GAMES" Style="{StaticResource LabelTextStyle}" Margin="0"/>
+                            </StackPanel>
+                            <TextBlock Text="{Binding GamesSummary}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,3,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <ScrollViewer MaxHeight="260" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <!-- Machine and live-bench evidence groups. -->
+                        <ItemsControl ItemsSource="{Binding PreflightGroups}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{StaticResource SurfaceAltBrush}" CornerRadius="8" Padding="10,8" Margin="0,3">
+                                        <StackPanel>
+                                            <Grid>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Overall, Converter={StaticResource CheckStatusToGlyph}}"
+                                                               Foreground="{Binding Overall, Converter={StaticResource CheckStatusToBrush}}"
+                                                               FontWeight="Bold" Width="18"/>
+                                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+                                                </StackPanel>
+                                                <TextBlock Text="{Binding Summary}" HorizontalAlignment="Right" FontSize="11"
+                                                           Foreground="{Binding Overall, Converter={StaticResource CheckStatusToBrush}}"/>
+                                            </Grid>
+                                            <TextBlock Text="{Binding Description}" FontSize="11" Foreground="{StaticResource TextMutedBrush}"
+                                                       TextWrapping="Wrap" Margin="18,2,0,3"/>
+                                            <ItemsControl ItemsSource="{Binding Checks}" Margin="18,0,0,0">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Grid Margin="0,1">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="18"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBlock Text="{Binding Status, Converter={StaticResource CheckStatusToGlyph}}"
+                                                                       Foreground="{Binding Status, Converter={StaticResource CheckStatusToBrush}}" FontSize="12"/>
+                                                            <StackPanel Grid.Column="1">
+                                                                <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{StaticResource TextSecondaryBrush}">
+                                                                    <Run Text="{Binding Name, Mode=OneWay}" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/><Run Text="  —  "/><Run Text="{Binding Detail, Mode=OneWay}"/>
+                                                                </TextBlock>
+                                                                <TextBlock Text="{Binding Fix, StringFormat='→ {0}'}" FontSize="12" TextWrapping="Wrap"
+                                                                           Foreground="{StaticResource TextMutedBrush}" FontStyle="Italic"
+                                                                           Visibility="{Binding Fix, Converter={StaticResource NullToVis}}"/>
+                                                            </StackPanel>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <TextBlock Text="GAME READINESS" Style="{StaticResource LabelTextStyle}" Margin="0,10,0,2"/>
+                        <ItemsControl ItemsSource="{Binding Readiness}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{StaticResource SurfaceAltBrush}" CornerRadius="8" Padding="10,7" Margin="0,3">
+                                    <StackPanel>
+                                        <!-- Game header row: overall pip + name + store -->
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Overall, Converter={StaticResource CheckStatusToGlyph}}"
+                                                       Foreground="{Binding Overall, Converter={StaticResource CheckStatusToBrush}}"
+                                                       FontWeight="Bold" Width="18" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Store, StringFormat='  ·  {0}'}" Foreground="{StaticResource TextMutedBrush}"
+                                                       FontSize="12" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                        <!-- Per-check lines -->
+                                        <ItemsControl ItemsSource="{Binding Checks}" Margin="18,3,0,0">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid Margin="0,1">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="18"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Grid.Column="0" Text="{Binding Status, Converter={StaticResource CheckStatusToGlyph}}"
+                                                                   Foreground="{Binding Status, Converter={StaticResource CheckStatusToBrush}}"
+                                                                   FontSize="12" VerticalAlignment="Top"/>
+                                                        <StackPanel Grid.Column="1">
+                                                            <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{StaticResource TextSecondaryBrush}">
+                                                                <Run Text="{Binding Name, Mode=OneWay}" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/><Run Text="  —  "/><Run Text="{Binding Detail, Mode=OneWay}"/>
+                                                            </TextBlock>
+                                                            <TextBlock Text="{Binding Fix, StringFormat='→ {0}'}" FontSize="12" TextWrapping="Wrap"
+                                                                       Foreground="{StaticResource TextMutedBrush}" FontStyle="Italic"
+                                                                       Visibility="{Binding Fix, Converter={StaticResource NullToVis}}"/>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </ScrollViewer>
+            </StackPanel>
+        </Border>
+
+        <!-- Live log -->
+        <Border Grid.Row="3" Height="{Binding Value, ElementName=LogHeightSlider}" VerticalAlignment="Top"
+                Background="{StaticResource TitleBarBrush}" BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1" CornerRadius="10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" Margin="16,12,16,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="ENGINE LOG" Style="{StaticResource LabelTextStyle}" Margin="0"/>
+                    <TextBlock Text="{Binding Summary}" Foreground="{StaticResource StatusReadyBrush}" FontSize="12"
+                               HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,14,0" Grid.Column="1"/>
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,14,0">
+                        <Button Content="Copy all log" Command="{Binding CopyAllLogCommand}" Height="28" FontSize="11"
+                                Margin="0,0,12,0" Padding="10,3"
+                                ToolTip="Copy the complete engine log to the Windows clipboard, regardless of the current display filter."/>
+                        <TextBlock Text="SHOW" Style="{StaticResource LabelTextStyle}" FontSize="10"
+                                   VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <ComboBox Width="108" Height="28" FontSize="11"
+                                  ItemsSource="{Binding LogFilterOptions}"
+                                  SelectedItem="{Binding LogFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  ToolTip="Choose which in-app engine-log levels to display. The full log remains saved."/>
+                    </StackPanel>
+                    <TextBlock Grid.Column="3" Text="HEIGHT" Style="{StaticResource LabelTextStyle}" FontSize="10"
+                               VerticalAlignment="Center" Margin="0,0,7,0" ToolTip="Adjust the engine log panel height. The newest entries remain visible automatically."/>
+                    <Slider x:Name="LogHeightSlider" Grid.Column="4" Minimum="160" Maximum="420" Value="220"
+                            Width="120" VerticalAlignment="Center" IsSnapToTickEnabled="True" TickFrequency="20"
+                            ToolTip="Adjust the engine log panel height from 160 to 420 pixels."/>
+                </Grid>
+                <ScrollViewer x:Name="LogScroll" Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="6,0,6,6" Padding="10,0">
+                    <ItemsControl x:Name="LogItems" ItemsSource="{Binding VisibleLog}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Style="{StaticResource MonoTextStyle}"
+                                           Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,1" TextWrapping="Wrap"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <TextBlock Grid.Row="1" Text="Start launches the selected games and benchmarks them — intended to run on the bench."
+                           Style="{StaticResource CaptionTextStyle}" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"
+                           MaxWidth="420" TextAlignment="Center"
+                           Visibility="{Binding Log.Count, Converter={StaticResource InverseBoolToVis}, FallbackValue=Visible}"/>
+            </Grid>
+        </Border>
+    </Grid>
+    </ScrollViewer>
+</UserControl>

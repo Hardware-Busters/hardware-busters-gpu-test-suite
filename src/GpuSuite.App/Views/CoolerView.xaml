@@ -1,0 +1,164 @@
+<UserControl x:Class="GpuSuite.App.Views.CoolerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:GpuSuite.App.ViewModels"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance vm:CoolerViewModel}"
+             Background="Transparent">
+
+    <UserControl.Resources>
+        <!-- compact labeled-field width for the numeric inputs -->
+        <Style x:Key="FieldPanel" TargetType="StackPanel">
+            <Setter Property="Width" Value="104"/>
+            <Setter Property="Margin" Value="0,0,12,10"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="28,24,28,24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,14">
+            <StackPanel>
+                <TextBlock Text="Cooler" Style="{StaticResource H1TextStyle}"/>
+                <TextBlock Text="{Binding StatusText}" Style="{StaticResource CaptionTextStyle}" Margin="0,4,0,0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+                <Button Content="Open report" Command="{Binding OpenReportCommand}" Margin="0,0,8,0"/>
+                <Button Content="Cancel" Command="{Binding CancelCommand}" Margin="0,0,8,0"/>
+                <Button Content="Start sweep" Style="{StaticResource PrimaryButtonStyle}" Command="{Binding StartCommand}"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- Config -->
+        <Grid Grid.Row="1" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="360"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Power & noise -->
+            <Border Grid.Column="0" Style="{StaticResource CardBorderStyle}" Margin="0,0,16,0">
+                <StackPanel>
+                    <TextBlock Text="POWER AXIS (WATTS)" Style="{StaticResource LabelTextStyle}"/>
+                    <WrapPanel Margin="0,4,0,0">
+                        <StackPanel Style="{StaticResource FieldPanel}">
+                            <TextBlock Text="From" Style="{StaticResource CaptionTextStyle}"/>
+                            <TextBox Text="{Binding FromW}"/>
+                        </StackPanel>
+                        <StackPanel Style="{StaticResource FieldPanel}">
+                            <TextBlock Text="To" Style="{StaticResource CaptionTextStyle}"/>
+                            <TextBox Text="{Binding ToW}"/>
+                        </StackPanel>
+                        <StackPanel Style="{StaticResource FieldPanel}">
+                            <TextBlock Text="Step" Style="{StaticResource CaptionTextStyle}"/>
+                            <TextBox Text="{Binding StepW}"/>
+                        </StackPanel>
+                        <StackPanel Style="{StaticResource FieldPanel}">
+                            <TextBlock Text="Ref power" Style="{StaticResource CaptionTextStyle}"/>
+                            <TextBox Text="{Binding RefPowerW}"/>
+                        </StackPanel>
+                    </WrapPanel>
+
+                    <TextBlock Text="NOISE LEVELS  (dBA : fan%)" Style="{StaticResource LabelTextStyle}" Margin="0,6,0,0"/>
+                    <TextBox Text="{Binding LevelsText, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,0,0"/>
+                    <TextBlock Text="Comma-separated. Each pair is a noise-normalized fan speed from your one-time meter calibration (e.g. 35:46 = 35 dBA at 46% fan)."
+                               Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" Margin="0,4,0,0"/>
+
+                    <TextBlock Text="GPU (name contains)" Style="{StaticResource LabelTextStyle}" Margin="0,10,0,0"/>
+                    <TextBox Text="{Binding PreferGpu}" Margin="0,2,0,0"/>
+                    <TextBlock Text="Pins the load + fan to the device under test (avoids an iGPU)."
+                               Style="{StaticResource CaptionTextStyle}" Margin="0,4,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Soak & options -->
+            <Border Grid.Column="1" Style="{StaticResource CardBorderStyle}">
+                <StackPanel>
+                    <TextBlock Text="SOAK / SETTLE" Style="{StaticResource LabelTextStyle}"/>
+                    <WrapPanel Margin="0,4,0,0">
+                        <StackPanel Style="{StaticResource FieldPanel}">
+                            <TextBlock Text="Soak min (s)" Style="{StaticResource CaptionTextStyle}"/>
+                            <TextBox Text="{Binding SoakMin}"/>
+                        </StackPanel>
+                        <StackPanel Style="{StaticResource FieldPanel}">
+                            <TextBlock Text="Soak max (s)" Style="{StaticResource CaptionTextStyle}"/>
+                            <TextBox Text="{Binding SoakMax}"/>
+                        </StackPanel>
+                        <StackPanel Style="{StaticResource FieldPanel}">
+                            <TextBlock Text="Window (s)" Style="{StaticResource CaptionTextStyle}"/>
+                            <TextBox Text="{Binding SettleWindow}"/>
+                        </StackPanel>
+                        <StackPanel Style="{StaticResource FieldPanel}">
+                            <TextBlock Text="Slope °C/min" Style="{StaticResource CaptionTextStyle}"/>
+                            <TextBox Text="{Binding SettleSlope}"/>
+                        </StackPanel>
+                    </WrapPanel>
+
+                    <CheckBox Style="{StaticResource ToggleSwitchStyle}" Margin="0,4,0,0" IsChecked="{Binding ManualFan, Mode=TwoWay}">
+                        <StackPanel>
+                            <TextBlock Text="Manual fan" FontWeight="SemiBold"/>
+                            <TextBlock Text="Off = the suite sets each fan % (NVIDIA/AMD, needs admin)."
+                                       Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </CheckBox>
+
+                    <WrapPanel Margin="0,10,0,0">
+                        <StackPanel Style="{StaticResource FieldPanel}" Width="130">
+                            <TextBlock Text="Lock clock (MHz)" Style="{StaticResource CaptionTextStyle}"/>
+                            <TextBox Text="{Binding LockClockText}"/>
+                        </StackPanel>
+                        <StackPanel Style="{StaticResource FieldPanel}">
+                            <TextBlock Text="Ambient °C" Style="{StaticResource CaptionTextStyle}"/>
+                            <TextBox Text="{Binding Ambient}"/>
+                        </StackPanel>
+                    </WrapPanel>
+
+                    <TextBlock Text="Fan note" Style="{StaticResource LabelTextStyle}" Margin="0,2,0,0"/>
+                    <TextBox Text="{Binding FanNote}" Margin="0,2,0,0"/>
+                    <TextBlock Text="Documents the noise calibration (meter, 1 m distance, etc.)."
+                               Style="{StaticResource CaptionTextStyle}" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                    <TextBlock Text="A sweep is only marked complete when every requested step has live power data and reaches its target. Missing ambient, unsettled temperatures, or unverifiable manual fan settings are retained as visible warnings."
+                               Foreground="{StaticResource StatusNotInstalledBrush}" FontSize="11" Margin="0,8,0,0" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Live log -->
+        <Border Grid.Row="2" Background="{StaticResource TitleBarBrush}" BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1" CornerRadius="10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" Margin="16,12,16,8">
+                    <TextBlock Text="SWEEP LOG" Style="{StaticResource LabelTextStyle}" Margin="0"/>
+                    <TextBlock Text="{Binding Summary}" Foreground="{StaticResource StatusReadyBrush}" FontSize="12"
+                               HorizontalAlignment="Right"/>
+                </Grid>
+                <ScrollViewer x:Name="LogScroll" Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="6,0,6,6" Padding="10,0">
+                    <ItemsControl x:Name="LogItems" ItemsSource="{Binding Log}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Style="{StaticResource MonoTextStyle}"
+                                           Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,1" TextWrapping="Wrap"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <TextBlock Grid.Row="1" Text="Holds each calibrated fan level, conditions the heatsink between curves, then sweeps power to equilibrium. Thermal limits or stale temperature telemetry stop the load and restore automatic fan control."
+                           Style="{StaticResource CaptionTextStyle}" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"
+                           MaxWidth="460" TextAlignment="Center"
+                           Visibility="{Binding Log.Count, Converter={StaticResource InverseBoolToVis}, FallbackValue=Visible}"/>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>
