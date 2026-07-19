@@ -2,7 +2,14 @@
 
 An open, reproducible .NET framework for GPU benchmark orchestration, measurement provenance, reporting, and profile authoring.
 
+Hardware Busters GPU Test Suite includes both automated game testing and GPU Cooling Tester Evaluation.
+
 This public source release contains code, safe defaults, a curated Hardware Busters Verified game pack, and disabled community samples. It does not contain benchmark results, machine settings, private operations material, game-generated configuration, executable tools, or media assets.
+
+## Included capabilities
+
+- **Automated game testing** — profile-driven game launch, navigation, capture, and benchmark orchestration.
+- **GPU Cooling Tester Evaluation** — controlled cooler test workflows with measurement and reporting support.
 
 ## Build
 
