@@ -1,0 +1,131 @@
+{
+    "id":  "tlou_continue_scene_smart",
+    "inputDevice":  "Keyboard",
+    "loop":  false,
+    "graph":  {
+                  "timeoutSeconds":  360,
+                  "pollMs":  3000,
+                  "lostMs":  6000,
+                  "recoverKey":  "Enter",
+                  "maxRecoveries":  40,
+                  "screens":  [
+                                  {
+                                      "id":  "MAIN_MENU",
+                                      "anyOf":  [
+                                                    "CONTINUE"
+                                                ],
+                                      "noneOf":  [
+                                                     "BUILDING",
+                                                     "SHADERS"
+                                                 ],
+                                      "do":  [
+
+                                             ],
+                                      "goal":  true
+                                  },
+                                  {
+                                      "id":  "BUILDING_SHADERS",
+                                      "anyOf":  [
+                                                    "BUILDING SHADERS",
+                                                    "SHADERS"
+                                                ],
+                                      "noneOf":  [
+                                                     "CONTINUE"
+                                                 ],
+                                      "do":  [
+                                                 {
+                                                     "key":  "Space",
+                                                     "holdMs":  90,
+                                                     "gapMs":  2500
+                                                 }
+                                             ]
+                                  },
+                                  {
+                                      "id":  "PRESS_TITLE",
+                                      "anyOf":  [
+                                                    "PRESS ANY KEY",
+                                                    "PRESS"
+                                                ],
+                                      "noneOf":  [
+                                                     "CONTINUE",
+                                                     "SHADERS"
+                                                 ],
+                                      "do":  [
+                                                 {
+                                                     "key":  "Space",
+                                                     "holdMs":  90,
+                                                     "gapMs":  2000
+                                                 }
+                                             ]
+                                  }
+                              ]
+              },
+    "visionGoal":  "Reach The Last of Us Part I STORY (main) menu, which shows CONTINUE as the highlighted top row. IMPORTANT: a small \u0027Building Shaders: Left N\u0027 counter may sit at the BOTTOM of the screen while shaders pre-compile in the BACKGROUND - it does NOT block input, so IGNORE it (never WAIT just because of it). Choose ONE action: answer DONE when the STORY main menu with a CONTINUE option is visible; answer CONFIRM to advance a studio/intro logo, to advance a \u0027PRESS ANY KEY\u0027 / press-to-start title (press it EVEN IF the \u0027Building Shaders\u0027 counter is also shown), or to press OK on a \u0027Building Shaders\u0027 warning DIALOG BOX; answer WAIT ONLY on a full-screen loading screen that has a spinner or progress bar and NO press-prompt and NO menu.",
+    "visionTimeoutSeconds":  720,
+    "visionDoneConfirmations":  1,
+    "actions":  [
+                    {
+                        "type":  "Wait",
+                        "durationMs":  1300
+                    },
+                    {
+                        "type":  "PressUntilText",
+                        "key":  "Space",
+                        "text":  "CONTINUE",
+                        "durationMs":  120000,
+                        "pollMs":  3000,
+                        "required":  true
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  1500
+                    },
+                    {
+                        "type":  "PressUntilText",
+                        "key":  "Space",
+                        "text":  "CONTINUE",
+                        "waitForAbsent":  true,
+                        "durationMs":  40000,
+                        "pollMs":  2000,
+                        "required":  true
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  50000
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  1500
+                    },
+                    {
+                        "type":  "Gx10Traverse",
+                        "durationMs":  45000,
+                        "pollMs":  700,
+                        "goal":  "Keep Joel moving through the playable prologue interior toward open traversable space. Follow corridors, doors, and the companion when visible; turn or strafe around furniture and walls; never stand still or grind into an obstacle.",
+                        "stuckThreshold":  0.03,
+                        "stuckTriggerCount":  2,
+                        "maxRecoveryTurns":  6,
+                        "minHealthyMotionRatio":  0.25
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  2000
+                    },
+                    {
+                        "type":  "MarkStart"
+                    },
+                    {
+                        "type":  "Gx10Traverse",
+                        "durationMs":  35000,
+                        "pollMs":  700,
+                        "goal":  "Keep Joel moving through the playable prologue interior toward open traversable space. Follow corridors, doors, and the companion when visible; turn or strafe around furniture and walls; never stand still or grind into an obstacle.",
+                        "stuckThreshold":  0.03,
+                        "stuckTriggerCount":  2,
+                        "maxRecoveryTurns":  4,
+                        "minHealthyMotionRatio":  0.25
+                    },
+                    {
+                        "type":  "MarkEnd"
+                    }
+                ]
+}

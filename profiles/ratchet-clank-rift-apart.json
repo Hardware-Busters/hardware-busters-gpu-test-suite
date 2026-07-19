@@ -1,0 +1,312 @@
+{
+    "id":  "ratchet-clank-rift-apart",
+    "settingsFingerprintKeys":  [
+                                    {
+                                        "label":  "upscaleMethod",
+                                        "registryKey":  "HKCU\\SOFTWARE\\Insomniac Games\\Ratchet \u0026 Clank - Rift Apart\\Graphics",
+                                        "registryValueName":  "UpscaleMethod",
+                                        "valueMap":  {
+                                                         "0":  "Off",
+                                                         "1":  "IGTI",
+                                                         "2":  "DLSS",
+                                                         "3":  "FSR3"
+                                                     }
+                                    },
+                                    {
+                                        "label":  "upscaleQuality",
+                                        "registryKey":  "HKCU\\SOFTWARE\\Insomniac Games\\Ratchet \u0026 Clank - Rift Apart\\Graphics",
+                                        "registryValueName":  "UpscaleQuality",
+                                        "valueMap":  {
+                                                         "3":  "Quality",
+                                                         "4":  "UltraQuality",
+                                                         "5":  "Off"
+                                                     }
+                                    },
+                                    {
+                                        "label":  "dynResTargetFps",
+                                        "registryKey":  "HKCU\\SOFTWARE\\Insomniac Games\\Ratchet \u0026 Clank - Rift Apart\\Graphics",
+                                        "registryValueName":  "DynamicResolutionTargetFPS",
+                                        "valueMap":  {
+                                                         "0":  "Off"
+                                                     }
+                                    },
+                                    {
+                                        "label":  "rtReflections",
+                                        "registryKey":  "HKCU\\SOFTWARE\\Insomniac Games\\Ratchet \u0026 Clank - Rift Apart\\Graphics",
+                                        "registryValueName":  "RTReflections"
+                                    },
+                                    {
+                                        "label":  "rtShadows",
+                                        "registryKey":  "HKCU\\SOFTWARE\\Insomniac Games\\Ratchet \u0026 Clank - Rift Apart\\Graphics",
+                                        "registryValueName":  "RTShadows"
+                                    },
+                                    {
+                                        "label":  "rtAO",
+                                        "registryKey":  "HKCU\\SOFTWARE\\Insomniac Games\\Ratchet \u0026 Clank - Rift Apart\\Graphics",
+                                        "registryValueName":  "RTAmbientOcclusion"
+                                    },
+                                    {
+                                        "label":  "fullscreenW",
+                                        "registryKey":  "HKCU\\SOFTWARE\\Insomniac Games\\Ratchet \u0026 Clank - Rift Apart\\Graphics",
+                                        "registryValueName":  "FullscreenWidth"
+                                    },
+                                    {
+                                        "label":  "fullscreenH",
+                                        "registryKey":  "HKCU\\SOFTWARE\\Insomniac Games\\Ratchet \u0026 Clank - Rift Apart\\Graphics",
+                                        "registryValueName":  "FullscreenHeight"
+                                    },
+                                    {
+                                        "label":  "dlssg",
+                                        "registryKey":  "HKCU\\SOFTWARE\\Insomniac Games\\Ratchet \u0026 Clank - Rift Apart\\Graphics",
+                                        "registryValueName":  "DLSSG"
+                                    },
+                                    {
+                                        "label":  "frameGen",
+                                        "registryKey":  "HKCU\\SOFTWARE\\Insomniac Games\\Ratchet \u0026 Clank - Rift Apart\\Graphics",
+                                        "registryValueName":  "FrameGen",
+                                        "isFrameGen":  true,
+                                        "frameGenOffValues":  [
+                                                                  "0"
+                                                              ]
+                                    }
+                                ],
+    "name":  "Ratchet \u0026 Clank: Rift Apart",
+    "engine":  "Insomniac (Nixxes PC port)",
+    "enabled":  true,
+    "repeats":  3,
+    "supportedResolutions":  [
+                                 "1080p",
+                                 "1440p",
+                                 "4K"
+                             ],
+    "graphicsPreset":  "Very High",
+    "variants":  [
+                     {
+                         "id":  "as-set",
+                         "name":  "As configured in-game",
+                         "enabled":  true,
+                         "settings":  {
+
+                                      }
+                     },
+                     {
+                         "id":  "rt-native",
+                         "name":  "RT-High native (pinned as-set)",
+                         "enabled":  false,
+                         "settings":  {
+                                          "rt":  "On",
+                                          "upscaler":  "Off",
+                                          "frameGen":  "Off",
+                                          "dynamicRes":  "Off"
+                                      }
+                     }
+                 ],
+    "settings":  [
+                     {
+                         "key":  "upscaler",
+                         "label":  "Upscaling Method",
+                         "options":  [
+                                         "Off",
+                                         "IGTI",
+                                         "DLSS",
+                                         "FSR3"
+                                     ],
+                         "default":  "",
+                         "apply":  {
+                                       "method":  "registry",
+                                       "registryKey":  "HKCU\\SOFTWARE\\Insomniac Games\\Ratchet \u0026 Clank - Rift Apart\\Graphics",
+                                       "valueMap":  {
+                                                        "Off":  "0",
+                                                        "IGTI":  "1",
+                                                        "DLSS":  "2",
+                                                        "FSR3":  "3"
+                                                    },
+                                       "registryEdits":  [
+                                                             {
+                                                                 "valueName":  "UpscaleMethod",
+                                                                 "kind":  "dword"
+                                                             }
+                                                         ]
+                                   }
+                     },
+                     {
+                         "key":  "upscalerQuality",
+                         "label":  "Upscaler Quality",
+                         "options":  [
+                                         "Quality",
+                                         "UltraQuality",
+                                         "Off"
+                                     ],
+                         "default":  "",
+                         "apply":  {
+                                       "method":  "registry",
+                                       "registryKey":  "HKCU\\SOFTWARE\\Insomniac Games\\Ratchet \u0026 Clank - Rift Apart\\Graphics",
+                                       "valueMap":  {
+                                                        "Quality":  "3",
+                                                        "UltraQuality":  "4",
+                                                        "Off":  "5"
+                                                    },
+                                       "registryEdits":  [
+                                                             {
+                                                                 "valueName":  "UpscaleQuality",
+                                                                 "kind":  "dword"
+                                                             }
+                                                         ]
+                                   }
+                     },
+                     {
+                         "key":  "rt",
+                         "label":  "Ray Tracing (Reflections/Shadows/AO)",
+                         "options":  [
+                                         "On"
+                                     ],
+                         "default":  "",
+                         "apply":  {
+                                       "method":  "registry",
+                                       "registryKey":  "HKCU\\SOFTWARE\\Insomniac Games\\Ratchet \u0026 Clank - Rift Apart\\Graphics",
+                                       "registryEdits":  [
+                                                             {
+                                                                 "valueName":  "RTReflections",
+                                                                 "kind":  "dword",
+                                                                 "valueMap":  {
+                                                                                  "On":  "1"
+                                                                              }
+                                                             },
+                                                             {
+                                                                 "valueName":  "RTShadows",
+                                                                 "kind":  "dword",
+                                                                 "valueMap":  {
+                                                                                  "On":  "2"
+                                                                              }
+                                                             },
+                                                             {
+                                                                 "valueName":  "RTAmbientOcclusion",
+                                                                 "kind":  "dword",
+                                                                 "valueMap":  {
+                                                                                  "On":  "2"
+                                                                              }
+                                                             }
+                                                         ]
+                                   }
+                     },
+                     {
+                         "key":  "frameGen",
+                         "label":  "Frame Generation",
+                         "options":  [
+                                         "Off"
+                                     ],
+                         "default":  "",
+                         "apply":  {
+                                       "method":  "registry",
+                                       "registryKey":  "HKCU\\SOFTWARE\\Insomniac Games\\Ratchet \u0026 Clank - Rift Apart\\Graphics",
+                                       "valueMap":  {
+                                                        "Off":  "0"
+                                                    },
+                                       "registryEdits":  [
+                                                             {
+                                                                 "valueName":  "FrameGen",
+                                                                 "kind":  "dword"
+                                                             },
+                                                             {
+                                                                 "valueName":  "DLSSG",
+                                                                 "kind":  "dword"
+                                                             }
+                                                         ]
+                                   }
+                     },
+                     {
+                         "key":  "dynamicRes",
+                         "label":  "Dynamic Resolution Scaling",
+                         "options":  [
+                                         "Off"
+                                     ],
+                         "default":  "",
+                         "apply":  {
+                                       "method":  "registry",
+                                       "registryKey":  "HKCU\\SOFTWARE\\Insomniac Games\\Ratchet \u0026 Clank - Rift Apart\\Graphics",
+                                       "valueMap":  {
+                                                        "Off":  "0"
+                                                    },
+                                       "registryEdits":  [
+                                                             {
+                                                                 "valueName":  "DynamicResolutionTargetFPS",
+                                                                 "kind":  "dword"
+                                                             }
+                                                         ]
+                                   }
+                     }
+                 ],
+    "captureProcessName":  "RiftApart.exe",
+    "presentMonByPid":  true,
+    "frameProvider":  "presentmon",
+    "forbidRtss":  true,
+    "lateRtss":  false,
+    "startupGraceSeconds":  120,
+    "launch":  {
+                   "store":  "Steam",
+                   "gameId":  "1895880"
+               },
+    "resolutionApply":  {
+                            "method":  "registry",
+                            "registryKey":  "HKCU\\SOFTWARE\\Insomniac Games\\Ratchet \u0026 Clank - Rift Apart\\Graphics",
+                            "switchDesktopMode":  true,
+                            "fingerprintWidthLabel":  "fullscreenW",
+                            "fingerprintHeightLabel":  "fullscreenH",
+                            "registryEdits":  [
+                                                  {
+                                                      "valueName":  "FullscreenWidth",
+                                                      "kind":  "dword",
+                                                      "valueMap":  {
+                                                                       "1080p":  "1920",
+                                                                       "1440p":  "2560",
+                                                                       "4K":  "3840"
+                                                                   }
+                                                  },
+                                                  {
+                                                      "valueName":  "FullscreenHeight",
+                                                      "kind":  "dword",
+                                                      "valueMap":  {
+                                                                       "1080p":  "1080",
+                                                                       "1440p":  "1440",
+                                                                       "4K":  "2160"
+                                                                   }
+                                                  },
+                                                  {
+                                                      "valueName":  "RefreshRate",
+                                                      "kind":  "dword",
+                                                      "valueMap":  {
+                                                                       "1080p":  "60",
+                                                                       "1440p":  "60",
+                                                                       "4K":  "60"
+                                                                   }
+                                                  }
+                                              ]
+                        },
+    "settingsVerify":  {
+                           "method":  "none"
+                       },
+    "scenes":  [
+                   {
+                       "id":  "scripted-scene",
+                       "name":  "Scripted Gameplay Scene",
+                       "kind":  "BotDriven",
+                       "captureSeconds":  120,
+                       "warmupSeconds":  0,
+                       "readinessTimeoutSeconds":  150,
+                       "botScript":  "ratchet_smart_measured",
+                       "warmup":  {
+                                      "enabled":  true,
+                                      "mode":  "gameplay",
+                                      "durationSeconds":  90,
+                                      "script":  "ratchet_warmup",
+                                      "completionCondition":  "duration"
+                                  },
+                       "completion":  {
+                                          "method":  "duration",
+                                          "gameplayBandCeilingFps":  0,
+                                          "measuredWarmupSeconds":  3,
+                                          "minValidSeconds":  15
+                                      }
+                   }
+               ]
+}

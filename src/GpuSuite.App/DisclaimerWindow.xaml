@@ -1,0 +1,121 @@
+<Window x:Class="GpuSuite.App.DisclaimerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Hardware Busters GPU Test Suite Disclaimer"
+        Width="860" Height="760" MinWidth="640" MinHeight="520"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource AppBackgroundBrush}"
+        Foreground="{StaticResource TextPrimaryBrush}"
+        FontFamily="Segoe UI" FontSize="13">
+    <Window.Resources>
+        <Style x:Key="DisclaimerHeading" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+            <Setter Property="Margin" Value="0,18,0,6"/>
+        </Style>
+        <Style x:Key="DisclaimerBody" TargetType="TextBlock">
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="LineHeight" Value="21"/>
+            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,14">
+            <TextBlock Text="Software disclaimer and evaluator notice" FontSize="25" FontWeight="SemiBold"/>
+            <TextBlock Text="Hardware Busters GPU Test Suite" FontSize="15" Margin="0,4,0,0"
+                       Foreground="{StaticResource AccentBrush}"/>
+            <TextBlock Text="Last updated: 19 July 2026 · Version 3"
+                       Foreground="{StaticResource TextMutedBrush}" Margin="0,4,0,0"/>
+        </StackPanel>
+
+        <Border Grid.Row="1" Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="8">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                          Padding="22,12,22,18">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource DisclaimerBody}"
+                               Text="Please read this notice before using GPU Test Suite. The software is intended for controlled benchmarking, engineering evaluation, reviewer testing, and beta feedback. It is not a consumer safety system, a certification service, or a substitute for qualified technical judgment."/>
+
+                    <TextBlock Style="{StaticResource DisclaimerHeading}" Text="Identity and Powenetics"/>
+                    <TextBlock Style="{StaticResource DisclaimerBody}"
+                               Text="Hardware Busters and Cybenetics LTD cooperate on this suite but are separate entities. Powenetics measurement hardware is supplied and sold by Cybenetics LTD. Hardware Busters power-result labels are governed by the recorded measurement provenance; GPU telemetry, synthetic, replay, and legacy-inferred values are not Hardware Busters verified power results."/>
+
+                    <TextBlock Style="{StaticResource DisclaimerHeading}" Text="1. Evaluation and beta software"/>
+                    <TextBlock Style="{StaticResource DisclaimerBody}"
+                               Text="This build may contain incomplete, experimental, or game-version-specific automation. Features, profiles, bots, AI-assisted functions, estimates, and results may be changed, interrupted, unavailable, or incorrect. Keep independent records and verify important findings with repeat runs and appropriate reference tools."/>
+
+                    <TextBlock Style="{StaticResource DisclaimerHeading}" Text="2. Authorization and user responsibility"/>
+                    <TextBlock Style="{StaticResource DisclaimerBody}"
+                               Text="Use the software only on computers, accounts, games, services, networks, and equipment that you own or are expressly authorized to test. You are responsible for complying with applicable laws, workplace rules, game and platform terms, software licences, export restrictions, and third-party service conditions. You must review the selected run plan, hardware limits, paths, credentials, and safety settings before starting a test."/>
+
+                    <TextBlock Style="{StaticResource DisclaimerHeading}" Text="3. Hardware, thermal, and data risk"/>
+                    <TextBlock Style="{StaticResource DisclaimerBody}"
+                               Text="Benchmark and cooler workloads can produce sustained GPU, CPU, memory, storage, power-supply, fan, and thermal load. Automation may change clocks, power limits, fan behaviour, display modes, game settings, controller input, and foreground applications. This may cause instability, overheating, accelerated wear, shutdowns, crashes, corrupted settings, loss of unsaved work, save-game changes, or other damage. Monitor the system, maintain adequate cooling and power, back up important data and configurations, and never leave unproven hardware or profiles unattended. Stop immediately if behaviour is unsafe or unexpected."/>
+
+                    <TextBlock Style="{StaticResource DisclaimerHeading}" Text="4. Automated input and unattended operation"/>
+                    <TextBlock Style="{StaticResource DisclaimerBody}"
+                               Text="The suite may launch and close applications, emulate controllers, send keyboard or mouse input, restrict physical input, navigate menus, and operate games without supervision. Automation can select the wrong control or scene after a game, launcher, language, resolution, login flow, save state, or user interface changes. Observe new or updated profiles before unattended use. Press ESC to abort a run; repeated ESC input is the emergency release for the input lock."/>
+
+                    <TextBlock Style="{StaticResource DisclaimerHeading}" Text="5. Benchmark results and fitness for purpose"/>
+                    <TextBlock Style="{StaticResource DisclaimerBody}"
+                               Text="Reported performance, power, temperature, acoustic, timing, readiness, update, login, motion, and health values depend on the selected equipment, drivers, game builds, profiles, sensors, capture tools, external services, and validation rules. Results are not guaranteed to be accurate, complete, reproducible, comparable, or suitable for purchasing, publishing, warranty, safety, compliance, certification, or business decisions. Invalid or incomplete runs must not be represented as valid results."/>
+
+                    <TextBlock Style="{StaticResource DisclaimerHeading}" Text="6. Third-party products and services"/>
+                    <TextBlock Style="{StaticResource DisclaimerBody}"
+                               Text="Games, launchers, stores, drivers, capture utilities, AI models, cloud APIs, local AI endpoints, and other third-party products are governed by their own licences, privacy notices, availability, charges, and terms. Cybenetics LTD does not control those services and is not responsible for their content, security, changes, outages, account actions, costs, or data handling. References to third-party names do not imply affiliation, sponsorship, or endorsement."/>
+
+                    <TextBlock Style="{StaticResource DisclaimerHeading}" Text="7. Credentials, privacy, diagnostics, and feedback"/>
+                    <TextBlock Style="{StaticResource DisclaimerBody}"
+                               Text="Do not place secrets or private information in profiles, scripts, logs, screenshots, or result notes. The public issue form opens in your browser; enter only the information you choose to share. The application does not collect or transmit local diagnostic material. Cloud AI requests may transmit prompts or images to the selected provider under that provider's terms."/>
+
+                    <TextBlock Style="{StaticResource DisclaimerHeading}" Text="8. No warranty"/>
+                    <TextBlock Style="{StaticResource DisclaimerBody}"
+                               Text="To the fullest extent permitted by applicable law, GPU Test Suite and its profiles, automation, documentation, results, and support are provided “as is” and “as available,” without warranties, representations, conditions, or guarantees of any kind, whether express, implied, or statutory, including accuracy, reliability, availability, security, non-infringement, merchantability, satisfactory quality, or fitness for a particular purpose."/>
+
+                    <TextBlock Style="{StaticResource DisclaimerHeading}" Text="9. Limitation of liability"/>
+                    <TextBlock Style="{StaticResource DisclaimerBody}"
+                               Text="To the fullest extent permitted by applicable law, Cybenetics LTD and its directors, officers, employees, contractors, contributors, distributors, and affiliates will not be liable for any direct, indirect, incidental, special, consequential, exemplary, or punitive loss or damage arising from or related to the software or its use, including hardware damage, data loss, lost profits, lost revenue, lost opportunity, business interruption, account action, third-party charges, or reliance on benchmark results, even if advised that such loss may occur. Nothing in this notice excludes or limits any right, remedy, warranty, or liability that cannot lawfully be excluded or limited."/>
+
+                    <TextBlock Style="{StaticResource DisclaimerHeading}" Text="10. Ownership and trademarks"/>
+                    <TextBlock Style="{StaticResource DisclaimerBody}"
+                               Text="GPU Test Suite, its original code, and its original documentation are owned by or licensed to Cybenetics LTD, subject to the included licence and third-party notices. Third-party product names, logos, and trademarks remain the property of their respective owners."/>
+
+                    <TextBlock Style="{StaticResource DisclaimerHeading}" Text="Acknowledgement"/>
+                    <TextBlock Style="{StaticResource DisclaimerBody}"
+                               Text="By continuing, you confirm that you have read and understood this notice, accept responsibility for operating the suite in a controlled and authorized environment, and understand that this acknowledgement does not waive rights that applicable law does not allow you to waive."/>
+
+                    <TextBlock Text="© 2026 Cybenetics LTD. All rights reserved."
+                               FontWeight="SemiBold" Margin="0,22,0,0"/>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <Grid Grid.Row="2" Margin="0,16,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                <CheckBox x:Name="AcknowledgementCheck"
+                          Content="I have read and understand this disclaimer."
+                          Checked="OnAcknowledgementChanged" Unchecked="OnAcknowledgementChanged"/>
+                <CheckBox x:Name="DontShowAgainCheck" Margin="0,7,0,0" IsChecked="True"
+                          Content="Don't show this disclaimer again for this version."/>
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <Button x:Name="ExitButton" Content="Exit" Width="96" Margin="12,0,8,0"
+                        Click="OnExit"/>
+                <Button x:Name="ContinueButton" Content="Accept and continue" MinWidth="150"
+                        IsDefault="True" Click="OnContinue"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

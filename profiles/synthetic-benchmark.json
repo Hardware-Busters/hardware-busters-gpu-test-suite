@@ -1,0 +1,45 @@
+{
+  "id": "synthetic-benchmark",
+  "name": "Synthetic Built-in Benchmark (pipeline proof)",
+  "engine": "n/a",
+  "notes": "Exercises the marker-driven SceneRunner with NO fixed sleep: a simulated benchmark whose synthetic frames stop after the bench length, so activity-based START/FINISH detection runs end-to-end. Replaced by real games.",
+  "enabled": false,
+  "repeats": 3,
+  "supportedResolutions": [
+    "1080p",
+    "1440p",
+    "4K"
+  ],
+  "graphicsPreset": "Ultra",
+  "captureProcessName": "",
+  "startupGraceSeconds": 1,
+  "launch": {
+    "store": "Standalone",
+    "gameId": "",
+    "target": ""
+  },
+  "resolutionApply": {
+    "method": "none"
+  },
+  "settingsVerify": {
+    "method": "none"
+  },
+  "scenes": [
+    {
+      "id": "benchmark",
+      "name": "Activity-detected Benchmark",
+      "kind": "BuiltInBenchmark",
+      "captureSeconds": 11,
+      "warmupSeconds": 0,
+      "readinessTimeoutSeconds": 30,
+      "benchmarkStart": "auto",
+      "completion": {
+        "method": "activity",
+        "minValidSeconds": 8,
+        "maxTimeoutSeconds": 60,
+        "activityIdleSeconds": 2,
+        "fallbackToActivity": true
+      }
+    }
+  ]
+}

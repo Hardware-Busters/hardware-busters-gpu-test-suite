@@ -1,0 +1,51 @@
+<UserControl x:Class="GpuSuite.App.Views.HelpView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:GpuSuite.App.ViewModels"
+             mc:Ignorable="d" d:DataContext="{d:DesignInstance vm:HelpViewModel}"
+             Background="Transparent">
+    <Grid Margin="28,24">
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+        <Grid Margin="0,0,0,14">
+            <StackPanel>
+                <TextBlock Text="Help" Style="{StaticResource H1TextStyle}"/>
+                <TextBlock Text="{Binding Summary}" Style="{StaticResource CaptionTextStyle}" Margin="0,4,0,0"/>
+            </StackPanel>
+            <TextBox Width="360" HorizontalAlignment="Right" VerticalAlignment="Top"
+                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                     ToolTip="Search by page, control, benchmark term, or problem."/>
+        </Grid>
+        <StackPanel Grid.Row="1" Margin="0,0,0,14">
+            <Border Style="{StaticResource CardBorderStyle}">
+                <StackPanel>
+                    <TextBlock Text="SUPPORT HARDWARE BUSTERS" Style="{StaticResource LabelTextStyle}"/>
+                    <TextBlock Text="Patreon is optional. It does not unlock features, change support priority, affect benchmark results, or alter Hardware Busters Verified status." TextWrapping="Wrap" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,5,0,8"/>
+                    <Button Content="Open Hardware Busters Patreon" HorizontalAlignment="Left" Click="OpenPatreon"/>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource CardBorderStyle}" Margin="0,10,0,0">
+                <StackPanel>
+                    <TextBlock Text="POWENETICS MEASUREMENT" Style="{StaticResource LabelTextStyle}"/>
+                    <TextBlock Text="Direct Powenetics power measures PCIe slot and auxiliary GPU rails. Powenetics is supplied and sold by Cybenetics LTD. No sales link is shown here until it is verified." TextWrapping="Wrap" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,5,0,0"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Topics}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,10">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Section}" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBlock Text="{Binding Title}" Style="{StaticResource H2TextStyle}" Margin="0,4,0,0"/>
+                                <TextBlock Text="{Binding Body}" TextWrapping="Wrap" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,7,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

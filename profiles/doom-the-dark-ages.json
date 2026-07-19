@@ -1,0 +1,371 @@
+{
+    "id":  "doom-the-dark-ages",
+    "name":  "DOOM: The Dark Ages",
+    "engine":  "id Tech 8 (Vulkan)",
+    "enabled":  true,
+    "repeats":  3,
+    "supportedResolutions":  [
+                                 "1080p",
+                                 "1440p",
+                                 "4K"
+                             ],
+    "graphicsPreset":  "Ultra Nightmare",
+    "settings":  [
+                     {
+                         "key":  "upscaler",
+                         "label":  "Upscaling / Anti-Aliasing",
+                         "options":  [
+                                         "Off",
+                                         "DLSS",
+                                         "FSR",
+                                         "XeSS"
+                                     ],
+                         "default":  "",
+                         "apply":  {
+                                       "method":  "menu",
+                                       "menuPath":  "Settings|Video|Upscaling"
+                                   }
+                     },
+                     {
+                         "key":  "upscalerQuality",
+                         "label":  "Upscaler Quality",
+                         "options":  [
+                                         "Quality",
+                                         "Balanced",
+                                         "Performance",
+                                         "UltraPerformance",
+                                         "DLAA"
+                                     ],
+                         "default":  "",
+                         "apply":  {
+                                       "method":  "menu",
+                                       "menuPath":  "Settings|Video|DLSS Super Resolution"
+                                   }
+                     },
+                     {
+                         "key":  "frameGen",
+                         "label":  "Frame Generation",
+                         "options":  [
+                                         "Off",
+                                         "2x",
+                                         "3x",
+                                         "4x"
+                                     ],
+                         "default":  "",
+                         "apply":  {
+                                       "method":  "menu",
+                                       "menuPath":  "Settings|Video|DLSS Frame Generation"
+                                   }
+                     }
+                 ],
+    "variants":  [
+                     {
+                         "id":  "as-set",
+                         "name":  "Ultra Nightmare (as configured in-game)",
+                         "enabled":  true,
+                         "settings":  {
+
+                                      }
+                     },
+                     {
+                         "id":  "dlss-q",
+                         "name":  "DLSS Quality (DLSS on)",
+                         "enabled":  false,
+                         "settings":  {
+                                          "upscaler":  "DLSS",
+                                          "upscalerQuality":  "Quality",
+                                          "frameGen":  "Off"
+                                      }
+                     },
+                     {
+                         "id":  "dlss-fg",
+                         "name":  "DLSS Quality + Frame Gen",
+                         "enabled":  true,
+                         "settings":  {
+                                          "upscaler":  "DLSS",
+                                          "upscalerQuality":  "Quality",
+                                          "frameGen":  "2x"
+                                      }
+                     },
+                     {
+                         "id":  "native",
+                         "name":  "Native (DLSS off)",
+                         "enabled":  false,
+                         "settings":  {
+                                          "upscaler":  "Off"
+                                      }
+                     },
+                     {
+                         "id":  "vn-dlss",
+                         "name":  "[vision-nav proof] Upscaler = DLSS",
+                         "enabled":  false,
+                         "benchmarkEligible":  false,
+                         "settings":  {
+                                          "upscaler":  "DLSS"
+                                      }
+                     },
+                     {
+                         "id":  "vn-native",
+                         "name":  "[vision-nav proof] Upscaler = Off (TAA)",
+                         "enabled":  false,
+                         "benchmarkEligible":  false,
+                         "settings":  {
+                                          "upscaler":  "Off"
+                                      }
+                     },
+                     {
+                         "id":  "restore-asset",
+                         "name":  "[restore] as-set: DLSS Performance, FG off",
+                         "enabled":  false,
+                         "benchmarkEligible":  false,
+                         "settings":  {
+                                          "upscaler":  "DLSS",
+                                          "upscalerQuality":  "Performance",
+                                          "frameGen":  "Off"
+                                      }
+                     }
+                 ],
+    "menuMap":  {
+                    "inputDevice":  "gamepad",
+                    "settleMs":  700,
+                    "valueMaxXFrac":  0.52,
+                    "anchorLabel":  "VIDEO",
+                    "anchorNavKey":  "RB",
+                    "anchorNavMax":  8,
+                    "backAnchor":  "Ripatorium",
+                    "backNavKey":  "B",
+                    "backNavMax":  6,
+                    "postBack":  [
+                                     {
+                                         "type":  "padTap",
+                                         "key":  "Up"
+                                     },
+                                     {
+                                         "type":  "wait",
+                                         "ms":  320
+                                     },
+                                     {
+                                         "type":  "padTap",
+                                         "key":  "Up"
+                                     },
+                                     {
+                                         "type":  "wait",
+                                         "ms":  320
+                                     },
+                                     {
+                                         "type":  "padTap",
+                                         "key":  "Up"
+                                     },
+                                     {
+                                         "type":  "wait",
+                                         "ms":  320
+                                     },
+                                     {
+                                         "type":  "padTap",
+                                         "key":  "Up"
+                                     },
+                                     {
+                                         "type":  "wait",
+                                         "ms":  320
+                                     }
+                                 ],
+                    "focusHeader":  {
+                                        "xMin":  0.54,
+                                        "yMin":  0.2,
+                                        "xMax":  0.96,
+                                        "yMax":  0.245
+                                    },
+                    "open":  [
+                                 {
+                                     "type":  "waitText",
+                                     "key":  "PRESS",
+                                     "ms":  120000
+                                 },
+                                 {
+                                     "type":  "padTap",
+                                     "key":  "RB",
+                                     "ms":  200
+                                 },
+                                 {
+                                     "type":  "wait",
+                                     "ms":  900
+                                 },
+                                 {
+                                     "type":  "padTap",
+                                     "key":  "A"
+                                 },
+                                 {
+                                     "type":  "wait",
+                                     "ms":  1400
+                                 },
+                                 {
+                                     "type":  "waitText",
+                                     "key":  "Ripatorium",
+                                     "ms":  15000
+                                 },
+                                 {
+                                     "type":  "padTap",
+                                     "key":  "Down"
+                                 },
+                                 {
+                                     "type":  "wait",
+                                     "ms":  320
+                                 },
+                                 {
+                                     "type":  "padTap",
+                                     "key":  "Down"
+                                 },
+                                 {
+                                     "type":  "wait",
+                                     "ms":  320
+                                 },
+                                 {
+                                     "type":  "padTap",
+                                     "key":  "Down"
+                                 },
+                                 {
+                                     "type":  "wait",
+                                     "ms":  320
+                                 },
+                                 {
+                                     "type":  "padTap",
+                                     "key":  "Down"
+                                 },
+                                 {
+                                     "type":  "wait",
+                                     "ms":  320
+                                 },
+                                 {
+                                     "type":  "padTap",
+                                     "key":  "A"
+                                 },
+                                 {
+                                     "type":  "wait",
+                                     "ms":  1500
+                                 }
+                             ],
+                    "back":  [
+                                 {
+                                     "type":  "padTap",
+                                     "key":  "B"
+                                 },
+                                 {
+                                     "type":  "wait",
+                                     "ms":  1100
+                                 },
+                                 {
+                                     "type":  "tapIfNoText",
+                                     "key":  "A",
+                                     "text":  "Ripatorium"
+                                 },
+                                 {
+                                     "type":  "wait",
+                                     "ms":  1300
+                                 }
+                             ],
+                    "controls":  [
+                                     {
+                                         "settingKey":  "upscaler",
+                                         "label":  "scaler",
+                                         "rowValueLabel":  "scaler",
+                                         "actuation":  "dropdown",
+                                         "optionOrder":  [
+                                                             "Off",
+                                                             "DLSS",
+                                                             "FSR",
+                                                             "XeSS"
+                                                         ],
+                                         "optionLabels":  {
+                                                              "Off":  "TAA",
+                                                              "DLSS":  "DLSS",
+                                                              "FSR":  "FSR",
+                                                              "XeSS":  "XeSS"
+                                                          },
+                                         "maxSteps":  60
+                                     },
+                                     {
+                                         "settingKey":  "upscalerQuality",
+                                         "label":  "DLSS Super Resolution",
+                                         "rowValueLabel":  "Super Resolution",
+                                         "actuation":  "dropdown",
+                                         "optionOrder":  [
+                                                             "UltraPerformance",
+                                                             "Performance",
+                                                             "Balanced",
+                                                             "Quality",
+                                                             "DLAA"
+                                                         ],
+                                         "optionLabels":  {
+                                                              "UltraPerformance":  "Ultra Performance",
+                                                              "Performance":  "Performance",
+                                                              "Balanced":  "Balanced",
+                                                              "Quality":  "Quality",
+                                                              "DLAA":  "DLAA"
+                                                          },
+                                         "maxSteps":  60
+                                     },
+                                     {
+                                         "settingKey":  "frameGen",
+                                         "label":  "DLSS Frame Generation",
+                                         "rowValueLabel":  "DLSS Frame Generation",
+                                         "actuation":  "dropdown",
+                                         "optionOrder":  [
+                                                             "Off",
+                                                             "2x",
+                                                             "3x",
+                                                             "4x"
+                                                         ],
+                                         "optionLabels":  {
+                                                              "Off":  "Off",
+                                                              "2x":  "2x",
+                                                              "3x":  "3x",
+                                                              "4x":  "4x"
+                                                          },
+                                         "maxSteps":  60
+                                     }
+                                 ]
+                },
+    "captureProcessName":  "DOOMTheDarkAges.exe",
+    "frameProvider":  "presentmon",
+    "startupGraceSeconds":  180,
+    "launch":  {
+                   "store":  "Steam",
+                   "gameId":  "3017860",
+                   "arguments":  "+set r_fullscreen 0 +set r_swapInterval 0 +com_skipIntroVideo 1 +r_customWidth 3840 +r_customHeight 2160 +r_mode -1",
+                   "forceBorderlessFullscreen":  true
+               },
+    "resolutionApply":  {
+                            "method":  "display"
+                        },
+    "settingsVerify":  {
+                           "method":  "none"
+                       },
+    "scenes":  [
+                   {
+                       "id":  "builtin-benchmark",
+                       "name":  "Benchmark Mode (Extras \u003e Benchmark Mode)",
+                       "kind":  "BuiltInBenchmark",
+                       "captureSeconds":  440,
+                       "warmupSeconds":  0,
+                       "readinessTimeoutSeconds":  300,
+                       "benchmarkStart":  "bot",
+                       "startBotScript":  "doom_benchmark_nav",
+                       "completion":  {
+                                          "method":  "result-file",
+                                          "resultDirPath":  "%USERPROFILE%\\Saved Games\\id Software\\DOOMTheDarkAges\\base\\benchmark",
+                                          "resultFileGlob":  "benchmark-*.json",
+                                          "frametimesJsonDir":  "%USERPROFILE%\\Saved Games\\id Software\\DOOMTheDarkAges\\base\\benchmark",
+                                          "frametimesJsonGlob":  "benchmark-*.json",
+                                          "frametimesJsonFramesField":  "frames",
+                                          "frametimesJsonFrameMsField":  "frame",
+                                          "frametimesJsonGpuMsField":  "gpu",
+                                          "frametimesJsonResolutionField":  "resolution",
+                                          "minValidSeconds":  12,
+                                          "maxTimeoutSeconds":  420,
+                                          "fallbackToActivity":  true,
+                                          "activityIdleSeconds":  6,
+                                          "gameplayBandCeilingFps":  500
+                                      }
+                   }
+               ]
+}

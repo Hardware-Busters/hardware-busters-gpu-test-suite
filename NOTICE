@@ -1,0 +1,12 @@
+Hardware Busters GPU Test Suite
+Copyright 2026 Hardware Busters contributors.
+
+The public engine and functional source are licensed under Apache-2.0.
+
+Explicit public profile samples and their accompanying provenance material are licensed under CC-BY-4.0; retain the attribution in profiles/PROVENANCE.md.
+
+PresentMon is not bundled. Obtain it only from its upstream project and follow its upstream license and notices.
+
+Cybenetics LTD has expressly authorized inclusion of the Powenetics protocol integration in this public release under Apache-2.0. This covers src/GpuSuite.Measurement/Real/Powenetics/ and src/GpuSuite.Measurement/Real/PoweneticsPowerProvider.cs only; it does not grant rights to Powenetics firmware, device binaries, product documentation, trademarks, or certification claims.
+
+The installer contains third-party NuGet runtime components. The release workflow generates audit/sbom.cdx.json and THIRD-PARTY-NOTICES.md from the restored dependency graph and stages THIRD-PARTY-NOTICES.md beside the installed application.

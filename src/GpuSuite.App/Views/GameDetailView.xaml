@@ -1,0 +1,471 @@
+<UserControl x:Class="GpuSuite.App.Views.GameDetailView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:GpuSuite.App.ViewModels"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance vm:GameDetailViewModel}"
+             Background="Transparent">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,14">
+            <StackPanel>
+                <TextBlock Text="{Binding Title}" Style="{StaticResource H1TextStyle}"/>
+                <TextBlock Text="{Binding Subtitle}" Style="{StaticResource CaptionTextStyle}" Margin="0,4,0,0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+                <TextBlock Text="{Binding SaveStatus}" Foreground="{StaticResource StatusReadyBrush}"
+                           VerticalAlignment="Center" Margin="0,0,12,0" FontSize="12"/>
+                <Button Content="Save" Style="{StaticResource PrimaryButtonStyle}" Command="{Binding SaveCommand}"/>
+            </StackPanel>
+        </Grid>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="0,0,8,0">
+            <StackPanel>
+
+                <!-- Launch &amp; capture (read-only) -->
+                <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock Text="LAUNCH &amp; CAPTURE" Style="{StaticResource LabelTextStyle}"/>
+                        <Grid Margin="0,2,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,6,12,6">
+                                <TextBlock Text="STORE" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBlock Text="{Binding LaunchStore}" Foreground="{StaticResource TextSecondaryBrush}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,6,12,6">
+                                <TextBlock Text="GAME ID" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBlock Text="{Binding LaunchId}" Foreground="{StaticResource TextSecondaryBrush}" TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,6,0,6">
+                                <TextBlock Text="CAPTURE PROCESS" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBlock Text="{Binding CaptureProcess}" Foreground="{StaticResource TextSecondaryBrush}" TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,6,12,6">
+                                <TextBlock Text="FRAME BACKEND" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBlock Text="{Binding FrameProvider}" Foreground="{StaticResource TextSecondaryBrush}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,6,12,6">
+                                <TextBlock Text="RESOLUTIONS" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBlock Text="{Binding ResolutionsText}" Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="1" Grid.Column="2" Margin="0,6,0,6">
+                                <TextBlock Text="MENU MAP" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBlock Text="{Binding MenuMapText}" Foreground="{StaticResource TextSecondaryBrush}"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Run configuration -->
+                <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock Text="RUN CONFIGURATION" Style="{StaticResource LabelTextStyle}"/>
+                        <Grid Margin="0,2,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,6,16,0">
+                                <TextBlock Text="REPEATS (min 3)" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBox Text="{Binding Repeats, UpdateSourceTrigger=LostFocus}"
+                                         ToolTip="Runs for THIS game per resolution. Raise above the global default to measure this game more times; minimum 3."/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="0,6,0,0">
+                                <TextBlock Text="GRAPHICS PRESET" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBox Text="{Binding Game.GraphicsPreset, UpdateSourceTrigger=LostFocus, TargetNullValue=''}"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Adjustable graphics settings (declared knobs; read-only — drives variant overrides below) -->
+                <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16"
+                        Visibility="{Binding HasSettings, Converter={StaticResource BoolToVis}}">
+                    <StackPanel>
+                        <TextBlock Text="ADJUSTABLE GRAPHICS SETTINGS" Style="{StaticResource LabelTextStyle}"/>
+                        <ItemsControl ItemsSource="{Binding Settings}" Margin="0,2,0,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,5">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="200"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding Label}" TextTrimming="CharacterEllipsis"/>
+                                        <ItemsControl Grid.Column="1" ItemsSource="{Binding Options}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Background="{StaticResource SurfaceAltBrush}" CornerRadius="4" Padding="7,2" Margin="0,0,5,4">
+                                                        <TextBlock Text="{Binding}" FontSize="11.5" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <TextBlock Grid.Column="2" Text="{Binding Default, StringFormat='default: {0}'}" FontSize="12"
+                                                   Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <!-- Menu map (vision navigation): editable scalars + structured read-only calibration -->
+                <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16"
+                        Visibility="{Binding HasMenuMap, Converter={StaticResource BoolToVis}}">
+                    <StackPanel>
+                        <TextBlock Text="MENU MAP — VISION NAVIGATION" Style="{StaticResource LabelTextStyle}"/>
+                        <TextBlock Text="Drives the in-game graphics menu off the capture card (OCR). Timing/anchor below are editable; the steps and per-control descriptors are calibrated via the CLI vision tools."
+                                   Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" Margin="0,2,0,8"/>
+
+                        <!-- Editable scalars -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                <TextBlock Text="INPUT DEVICE" Style="{StaticResource LabelTextStyle}"/>
+                                <ComboBox ItemsSource="{Binding MenuInputDevices}"
+                                          SelectedItem="{Binding Game.MenuMap.InputDevice, Mode=TwoWay}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="0,0,10,0">
+                                <TextBlock Text="SETTLE (ms)" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBox Text="{Binding Game.MenuMap.SettleMs, UpdateSourceTrigger=LostFocus}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" Margin="0,0,10,0">
+                                <TextBlock Text="ANCHOR NAV KEY" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBox Text="{Binding Game.MenuMap.AnchorNavKey, UpdateSourceTrigger=LostFocus, TargetNullValue=''}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="3">
+                                <TextBlock Text="ANCHOR NAV MAX" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBox Text="{Binding Game.MenuMap.AnchorNavMax, UpdateSourceTrigger=LostFocus}"/>
+                            </StackPanel>
+                        </Grid>
+                        <StackPanel Margin="0,10,0,0">
+                            <TextBlock Text="ANCHOR LABEL (proves the graphics page is open)" Style="{StaticResource LabelTextStyle}"/>
+                            <TextBox Text="{Binding Game.MenuMap.AnchorLabel, UpdateSourceTrigger=LostFocus, TargetNullValue=''}"/>
+                        </StackPanel>
+
+                        <!-- Focus header (read-only) -->
+                        <StackPanel Margin="0,12,0,0">
+                            <TextBlock Text="FOCUS HEADER REGION (OCR-guided stepping)" Style="{StaticResource LabelTextStyle}"/>
+                            <TextBlock Text="{Binding FocusHeaderText}" Foreground="{StaticResource TextSecondaryBrush}"/>
+                        </StackPanel>
+
+                        <!-- Open / Back steps (read-only) -->
+                        <Grid Margin="0,12,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                <TextBlock Text="OPEN STEPS" Style="{StaticResource LabelTextStyle}"/>
+                                <ItemsControl ItemsSource="{Binding Game.MenuMap.Open}" Margin="0,2,0,0">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="{StaticResource SurfaceAltBrush}" CornerRadius="4" Padding="7,3" Margin="0,0,0,3">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Type}" FontWeight="SemiBold" FontSize="12"/>
+                                                    <TextBlock Text="{Binding Key}" Foreground="{StaticResource AccentBrush}" FontSize="12" Margin="6,0,0,0"/>
+                                                    <TextBlock Text="{Binding Ms, StringFormat=' · {0} ms'}" Foreground="{StaticResource TextMutedBrush}" FontSize="12" Margin="6,0,0,0"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <TextBlock Text="—" Foreground="{StaticResource TextMutedBrush}"
+                                           Visibility="{Binding HasOpenSteps, Converter={StaticResource InverseBoolToVis}}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="BACK STEPS" Style="{StaticResource LabelTextStyle}"/>
+                                <ItemsControl ItemsSource="{Binding Game.MenuMap.Back}" Margin="0,2,0,0">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="{StaticResource SurfaceAltBrush}" CornerRadius="4" Padding="7,3" Margin="0,0,0,3">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Type}" FontWeight="SemiBold" FontSize="12"/>
+                                                    <TextBlock Text="{Binding Key}" Foreground="{StaticResource AccentBrush}" FontSize="12" Margin="6,0,0,0"/>
+                                                    <TextBlock Text="{Binding Ms, StringFormat=' · {0} ms'}" Foreground="{StaticResource TextMutedBrush}" FontSize="12" Margin="6,0,0,0"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <TextBlock Text="—" Foreground="{StaticResource TextMutedBrush}"
+                                           Visibility="{Binding HasBackSteps, Converter={StaticResource InverseBoolToVis}}"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Controls (read-only) -->
+                        <StackPanel Margin="0,12,0,0" Visibility="{Binding HasMenuControls, Converter={StaticResource BoolToVis}}">
+                            <TextBlock Text="CONTROLS (settings the applier can drive)" Style="{StaticResource LabelTextStyle}"/>
+                            <ItemsControl ItemsSource="{Binding Game.MenuMap.Controls}" Margin="0,2,0,0">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1" Padding="0,7">
+                                            <StackPanel>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding SettingKey}" FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}"/>
+                                                    <TextBlock Text="{Binding Label, StringFormat=' · {0}'}" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                                    <Border Background="{StaticResource SurfaceAltBrush}" CornerRadius="4" Padding="6,1" Margin="8,0,0,0">
+                                                        <TextBlock Text="{Binding Actuation}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                                    </Border>
+                                                </StackPanel>
+                                                <TextBlock Foreground="{StaticResource TextMutedBrush}" FontSize="12" Margin="0,3,0,0" TextWrapping="Wrap">
+                                                    <Run Text="steps="/><Run Text="{Binding MaxSteps, Mode=OneWay}"/>
+                                                    <Run Text="  homeUp="/><Run Text="{Binding HomeUpCount, Mode=OneWay}"/>
+                                                    <Run Text="  down="/><Run Text="{Binding DownFromTop, Mode=OneWay}"/>
+                                                    <Run Text="  cycle="/><Run Text="{Binding CycleRight, Mode=OneWay}"/><Run Text="/"/><Run Text="{Binding CycleLeft, Mode=OneWay}"/>
+                                                    <Run Text="  maxCycles="/><Run Text="{Binding MaxCycles, Mode=OneWay}"/>
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- ===== SCENES editor ===== -->
+                <Grid Margin="0,0,0,8">
+                    <TextBlock Text="SCENES" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
+                    <Button Content="+ Add scene" Style="{StaticResource LinkButtonStyle}" Command="{Binding AddSceneCommand}"
+                            HorizontalAlignment="Right"/>
+                </Grid>
+                <Expander Header="How scene timing works" Style="{StaticResource SectionExpanderStyle}" Margin="0,0,0,8">
+                    <Border Background="{StaticResource AccentSoftBrush}" BorderBrush="{StaticResource AccentBrush}"
+                            BorderThickness="1" CornerRadius="8" Padding="12,10">
+                        <StackPanel>
+                            <TextBlock Text="The measured benchmark window is not always the same as the scene deadline."
+                                       FontWeight="SemiBold" TextWrapping="Wrap"/>
+                            <TextBlock TextWrapping="Wrap" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,6,0,0">
+                                <Run Text="CAPTURE DEADLINE (s)" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                                <Run Text=" is the maximum time reserved for this scene run. Bot-driven scenes may spend it launching the game, waiting for OCR/menu navigation, loading a save, compiling shaders, and recovering from a retry. It is not automatically the reported GPU measurement length."/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,5,0,0">
+                                <Run Text="MARK START → MARK END" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                                <Run Text=" is the measured interval when a bot emits scene markers. Only frames inside that interval are reported. For example, TLOU uses a 510-second deadline but measures a 35-second marked gameplay window."/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,5,0,0">
+                                <Run Text="WARM-UP (s)" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                                <Run Text=" is discarded pre-measure time. A bot may own its warm-up internally; those scenes intentionally leave this field at 0."/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,5,0,0">
+                                <Run Text="READINESS TIMEOUT (s)" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                                <Run Text=" is the maximum wait for the game and its target scene to become ready. It protects against a stuck launch; it does not extend the measured window."/>
+                            </TextBlock>
+                            <TextBlock Text="Tip: do not reduce the capture deadline to the measured 35 seconds. That would cut off cold launch/navigation before the bot reaches the benchmark scene."
+                                       TextWrapping="Wrap" Foreground="{StaticResource AccentBrush}" FontSize="12" Margin="0,7,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </Expander>
+                <ItemsControl ItemsSource="{Binding SceneList}" Margin="0,0,0,8">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Expander Style="{StaticResource SectionExpanderStyle}" Margin="0,0,0,8" Header="{Binding Name}">
+                                <StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                                            <TextBlock Text="NAME" Style="{StaticResource LabelTextStyle}"/>
+                                            <TextBox Text="{Binding Name, UpdateSourceTrigger=LostFocus}"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1">
+                                            <TextBlock Text="KIND" Style="{StaticResource LabelTextStyle}"/>
+                                            <ComboBox SelectedItem="{Binding Kind, Mode=TwoWay}"
+                                                      ItemsSource="{Binding DataContext.SceneKinds, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                    <Grid Margin="0,10,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                            <TextBlock Text="CAPTURE DEADLINE (s)" Style="{StaticResource LabelTextStyle}"
+                                                       ToolTip="Maximum scene-run budget, including launch, OCR/menu navigation, loading, shader compilation, and retries. For marked bot scenes this is not the reported GPU window."/>
+                                            <TextBox Text="{Binding CaptureSeconds, UpdateSourceTrigger=LostFocus}"
+                                                     ToolTip="Scene-run deadline. Keep this longer than the measured MarkStart-to-MarkEnd interval."/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Margin="0,0,10,0">
+                                            <TextBlock Text="WARM-UP (s)" Style="{StaticResource LabelTextStyle}"
+                                                       ToolTip="Discarded pre-measure time. Marker-driven bots may perform their warm-up internally, leaving this at 0."/>
+                                            <TextBox Text="{Binding WarmupSeconds, UpdateSourceTrigger=LostFocus}"
+                                                     ToolTip="Discarded pre-measure time; it is not included in reported FPS."/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="2">
+                                            <TextBlock Text="READINESS TIMEOUT (s)" Style="{StaticResource LabelTextStyle}"
+                                                       ToolTip="Maximum wait for the game and target scene to become ready. It does not define the measured GPU window."/>
+                                            <TextBox Text="{Binding ReadinessTimeoutSeconds, UpdateSourceTrigger=LostFocus}"
+                                                     ToolTip="Abort the scene if launch/navigation cannot reach the target within this time."/>
+                                        </StackPanel>
+                                    </Grid>
+                                    <Grid Margin="0,10,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                            <TextBlock Text="BENCHMARK START" Style="{StaticResource LabelTextStyle}"/>
+                                            <TextBox Text="{Binding BenchmarkStart, UpdateSourceTrigger=LostFocus, TargetNullValue=''}"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Margin="0,0,10,0">
+                                            <TextBlock Text="BOT SCRIPT" Style="{StaticResource LabelTextStyle}"/>
+                                            <TextBox Text="{Binding BotScript, UpdateSourceTrigger=LostFocus, TargetNullValue=''}"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="2">
+                                            <TextBlock Text="START BOT SCRIPT" Style="{StaticResource LabelTextStyle}"/>
+                                            <TextBox Text="{Binding StartBotScript, UpdateSourceTrigger=LostFocus, TargetNullValue=''}"/>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Margin="0,14,0,0" Padding="0,12,0,0">
+                                        <StackPanel>
+                                            <TextBlock Text="COMPLETION DETECTION" Style="{StaticResource LabelTextStyle}"/>
+                                            <Grid Margin="0,2,0,0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                                    <TextBlock Text="METHOD" Style="{StaticResource LabelTextStyle}"/>
+                                                    <TextBox Text="{Binding Completion.Method, UpdateSourceTrigger=LostFocus, TargetNullValue=''}"/>
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="1" Margin="0,0,10,0">
+                                                    <TextBlock Text="MIN VALID (s)" Style="{StaticResource LabelTextStyle}"/>
+                                                    <TextBox Text="{Binding Completion.MinValidSeconds, UpdateSourceTrigger=LostFocus}"/>
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="2">
+                                                    <TextBlock Text="MAX TIMEOUT (s)" Style="{StaticResource LabelTextStyle}"/>
+                                                    <TextBox Text="{Binding Completion.MaxTimeoutSeconds, UpdateSourceTrigger=LostFocus}"/>
+                                                </StackPanel>
+                                            </Grid>
+                                            <StackPanel Margin="0,10,0,0">
+                                                <TextBlock Text="START PATTERN" Style="{StaticResource LabelTextStyle}"/>
+                                                <TextBox Text="{Binding Completion.StartPattern, UpdateSourceTrigger=LostFocus, TargetNullValue=''}"/>
+                                            </StackPanel>
+                                            <StackPanel Margin="0,10,0,0">
+                                                <TextBlock Text="FINISH PATTERN" Style="{StaticResource LabelTextStyle}"/>
+                                                <TextBox Text="{Binding Completion.FinishPattern, UpdateSourceTrigger=LostFocus, TargetNullValue=''}"/>
+                                            </StackPanel>
+                                            <StackPanel Margin="0,10,0,0">
+                                                <TextBlock Text="RESULT FPS PATTERN" Style="{StaticResource LabelTextStyle}"/>
+                                                <TextBox Text="{Binding Completion.ResultFpsPattern, UpdateSourceTrigger=LostFocus, TargetNullValue=''}"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <Button Content="Remove scene" HorizontalAlignment="Right" Margin="0,14,0,0"
+                                            Command="{Binding DataContext.RemoveSceneCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"/>
+                                </StackPanel>
+                            </Expander>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- ===== VARIANTS (models) editor ===== -->
+                <Grid Margin="0,8,0,8">
+                    <TextBlock Text="MODELS (VARIANTS)" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
+                    <Button Content="+ Add model" Style="{StaticResource LinkButtonStyle}" Command="{Binding AddVariantCommand}"
+                            HorizontalAlignment="Right"/>
+                </Grid>
+                <ItemsControl ItemsSource="{Binding VariantList}" Margin="0,0,0,8">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Expander Style="{StaticResource SectionExpanderStyle}" Margin="0,0,0,8" Header="{Binding Model.Name}">
+                                <StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                            <TextBlock Text="ID" Style="{StaticResource LabelTextStyle}"/>
+                                            <TextBox Text="{Binding Model.Id, UpdateSourceTrigger=LostFocus}"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Margin="0,0,10,0">
+                                            <TextBlock Text="NAME" Style="{StaticResource LabelTextStyle}"/>
+                                            <TextBox Text="{Binding Model.Name, UpdateSourceTrigger=LostFocus}"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="2" VerticalAlignment="Bottom">
+                                            <CheckBox Style="{StaticResource ToggleSwitchStyle}" Content="Enabled" Margin="0,0,0,6"
+                                                      IsChecked="{Binding Model.Enabled, Mode=TwoWay}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                    <StackPanel Margin="0,10,0,0">
+                                        <TextBlock Text="GRAPHICS PRESET (optional override)" Style="{StaticResource LabelTextStyle}"/>
+                                        <TextBox Text="{Binding Model.GraphicsPreset, UpdateSourceTrigger=LostFocus, TargetNullValue=''}"/>
+                                    </StackPanel>
+
+                                    <StackPanel Margin="0,14,0,0" Visibility="{Binding HasOverrides, Converter={StaticResource BoolToVis}}">
+                                        <TextBlock Text="SETTING OVERRIDES" Style="{StaticResource LabelTextStyle}"/>
+                                        <ItemsControl ItemsSource="{Binding Overrides}" Margin="0,2,0,0">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid Margin="0,5">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="200"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Grid.Column="0" Text="{Binding Label}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                        <ComboBox Grid.Column="1" ItemsSource="{Binding Options}" SelectedItem="{Binding Value, Mode=TwoWay}"
+                                                                  Visibility="{Binding HasOptions, Converter={StaticResource BoolToVis}}"/>
+                                                        <TextBox Grid.Column="1" Text="{Binding Value, UpdateSourceTrigger=LostFocus}"
+                                                                 Visibility="{Binding HasOptions, Converter={StaticResource InverseBoolToVis}}"/>
+                                                        <TextBlock Grid.Column="2" Text="{Binding DefaultHint}" Foreground="{StaticResource TextMutedBrush}"
+                                                                   FontSize="12" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                    <TextBlock Text="No adjustable settings declared for this game — variants run the profile defaults."
+                                               Style="{StaticResource CaptionTextStyle}" Margin="0,12,0,0"
+                                               Visibility="{Binding HasOverrides, Converter={StaticResource InverseBoolToVis}}"/>
+
+                                    <Button Content="Remove model" HorizontalAlignment="Right" Margin="0,14,0,0"
+                                            Command="{Binding DataContext.RemoveVariantCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"/>
+                                </StackPanel>
+                            </Expander>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

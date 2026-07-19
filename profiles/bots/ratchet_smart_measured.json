@@ -1,0 +1,26 @@
+{
+    "id":  "ratchet_smart_measured",
+    "inputDevice":  "Gamepad",
+    "loop":  false,
+    "actions":  [
+                    {
+                        "type":  "Wait",
+                        "durationMs":  2500
+                    },
+                    {
+                        "type":  "MarkStart"
+                    },
+                    {
+                        "type":  "SmartTraverse",
+                        "durationMs":  35000,
+                        "stuckThreshold":  0.01,
+                        "stuckTriggerCount":  3,
+                        "maxRecoveryTurns":  6,
+                        "minHealthyMotionRatio":  0.5,
+                        "recordRoutePath":  "Results/ratchet_discovered.route.json"
+                    },
+                    {
+                        "type":  "MarkEnd"
+                    }
+                ]
+}

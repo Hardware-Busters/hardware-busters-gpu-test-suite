@@ -1,0 +1,25 @@
+{
+    "schemaVersion":  1,
+    "id":  "hardware-busters.verified",
+    "name":  "Hardware Busters Verified Profiles",
+    "version":  "1.0.0",
+    "publisher":  "Hardware Busters",
+    "license":  "Apache-2.0",
+    "homepage":  "https://hwbusters.com/",
+    "minimumEngineVersion":  "0.1.0",
+    "games":  [
+                  "alan-wake-2",
+                  "assassins-creed-mirage",
+                  "black-myth-wukong",
+                  "cyberpunk-2077",
+                  "doom-the-dark-ages",
+                  "f1-25",
+                  "forza-horizon-6",
+                  "forza-motorsport",
+                  "microsoft-flight-simulator-2024",
+                  "ratchet-clank-rift-apart",
+                  "resident-evil-requiem",
+                  "the-last-of-us-part-1"
+              ],
+    "description":  "Hardware Busters Verified game profiles and navigation scripts. Bench-local commentary and machine configuration are intentionally removed from this public pack."
+}

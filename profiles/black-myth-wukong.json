@@ -1,0 +1,332 @@
+{
+    "id":  "black-myth-wukong",
+    "settingsFingerprintKeys":  [
+                                    {
+                                        "label":  "resScalePct",
+                                        "configFilePath":  "%LOCALAPPDATA%\\b1\\Saved\\Config\\Windows\\GameUserSettings.ini",
+                                        "pattern":  "(?m)^sg\\.ResolutionQuality=(\\d+)"
+                                    },
+                                    {
+                                        "label":  "rtQualitySg",
+                                        "configFilePath":  "%LOCALAPPDATA%\\b1\\Saved\\Config\\Windows\\GameUserSettings.ini",
+                                        "pattern":  "(?m)^sg\\.RayTracingQuality=(\\d+)"
+                                    },
+                                    {
+                                        "label":  "rtInGame",
+                                        "configFilePath":  "%LOCALAPPDATA%\\b1\\Saved\\Config\\Windows\\GameUserSettings.ini",
+                                        "pattern":  "r\\.RayTracing\\.EnableInGame=(\\w+)"
+                                    },
+                                    {
+                                        "label":  "uiRtx",
+                                        "configFilePath":  "%LOCALAPPDATA%\\b1\\Saved\\Config\\Windows\\GameUserSettings.ini",
+                                        "pattern":  "\\(\"Rtx\", \"(\\d+)\"\\)"
+                                    },
+                                    {
+                                        "label":  "uiRtxLevel",
+                                        "configFilePath":  "%LOCALAPPDATA%\\b1\\Saved\\Config\\Windows\\GameUserSettings.ini",
+                                        "pattern":  "\\(\"RtxLevel\", \"(\\d+)\"\\)"
+                                    },
+                                    {
+                                        "label":  "qualityLevel",
+                                        "configFilePath":  "%LOCALAPPDATA%\\b1\\Saved\\Config\\Windows\\GameUserSettings.ini",
+                                        "pattern":  "\\(\"QualityLevel\", \"(\\d+)\"\\)"
+                                    },
+                                    {
+                                        "label":  "srsMethod",
+                                        "configFilePath":  "%LOCALAPPDATA%\\b1\\Saved\\Config\\Windows\\GameUserSettings.ini",
+                                        "pattern":  "\\(\"SuperResolutionSampling\", \"(\\d+)\"\\)",
+                                        "valueMap":  {
+                                                         "0":  "FSR3",
+                                                         "1":  "XeSS",
+                                                         "2":  "DLSS",
+                                                         "3":  "TSR",
+                                                         "5":  "NXSR"
+                                                     }
+                                    },
+                                    {
+                                        "label":  "srRatioRaw",
+                                        "configFilePath":  "%LOCALAPPDATA%\\b1\\Saved\\Config\\Windows\\GameUserSettings.ini",
+                                        "pattern":  "\\(\"ImageQuality\", \"(\\d+)\"\\)",
+                                        "valueMap":  {
+                                                         "648":  "60%-Balanced",
+                                                         "724":  "67%"
+                                                     }
+                                    },
+                                    {
+                                        "label":  "frameGen",
+                                        "configFilePath":  "%LOCALAPPDATA%\\b1\\Saved\\Config\\Windows\\GameUserSettings.ini",
+                                        "pattern":  "\\(\"InsertFrame\", \"(\\d+)\"\\)",
+                                        "isFrameGen":  true,
+                                        "frameGenOffValues":  [
+                                                                  "0"
+                                                              ],
+                                        "valueMap":  {
+                                                         "0":  "Off",
+                                                         "1":  "Auto",
+                                                         "2":  "2X",
+                                                         "3":  "3X",
+                                                         "4":  "4X"
+                                                     }
+                                    }
+                                ],
+    "name":  "Black Myth: Wukong",
+    "engine":  "Unreal Engine 5",
+    "enabled":  true,
+    "repeats":  3,
+    "supportedResolutions":  [
+                                 "1080p",
+                                 "1440p",
+                                 "4K"
+                             ],
+    "graphicsPreset":  "Cinematic",
+    "variants":  [
+                     {
+                         "id":  "as-set",
+                         "name":  "As configured in-game",
+                         "enabled":  true,
+                         "settings":  {
+
+                                      }
+                     },
+                     {
+                         "id":  "rt-dlss-q",
+                         "name":  "RT + DLSS Balanced-60 (pinned as-set)",
+                         "enabled":  false,
+                         "settings":  {
+                                          "rt":  "On",
+                                          "upscaler":  "DLSS",
+                                          "upscalerQuality":  "Balanced60",
+                                          "frameGen":  "Off"
+                                      }
+                     },
+                     {
+                         "id":  "rt-dlss-fg",
+                         "name":  "RT + DLSS Balanced-60 + FG 2X",
+                         "enabled":  false,
+                         "settings":  {
+                                          "rt":  "On",
+                                          "upscaler":  "DLSS",
+                                          "upscalerQuality":  "Balanced60",
+                                          "frameGen":  "2X"
+                                      }
+                     },
+                     {
+                         "id":  "rt-dlss-fg-3x",
+                         "name":  "RT + DLSS Balanced-60 + MFG 3X",
+                         "enabled":  true,
+                         "settings":  {
+                                          "rt":  "On",
+                                          "upscaler":  "DLSS",
+                                          "upscalerQuality":  "Balanced60",
+                                          "frameGen":  "3X"
+                                      }
+                     },
+                     {
+                         "id":  "rt-dlss-fg-4x",
+                         "name":  "RT + DLSS Balanced-60 + MFG 4X",
+                         "enabled":  true,
+                         "settings":  {
+                                          "rt":  "On",
+                                          "upscaler":  "DLSS",
+                                          "upscalerQuality":  "Balanced60",
+                                          "frameGen":  "4X"
+                                      }
+                     },
+                     {
+                         "id":  "rt-off",
+                         "name":  "RT off (as-set 58% scale Cinematic)",
+                         "enabled":  false,
+                         "settings":  {
+                                          "rt":  "Off",
+                                          "frameGen":  "Off"
+                                      }
+                     }
+                 ],
+    "settings":  [
+                     {
+                         "key":  "upscaler",
+                         "label":  "Super Resolution Sampling",
+                         "options":  [
+                                         "DLSS",
+                                         "FSR3",
+                                         "XeSS",
+                                         "TSR",
+                                         "NXSR"
+                                     ],
+                         "default":  "",
+                         "apply":  {
+                                       "method":  "config-file",
+                                       "configFilePath":  "%LOCALAPPDATA%\\b1\\Saved\\Config\\Windows\\GameUserSettings.ini",
+                                       "valueMap":  {
+                                                        "FSR3":  "0",
+                                                        "XeSS":  "1",
+                                                        "DLSS":  "2",
+                                                        "TSR":  "3",
+                                                        "NXSR":  "5"
+                                                    },
+                                       "edits":  [
+                                                     {
+                                                         "pattern":  "(\"SuperResolutionSampling\",\\s*\")[0-9]+",
+                                                         "replacement":  "${1}{VALUE}"
+                                                     }
+                                                 ]
+                                   }
+                     },
+                     {
+                         "key":  "upscalerQuality",
+                         "label":  "Super Resolution ratio (%)",
+                         "options":  [
+                                         "Balanced60",
+                                         "Ratio67"
+                                     ],
+                         "default":  "",
+                         "apply":  {
+                                       "method":  "config-file",
+                                       "configFilePath":  "%LOCALAPPDATA%\\b1\\Saved\\Config\\Windows\\GameUserSettings.ini",
+                                       "valueMap":  {
+                                                        "Balanced60":  "648",
+                                                        "Ratio67":  "724"
+                                                    },
+                                       "edits":  [
+                                                     {
+                                                         "pattern":  "(\"ImageQuality\",\\s*\")[0-9]+",
+                                                         "replacement":  "${1}{VALUE}"
+                                                     }
+                                                 ]
+                                   }
+                     },
+                     {
+                         "key":  "rt",
+                         "label":  "Ray Tracing",
+                         "options":  [
+                                         "On",
+                                         "Off"
+                                     ],
+                         "default":  "",
+                         "apply":  {
+                                       "method":  "config-file",
+                                       "configFilePath":  "%LOCALAPPDATA%\\b1\\Saved\\Config\\Windows\\GameUserSettings.ini",
+                                       "edits":  [
+                                                     {
+                                                         "pattern":  "(\"Rtx\",\\s*\")[0-9]+",
+                                                         "replacement":  "${1}{VALUE}",
+                                                         "valueMap":  {
+                                                                          "On":  "1",
+                                                                          "Off":  "0"
+                                                                      }
+                                                     },
+                                                     {
+                                                         "pattern":  "(\"RtxLevel\",\\s*\")[0-9]+",
+                                                         "replacement":  "${1}{VALUE}",
+                                                         "valueMap":  {
+                                                                          "On":  "3",
+                                                                          "Off":  "0"
+                                                                      }
+                                                     },
+                                                     {
+                                                         "pattern":  "(?m)^(sg\\.RayTracingQuality=)\\d+",
+                                                         "replacement":  "${1}{VALUE}",
+                                                         "valueMap":  {
+                                                                          "On":  "3",
+                                                                          "Off":  "0"
+                                                                      }
+                                                     },
+                                                     {
+                                                         "pattern":  "(?m)^(r\\.RayTracing\\.EnableInGame=)\\w+",
+                                                         "replacement":  "${1}{VALUE}",
+                                                         "valueMap":  {
+                                                                          "On":  "True",
+                                                                          "Off":  "False"
+                                                                      }
+                                                     }
+                                                 ]
+                                   }
+                     },
+                     {
+                         "key":  "frameGen",
+                         "label":  "Frame Generation",
+                         "options":  [
+                                         "Off",
+                                         "Auto",
+                                         "2X",
+                                         "3X",
+                                         "4X"
+                                     ],
+                         "default":  "Off",
+                         "apply":  {
+                                       "method":  "config-file",
+                                       "configFilePath":  "%LOCALAPPDATA%\\b1\\Saved\\Config\\Windows\\GameUserSettings.ini",
+                                       "valueMap":  {
+                                                        "Off":  "0",
+                                                        "Auto":  "1",
+                                                        "2X":  "2",
+                                                        "3X":  "3",
+                                                        "4X":  "4"
+                                                    },
+                                       "edits":  [
+                                                     {
+                                                         "pattern":  "(\"InsertFrame\",\\s*\")[0-9]+",
+                                                         "replacement":  "${1}{VALUE}"
+                                                     }
+                                                 ]
+                                   }
+                     }
+                 ],
+    "captureProcessName":  "b1-Win64-Shipping.exe",
+    "frameProvider":  "presentmon",
+    "startupGraceSeconds":  180,
+    "launch":  {
+                   "store":  "Steam",
+                   "gameId":  "2358720"
+               },
+    "resolutionApply":  {
+                            "method":  "config-file",
+                            "switchDesktopMode":  true,
+                            "configFilePath":  "%LOCALAPPDATA%\\b1\\Saved\\Config\\Windows\\GameUserSettings.ini",
+                            "edits":  [
+                                          {
+                                              "pattern":  "ResolutionSizeX=\\d+",
+                                              "replacement":  "ResolutionSizeX={WIDTH}"
+                                          },
+                                          {
+                                              "pattern":  "ResolutionSizeY=\\d+",
+                                              "replacement":  "ResolutionSizeY={HEIGHT}"
+                                          },
+                                          {
+                                              "pattern":  "LastUserConfirmedResolutionSizeX=\\d+",
+                                              "replacement":  "LastUserConfirmedResolutionSizeX={WIDTH}"
+                                          },
+                                          {
+                                              "pattern":  "LastUserConfirmedResolutionSizeY=\\d+",
+                                              "replacement":  "LastUserConfirmedResolutionSizeY={HEIGHT}"
+                                          },
+                                          {
+                                              "pattern":  "bUseVSync=\\w+",
+                                              "replacement":  "bUseVSync=False"
+                                          },
+                                          {
+                                              "pattern":  "(\\(\"Vsync\",\\s*\")\\d+",
+                                              "replacement":  "${1}0"
+                                          }
+                                      ]
+                        },
+    "settingsVerify":  {
+                           "method":  "config-file",
+                           "configFilePath":  "%LOCALAPPDATA%\\b1\\Saved\\Config\\Windows\\GameUserSettings.ini",
+                           "expectedPattern":  "ResolutionSizeX={WIDTH}"
+                       },
+    "scenes":  [
+                   {
+                       "id":  "scripted-scene",
+                       "name":  "Scripted Gameplay Scene",
+                       "kind":  "BotDriven",
+                       "captureSeconds":  420,
+                       "warmupSeconds":  0,
+                       "readinessTimeoutSeconds":  300,
+                       "botScript":  "blackmyth_continue_scene_smart",
+                       "completion":  {
+                                          "method":  "duration"
+                                      }
+                   }
+               ]
+}

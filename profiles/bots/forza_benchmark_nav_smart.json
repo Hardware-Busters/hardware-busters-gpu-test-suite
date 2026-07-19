@@ -1,0 +1,128 @@
+{
+    "id":  "forza_benchmark_nav_smart",
+    "inputDevice":  "Gamepad",
+    "loop":  false,
+    "graph":  {
+                  "timeoutSeconds":  1800,
+                  "pollMs":  3000,
+                  "lostMs":  24000,
+                  "recoverKey":  "A",
+                  "maxRecoveries":  3,
+                  "screens":  [
+                                  {
+                                      "id":  "DISPLAY",
+                                      "allOf":  [
+                                                    "Run Benchmark"
+                                                ],
+                                      "do":  [
+                                                 {
+                                                     "key":  "A",
+                                                     "holdMs":  150,
+                                                     "gapMs":  800
+                                                 }
+                                             ],
+                                      "goal":  true,
+                                      "markStartHere":  true
+                                  },
+                                  {
+                                      "id":  "SETTINGS",
+                                      "anyOf":  [
+                                                    "Driving Assists"
+                                                ],
+                                      "noneOf":  [
+                                                     "Run Benchmark"
+                                                 ],
+                                      "do":  [
+                                                 {
+                                                     "key":  "RB",
+                                                     "repeat":  4,
+                                                     "gapMs":  500
+                                                 }
+                                             ]
+                                  },
+                                  {
+                                      "id":  "HOME",
+                                      "anyOf":  [
+                                                    "RACE"
+                                                ],
+                                      "noneOf":  [
+                                                     "Run Benchmark",
+                                                     "Driving Assists"
+                                                 ],
+                                      "do":  [
+                                                 {
+                                                     "key":  "Down",
+                                                     "repeat":  7,
+                                                     "gapMs":  350
+                                                 },
+                                                 {
+                                                     "key":  "A",
+                                                     "holdMs":  150,
+                                                     "gapMs":  800
+                                                 }
+                                             ]
+                                  },
+                                  {
+                                      "id":  "WELCOME",
+                                      "anyOf":  [
+                                                    "Welcome Center"
+                                                ],
+                                      "do":  [
+                                                 {
+                                                     "key":  "B",
+                                                     "holdMs":  150,
+                                                     "gapMs":  800
+                                                 }
+                                             ]
+                                  },
+                                  {
+                                      "id":  "SIGNIN_OR_LOAD",
+                                      "anyOf":  [
+                                                    "Attempting to sign",
+                                                    "Signing in",
+                                                    "Checking for updates",
+                                                    "Please wait"
+                                                ],
+                                      "do":  [
+
+                                             ]
+                                  },
+                                  {
+                                      "id":  "TITLE",
+                                      "anyOf":  [
+                                                    "Play"
+                                                ],
+                                      "noneOf":  [
+                                                     "Welcome Center",
+                                                     "RACE",
+                                                     "Run Benchmark",
+                                                     "Gameplay"
+                                                 ],
+                                      "do":  [
+                                                 {
+                                                     "key":  "A",
+                                                     "holdMs":  150,
+                                                     "gapMs":  1200
+                                                 }
+                                             ]
+                                  },
+                                  {
+                                      "id":  "SPLASH",
+                                      "anyOf":  [
+                                                    "MOTORSPORT"
+                                                ],
+                                      "noneOf":  [
+                                                     "Play",
+                                                     "Welcome Center",
+                                                     "RACE",
+                                                     "Run Benchmark",
+                                                     "Driving Assists",
+                                                     "Settings"
+                                                 ],
+                                      "do":  [
+
+                                             ]
+                                  }
+                              ]
+              }
+}

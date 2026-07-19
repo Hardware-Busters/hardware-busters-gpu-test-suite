@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0-windows8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>GpuSuite.Measurement</AssemblyName>
+    <RootNamespace>GpuSuite.Measurement</RootNamespace>
+    <Platforms>x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.7-pre700" />
+    <PackageReference Include="System.IO.Ports" Version="10.0.9" />
+    <PackageReference Include="SerialPortStream" Version="2.4.2" />
+    <!-- SerialPortStream's old transitive pins contain published security advisories. -->
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GpuSuite.Core\GpuSuite.Core.csproj" />
+  </ItemGroup>
+
+</Project>

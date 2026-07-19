@@ -1,0 +1,129 @@
+<UserControl x:Class="GpuSuite.App.Views.ProfilePacksView"
+             x:Name="Root"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:GpuSuite.App.ViewModels"
+             mc:Ignorable="d" d:DataContext="{d:DesignInstance vm:ProfilePacksViewModel}"
+             Background="Transparent">
+    <UserControl.Resources>
+        <Style x:Key="PackTrustStripeStyle" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource StatusNotInstalledBrush}"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsBundled}" Value="True">
+                    <Setter Property="Background" Value="{StaticResource StatusReadyBrush}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding HasProblem}" Value="True">
+                    <Setter Property="Background" Value="{StaticResource StatusInvalidBrush}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="PackStatusStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource StatusReadyBrush}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Status}" Value="Disabled"><Setter Property="Foreground" Value="{StaticResource TextMutedBrush}"/></DataTrigger>
+                <DataTrigger Binding="{Binding Status}" Value="Invalid"><Setter Property="Foreground" Value="{StaticResource StatusInvalidBrush}"/></DataTrigger>
+                <DataTrigger Binding="{Binding Status}" Value="Incompatible"><Setter Property="Foreground" Value="{StaticResource StatusNotInstalledBrush}"/></DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="28,24">
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+
+        <Grid Margin="0,0,0,14">
+            <StackPanel>
+                <TextBlock Text="Profile packs" Style="{StaticResource H1TextStyle}"/>
+                <TextBlock Text="Install benchmark knowledge without changing the engine. Green packs are supplied by Hardware Busters; amber packs are community or local content."
+                           Style="{StaticResource CaptionTextStyle}" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                <TextBlock Text="{Binding Summary}" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,7,0,0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+                <Button Content="Open pack folder" Command="{Binding OpenPacksFolderCommand}" Margin="0,0,8,0"
+                        ToolTip="Open the isolated folder where imported community packs are stored."/>
+                <Button Content="Install pack…" Command="{Binding ImportCommand}" Style="{StaticResource PrimaryButtonStyle}"
+                        ToolTip="Validate and install a .gtsprofilepack archive. Existing packs are never replaced without confirmation."/>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="410"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Style="{StaticResource CardBorderStyle}" Margin="0,0,16,0" Padding="8">
+                <ListBox ItemsSource="{Binding Packs}" SelectedItem="{Binding SelectedPack, Mode=TwoWay}"
+                         Style="{StaticResource RowsListBoxStyle}" ItemContainerStyle="{StaticResource GameRowItemStyle}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,2">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="5"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Style="{StaticResource PackTrustStripeStyle}" CornerRadius="3"/>
+                                <StackPanel Grid.Column="1" Margin="12,7,8,7">
+                                    <Grid>
+                                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" Margin="0,0,78,0"/>
+                                        <TextBlock Text="{Binding Status}" HorizontalAlignment="Right" Style="{StaticResource PackStatusStyle}" FontSize="12"/>
+                                    </Grid>
+                                    <TextBlock Text="{Binding Publisher}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,4,0,0"/>
+                                    <TextBlock Text="{Binding Counts}" Foreground="{StaticResource TextMutedBrush}" FontSize="11" Margin="0,3,0,0"/>
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Border>
+
+            <Border Grid.Column="1" Style="{StaticResource CardBorderStyle}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel DataContext="{Binding SelectedPack}">
+                        <Grid>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Name}" Style="{StaticResource H2TextStyle}"/>
+                                <TextBlock Text="{Binding Id}" Style="{StaticResource CaptionTextStyle}" Margin="0,3,0,0"/>
+                            </StackPanel>
+                            <Border HorizontalAlignment="Right" Background="{StaticResource AccentSoftBrush}" CornerRadius="6" Padding="10,5">
+                                <TextBlock Text="{Binding Trust}" FontWeight="SemiBold"/>
+                            </Border>
+                        </Grid>
+
+                        <TextBlock Text="{Binding Description}" TextWrapping="Wrap" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,16,0,18"/>
+
+                        <Grid Margin="0,0,0,18">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" Background="{StaticResource SurfaceAltBrush}" CornerRadius="8" Padding="12" Margin="0,0,5,0">
+                                <StackPanel><TextBlock Text="VERSION" Style="{StaticResource LabelTextStyle}" Margin="0"/><TextBlock Text="{Binding Version}" Margin="0,5,0,0"/></StackPanel>
+                            </Border>
+                            <Border Grid.Column="1" Background="{StaticResource SurfaceAltBrush}" CornerRadius="8" Padding="12" Margin="5,0">
+                                <StackPanel><TextBlock Text="CONTENT" Style="{StaticResource LabelTextStyle}" Margin="0"/><TextBlock Text="{Binding Counts}" TextWrapping="Wrap" Margin="0,5,0,0"/></StackPanel>
+                            </Border>
+                            <Border Grid.Column="2" Background="{StaticResource SurfaceAltBrush}" CornerRadius="8" Padding="12" Margin="5,0,0,0">
+                                <StackPanel><TextBlock Text="STATUS" Style="{StaticResource LabelTextStyle}" Margin="0"/><TextBlock Text="{Binding Status}" Style="{StaticResource PackStatusStyle}" Margin="0,5,0,0"/></StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <TextBlock Text="COMPATIBILITY" Style="{StaticResource LabelTextStyle}"/>
+                        <TextBlock Text="{Binding Compatibility}" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4,0,14"/>
+                        <TextBlock Text="PROVENANCE" Style="{StaticResource LabelTextStyle}"/>
+                        <TextBlock Text="{Binding Signature}" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4,0,3"/>
+                        <TextBlock Text="{Binding Fingerprint, StringFormat=Content fingerprint: {0}}" FontFamily="Cascadia Mono, Consolas" FontSize="11"
+                                   Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,14"/>
+                        <TextBlock Text="VALIDATION" Style="{StaticResource LabelTextStyle}"/>
+                        <TextBlock Text="{Binding Findings}" TextWrapping="Wrap" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4,0,18"/>
+
+                        <StackPanel Orientation="Horizontal" DataContext="{Binding DataContext, ElementName=Root}">
+                            <Button Content="{Binding SelectedPack.EnableButtonText}" Command="{Binding ToggleEnabledCommand}" Margin="0,0,8,0"/>
+                            <Button Content="Export pack…" Command="{Binding ExportCommand}" Margin="0,0,8,0"
+                                    ToolTip="Create one portable .gtsprofilepack archive for sharing or version control releases."/>
+                            <Button Content="Remove" Command="{Binding RemoveCommand}"
+                                    ToolTip="Remove the selected community pack. The bundled verified pack cannot be removed."/>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="2" Background="{StaticResource SurfaceAltBrush}" CornerRadius="7" Padding="12,8" Margin="0,12,0,0">
+            <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap"/>
+        </Border>
+    </Grid>
+</UserControl>

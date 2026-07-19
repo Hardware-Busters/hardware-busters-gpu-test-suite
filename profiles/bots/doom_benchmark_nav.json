@@ -1,0 +1,159 @@
+{
+    "id":  "doom_benchmark_nav",
+    "loop":  false,
+    "inputDevice":  "Keyboard",
+    "actions":  [
+                    {
+                        "type":  "WaitForText",
+                        "text":  "PRESS",
+                        "textAlternatives":  [
+                                                 "CAMPAIGN"
+                                             ],
+                        "durationMs":  60000,
+                        "pollMs":  2500
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  1200
+                    },
+                    {
+                        "type":  "TapIfText",
+                        "text":  "PRESS",
+                        "key":  "Space",
+                        "durationMs":  120
+                    },
+                    {
+                        "type":  "WaitForText",
+                        "text":  "CAMPAIGN",
+                        "durationMs":  30000,
+                        "pollMs":  2000,
+                        "required":  true
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "Down",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  380
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "Down",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  380
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "Down",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  380
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "Enter",
+                        "durationMs":  120
+                    },
+                    {
+                        "type":  "WaitForText",
+                        "text":  "Weapon Skins",
+                        "durationMs":  12000,
+                        "pollMs":  1200,
+                        "required":  true
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "Down",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  300
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "Down",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  300
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "Down",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  300
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "Down",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  300
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "Down",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  300
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "Down",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  300
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "Down",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  400
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "Enter",
+                        "durationMs":  120
+                    },
+                    {
+                        "type":  "WaitForText",
+                        "text":  "Hebeth",
+                        "durationMs":  12000,
+                        "pollMs":  1200,
+                        "required":  true
+                    },
+                    {
+                        "type":  "MarkStart"
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "Enter",
+                        "durationMs":  120
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  2000
+                    }
+                ]
+}

@@ -1,0 +1,152 @@
+<Window x:Class="GpuSuite.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:GpuSuite.App.ViewModels"
+        xmlns:views="clr-namespace:GpuSuite.App.Views"
+        mc:Ignorable="d"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        Title="Hardware Busters GPU Test Suite"
+        Width="1400" Height="880" MinWidth="940" MinHeight="600"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource AppBackgroundBrush}"
+        Foreground="{StaticResource TextPrimaryBrush}"
+        FontFamily="Segoe UI" FontSize="13"
+        d:DataContext="{d:DesignInstance vm:MainViewModel}">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="44" ResizeBorderThickness="6" GlassFrameThickness="0"
+                      CornerRadius="0" UseAeroCaptionButtons="False"/>
+    </WindowChrome.WindowChrome>
+
+    <Window.Resources>
+        <!-- VM-first: the content host picks the matching view by the current view model's type. -->
+        <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
+            <views:DashboardView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:GameListViewModel}">
+            <views:GameListView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:CatalogViewModel}">
+            <views:CatalogView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:RunViewModel}">
+            <views:RunView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:CoolerViewModel}">
+            <views:CoolerView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ResultsViewModel}">
+            <views:ResultsView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
+            <views:SettingsView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:BotDiagnosticsViewModel}">
+            <views:BotDiagnosticsView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ProfilePacksViewModel}">
+            <views:ProfilePacksView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:AuthorStudioViewModel}">
+            <views:AuthorStudioView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:HelpViewModel}">
+            <views:HelpView/>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="44"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ===== Title bar ===== -->
+        <Grid Grid.Row="0" Background="{StaticResource TitleBarBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
+                <Border Width="10" Height="10" CornerRadius="2" Background="{StaticResource AccentBrush}" Margin="0,0,10,0"/>
+                <TextBlock Text="GPU Test Suite" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                <TextBlock Text=" — Hardware Busters" Foreground="{StaticResource TextSecondaryBrush}"
+                           FontWeight="SemiBold" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding Version}" Foreground="{StaticResource TextSecondaryBrush}"
+                           VerticalAlignment="Center" Margin="10,0,0,0" FontSize="12"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal" WindowChrome.IsHitTestVisibleInChrome="True">
+                <Button Content="Disclaimer" Command="{Binding ShowDisclaimerCommand}"
+                        Height="30" Margin="0,7,8,7" Padding="12,3" FontSize="12"
+                        ToolTip="Review the complete software, safety, privacy, warranty, and liability disclaimer."/>
+                <Button Content="{Binding FeedbackButtonText}" Command="{Binding ReportFeedbackCommand}"
+                        Height="30" Margin="0,7,8,7" Padding="12,3" FontSize="12"
+                        ToolTip="Open the public issue form. Describe the finding without including secrets or private data."/>
+                <Button Style="{StaticResource WindowButtonStyle}" Command="{Binding ShowContextHelpCommand}"
+                        Content="?" FontFamily="Segoe UI" FontWeight="Bold" ToolTip="Help for the current page (F1)"/>
+                <Button x:Name="MinButton" Style="{StaticResource WindowButtonStyle}" Click="OnMinimize" Content="&#xE921;"/>
+                <Button x:Name="MaxButton" Style="{StaticResource WindowButtonStyle}" Click="OnMaximizeRestore" Content="&#xE922;"/>
+                <Button x:Name="CloseButton" Style="{StaticResource WindowCloseButtonStyle}" Click="OnClose" Content="&#xE8BB;"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- ===== Body: nav rail + content host ===== -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="220"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Nav rail -->
+            <Border Grid.Column="0" Background="{StaticResource NavBackgroundBrush}"
+                    BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,1,0">
+                <DockPanel>
+                    <!-- Footer: working folder + version -->
+                    <Border DockPanel.Dock="Bottom" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0"
+                            Padding="14,12">
+                        <StackPanel>
+                            <TextBlock Text="WORKSPACE" FontSize="10" FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,4"/>
+                            <TextBlock Text="{Binding WorkingFolder}" Foreground="{StaticResource TextSecondaryBrush}"
+                                       TextTrimming="CharacterEllipsis" ToolTip="{Binding WorkingFolder}" FontSize="12"/>
+                            <Button Content="Change folder…" Command="{Binding ChangeWorkspaceCommand}"
+                                    Style="{StaticResource LinkButtonStyle}" HorizontalAlignment="Left" Margin="0,6,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Nav items -->
+                    <StackPanel DockPanel.Dock="Top" Margin="12,16,12,0">
+                        <RadioButton Style="{StaticResource NavButtonStyle}" GroupName="nav" Content="Dashboard"
+                                     IsChecked="True" Command="{Binding ShowDashboardCommand}"/>
+                        <RadioButton Style="{StaticResource NavButtonStyle}" GroupName="nav" Content="Benchmark List"
+                                     Command="{Binding ShowGamesCommand}"/>
+                        <RadioButton Style="{StaticResource NavButtonStyle}" GroupName="nav" Content="Installed Games"
+                                     Command="{Binding ShowCatalogCommand}"/>
+                        <RadioButton Style="{StaticResource NavButtonStyle}" GroupName="nav" Content="Profile Packs"
+                                     Command="{Binding ShowProfilePacksCommand}"/>
+                        <RadioButton Style="{StaticResource NavButtonStyle}" GroupName="nav" Content="Author Studio"
+                                     Command="{Binding ShowAuthorStudioCommand}"/>
+                        <RadioButton Style="{StaticResource NavButtonStyle}" GroupName="nav" Content="Run"
+                                     Command="{Binding ShowRunCommand}"/>
+                        <RadioButton Style="{StaticResource NavButtonStyle}" GroupName="nav" Content="Cooler"
+                                     Command="{Binding ShowCoolerCommand}"/>
+                        <RadioButton Style="{StaticResource NavButtonStyle}" GroupName="nav" Content="Results"
+                                     Command="{Binding ShowResultsCommand}"/>
+                        <RadioButton Style="{StaticResource NavButtonStyle}" GroupName="nav" Content="Bot diagnostics"
+                                     Command="{Binding ShowDiagnosticsCommand}"/>
+                        <RadioButton Style="{StaticResource NavButtonStyle}" GroupName="nav" Content="Settings"
+                                     Command="{Binding ShowSettingsCommand}"/>
+                        <RadioButton Style="{StaticResource NavButtonStyle}" GroupName="nav" Content="Help"
+                                     Command="{Binding ShowHelpCommand}"/>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+            <!-- Content host -->
+            <ContentControl Grid.Column="1" Content="{Binding CurrentView}"/>
+        </Grid>
+    </Grid>
+</Window>

@@ -1,0 +1,185 @@
+{
+    "id":  "acmirage_benchmark_nav",
+    "inputDevice":  "Gamepad",
+    "loop":  false,
+    "actions":  [
+                    {
+                        "type":  "Wait",
+                        "durationMs":  4000
+                    },
+                    {
+                        "type":  "WaitForText",
+                        "text":  "any key",
+                        "durationMs":  200000,
+                        "pollMs":  3000
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "A",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  700
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "A",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "WaitForText",
+                        "text":  "Quit to Desktop",
+                        "durationMs":  70000,
+                        "pollMs":  2500,
+                        "required":  true
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  900
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "Left",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  450
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "Down",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  340
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "Down",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  340
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "Down",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  340
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "Down",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  340
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "Down",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  340
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "Down",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  340
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "Down",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  340
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "Down",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  340
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "Down",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  600
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "Up",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  500
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "Up",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  800
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "A",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "WaitForText",
+                        "text":  "want to launch",
+                        "durationMs":  22000,
+                        "pollMs":  2000,
+                        "required":  true
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "A",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  15000
+                    },
+                    {
+                        "type":  "MarkStart"
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  72000
+                    },
+                    {
+                        "type":  "MarkEnd"
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  1000
+                    }
+                ]
+}

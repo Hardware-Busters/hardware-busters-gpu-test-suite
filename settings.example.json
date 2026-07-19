@@ -1,0 +1,24 @@
+{
+    "navSupervisorVisionModel":  "qwen2.5vl:7b",
+    "powerSource":  "auto",
+    "profilesDir":  "profiles",
+    "forceSyntheticFrames":  false,
+    "navSupervisor":  "vision",
+    "powerSampleHz":  50,
+    "cooldownSeconds":  3,
+    "presentMonPath":  "tools/PresentMon/PresentMon.exe",
+    "resultsRoot":  "Results",
+    "forceSyntheticPower":  false,
+    "navSupervisorEndpoint":  "http://localhost:11434",
+    "osd":  false,
+    "frameProvider":  "presentmon",
+    "forceSyntheticTelemetry":  false,
+    "repeatsPerScene":  3,
+    "telemetryIntervalMs":  100,
+    "poweneticsAutoDetect":  true,
+    "resolutions":  [
+                        "1080p",
+                        "1440p",
+                        "4K"
+                    ]
+}

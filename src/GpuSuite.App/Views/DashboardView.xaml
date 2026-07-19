@@ -1,0 +1,134 @@
+<UserControl x:Class="GpuSuite.App.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:GpuSuite.App.ViewModels"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance vm:DashboardViewModel}"
+             Background="Transparent">
+
+    <Grid Margin="28,24,28,24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,18">
+            <StackPanel>
+                <TextBlock Text="Dashboard" Style="{StaticResource H1TextStyle}"/>
+                <TextBlock Text="Pre-flight hardware probe — the device under test and live measurement sources."
+                           Style="{StaticResource CaptionTextStyle}" Margin="0,4,0,0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+                <TextBlock Text="Probing…" Foreground="{StaticResource AccentBrush}" VerticalAlignment="Center"
+                           Margin="0,0,12,0" Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"/>
+                <Button Content="Refresh probe" Style="{StaticResource PrimaryButtonStyle}" Command="{Binding RefreshCommand}"/>
+            </StackPanel>
+        </Grid>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="0,0,8,0">
+            <StackPanel>
+
+                <!-- Error -->
+                <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16"
+                        Visibility="{Binding Error, Converter={StaticResource NullToVis}}"
+                        BorderBrush="{StaticResource StatusInvalidBrush}">
+                    <StackPanel>
+                        <TextBlock Text="PROBE ERROR" Style="{StaticResource LabelTextStyle}"
+                                   Foreground="{StaticResource StatusInvalidBrush}"/>
+                        <TextBlock Text="{Binding Error}" TextWrapping="Wrap" Foreground="{StaticResource TextSecondaryBrush}"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Device under test -->
+                <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock Text="DEVICE UNDER TEST" Style="{StaticResource LabelTextStyle}"/>
+                        <TextBlock Text="{Binding GpuName, FallbackValue=—}" FontSize="20" FontWeight="SemiBold" Margin="0,2,0,2"/>
+                        <Grid Margin="0,8,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="CPU" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBlock Text="{Binding CpuName, FallbackValue=—}" Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="GPU PIN (preferredGpu)" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBlock Text="{Binding PreferredGpu}" Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Measurement sources -->
+                <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock Text="MEASUREMENT SOURCES" Style="{StaticResource LabelTextStyle}"/>
+                        <ItemsControl ItemsSource="{Binding ProbeLines}" Margin="0,2,0,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" Style="{StaticResource MonoTextStyle}"
+                                               Foreground="{StaticResource TextSecondaryBrush}" Margin="0,3"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBlock Text="No probe run yet." Style="{StaticResource CaptionTextStyle}"
+                                   Visibility="{Binding HasResult, Converter={StaticResource InverseBoolToVis}}"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Power &amp; overlay settings -->
+                <Border Style="{StaticResource CardBorderStyle}">
+                    <StackPanel>
+                        <TextBlock Text="POWER &amp; OVERLAY (from settings.json)" Style="{StaticResource LabelTextStyle}"/>
+                        <Grid Margin="0,2,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,6">
+                                <TextBlock Text="POWER SOURCE" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBlock Text="{Binding PowerSource}" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{Binding PowerProvenanceStatus}" Foreground="{StaticResource TextMutedBrush}" FontSize="11" TextWrapping="Wrap"/>
+                                <TextBlock Text="{Binding PowerProvenanceExplanation}" Foreground="{StaticResource TextMutedBrush}" FontSize="10" TextWrapping="Wrap"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,6">
+                                <TextBlock Text="FRAME PROVIDER" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBlock Text="{Binding FrameProvider}" Foreground="{StaticResource TextSecondaryBrush}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,6">
+                                <TextBlock Text="POWENETICS PORT" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBlock Text="{Binding PoweneticsPort}" Foreground="{StaticResource TextSecondaryBrush}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,6">
+                                <TextBlock Text="OSD" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBlock Foreground="{StaticResource TextSecondaryBrush}">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                            <Setter Property="Text" Value="On"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding OsdEnabled}" Value="False">
+                                                    <Setter Property="Text" Value="Off"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

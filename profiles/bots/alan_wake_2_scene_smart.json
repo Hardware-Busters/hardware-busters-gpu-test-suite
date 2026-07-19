@@ -1,0 +1,544 @@
+{
+    "id":  "alan_wake_2_scene_smart",
+    "inputDevice":  "Keyboard",
+    "loop":  false,
+    "graph":  {
+                  "timeoutSeconds":  360,
+                  "pollMs":  3000,
+                  "lostMs":  5000,
+                  "recoverKey":  "Enter",
+                  "maxRecoveries":  40,
+                  "screens":  [
+                                  {
+                                      "id":  "MAIN_MENU",
+                                      "anyOf":  [
+                                                    "EXIT GAME",
+                                                    "NEW GAME"
+                                                ],
+                                      "do":  [
+
+                                             ],
+                                      "goal":  true
+                                  },
+                                  {
+                                      "id":  "DISCLAIMER",
+                                      "anyOf":  [
+                                                    "SAVING",
+                                                    "do not turn off"
+                                                ],
+                                      "noneOf":  [
+                                                     "EXIT GAME"
+                                                 ],
+                                      "do":  [
+
+                                             ]
+                                  },
+                                  {
+                                      "id":  "TITLE",
+                                      "anyOf":  [
+                                                    "PRESS"
+                                                ],
+                                      "noneOf":  [
+                                                     "EXIT GAME",
+                                                     "SAVING"
+                                                 ],
+                                      "do":  [
+                                                 {
+                                                     "key":  "Enter",
+                                                     "holdMs":  120,
+                                                     "gapMs":  1500
+                                                 }
+                                             ]
+                                  },
+                                  {
+                                      "id":  "PHOTOSENS",
+                                      "anyOf":  [
+                                                    "PHOTOSENSITIVITY",
+                                                    "epileptic",
+                                                    "flashing images"
+                                                ],
+                                      "noneOf":  [
+                                                     "EXIT GAME",
+                                                     "NEW GAME"
+                                                 ],
+                                      "do":  [
+                                                 {
+                                                     "key":  "Enter",
+                                                     "holdMs":  120,
+                                                     "gapMs":  1500
+                                                 }
+                                             ]
+                                  }
+                              ]
+              },
+    "visionGoal":  "Navigate Alan Wake II\u0027s cold-launch screens to its MAIN MENU and then STOP. The MAIN MENU is a VERTICAL LIST of several short options STACKED on the LEFT side of the screen (the options are CONTINUE, NEW GAME, SETTINGS, EXTRAS and QUIT, drawn as low-contrast light-gray text over a dark, moody background β€” you may only be able to clearly read ONE or TWO of them, and that is fine; recognize it by the LAYOUT: a column of several stacked text options on the left). Choose ONE action: answer DONE the moment you see that vertical stack of TWO OR MORE menu options on the left β€” and do NOT press anything, the rest of the run is fully automated from the menu. Answer CONFIRM ONLY to advance a SINGLE press-to-start prompt that is NOT a list β€” e.g. a title/attract screen showing \u0027PRESS ANY BUTTON\u0027 or \u0027ENTER CONTINUE\u0027 centered on screen. Answer WAIT for: a studio/publisher logo; a loading spinner or progress bar; a \u0027GAME SAVING - do not turn off\u0027 screen; OR a cinematic story/chapter card that shows a PARAGRAPH of narrative prose with a small \u0027Next\u0027 prompt (a paragraph of story text means a game has ALREADY STARTED β€” NEVER CONFIRM it, only WAIT). CRITICAL RULES: (1) NEVER answer CONFIRM while a vertical LIST of menu options is visible β€” that would start the game; answer DONE instead. (2) A single highlighted CONTINUE button by itself, or any screen with a paragraph of prose text, is NOT the main menu β€” only a column of several stacked options is. (3) If you are unsure between CONFIRM and DONE and you can see more than one stacked option on the left, ALWAYS choose DONE.",
+    "visionTimeoutSeconds":  360,
+    "actions":  [
+                    {
+                        "type":  "PressUntilText",
+                        "key":  "Enter",
+                        "text":  "EXIT GAME",
+                        "pollMs":  4000,
+                        "durationMs":  300000,
+                        "required":  true
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  800
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "Up",
+                        "durationMs":  120
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  250
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "Up",
+                        "durationMs":  120
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  250
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "Up",
+                        "durationMs":  120
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  400
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "Enter",
+                        "durationMs":  120
+                    },
+                    {
+                        "type":  "WaitForText",
+                        "text":  "CONTINUE",
+                        "durationMs":  150000,
+                        "pollMs":  2500,
+                        "required":  true
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "Enter",
+                        "durationMs":  120
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  2000
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "Space",
+                        "durationMs":  120
+                    },
+                    {
+                        "type":  "WaitForText",
+                        "text":  "CONTINUE",
+                        "durationMs":  25000,
+                        "pollMs":  1500,
+                        "waitForAbsent":  true,
+                        "required":  true,
+                        "minConsecutive":  2
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  3000
+                    },
+                    {
+                        "type":  "MouseMove",
+                        "dx":  60,
+                        "dy":  0
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  25
+                    },
+                    {
+                        "type":  "MouseMove",
+                        "dx":  60,
+                        "dy":  0
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  25
+                    },
+                    {
+                        "type":  "MouseMove",
+                        "dx":  60,
+                        "dy":  0
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  25
+                    },
+                    {
+                        "type":  "MouseMove",
+                        "dx":  60,
+                        "dy":  0
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  25
+                    },
+                    {
+                        "type":  "MouseMove",
+                        "dx":  60,
+                        "dy":  0
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  25
+                    },
+                    {
+                        "type":  "MouseMove",
+                        "dx":  60,
+                        "dy":  0
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  25
+                    },
+                    {
+                        "type":  "MouseMove",
+                        "dx":  60,
+                        "dy":  0
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  25
+                    },
+                    {
+                        "type":  "MouseMove",
+                        "dx":  60,
+                        "dy":  0
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  25
+                    },
+                    {
+                        "type":  "MouseMove",
+                        "dx":  60,
+                        "dy":  0
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  25
+                    },
+                    {
+                        "type":  "MouseMove",
+                        "dx":  60,
+                        "dy":  0
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  25
+                    },
+                    {
+                        "type":  "MouseMove",
+                        "dx":  60,
+                        "dy":  0
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  25
+                    },
+                    {
+                        "type":  "MouseMove",
+                        "dx":  60,
+                        "dy":  0
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  25
+                    },
+                    {
+                        "type":  "MouseMove",
+                        "dx":  60,
+                        "dy":  0
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  25
+                    },
+                    {
+                        "type":  "MouseMove",
+                        "dx":  60,
+                        "dy":  0
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  25
+                    },
+                    {
+                        "type":  "MouseMove",
+                        "dx":  60,
+                        "dy":  0
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  25
+                    },
+                    {
+                        "type":  "MouseMove",
+                        "dx":  60,
+                        "dy":  0
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  25
+                    },
+                    {
+                        "type":  "MouseMove",
+                        "dx":  60,
+                        "dy":  0
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  25
+                    },
+                    {
+                        "type":  "MouseMove",
+                        "dx":  60,
+                        "dy":  0
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  25
+                    },
+                    {
+                        "type":  "MouseMove",
+                        "dx":  60,
+                        "dy":  0
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  25
+                    },
+                    {
+                        "type":  "MouseMove",
+                        "dx":  60,
+                        "dy":  0
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  25
+                    },
+                    {
+                        "type":  "MouseMove",
+                        "dx":  60,
+                        "dy":  0
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  25
+                    },
+                    {
+                        "type":  "MouseMove",
+                        "dx":  60,
+                        "dy":  0
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  25
+                    },
+                    {
+                        "type":  "MouseMove",
+                        "dx":  60,
+                        "dy":  0
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  25
+                    },
+                    {
+                        "type":  "MouseMove",
+                        "dx":  60,
+                        "dy":  0
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  25
+                    },
+                    {
+                        "type":  "MouseMove",
+                        "dx":  60,
+                        "dy":  0
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  600
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "W",
+                        "durationMs":  140
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "W",
+                        "durationMs":  140
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "W",
+                        "durationMs":  140
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "W",
+                        "durationMs":  140
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "W",
+                        "durationMs":  140
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "W",
+                        "durationMs":  140
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "W",
+                        "durationMs":  140
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "W",
+                        "durationMs":  140
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "W",
+                        "durationMs":  140
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "W",
+                        "durationMs":  140
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "W",
+                        "durationMs":  140
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "W",
+                        "durationMs":  140
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "W",
+                        "durationMs":  140
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  110
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "W",
+                        "durationMs":  140
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  800
+                    },
+                    {
+                        "type":  "KeyTap",
+                        "key":  "A",
+                        "durationMs":  1400
+                    },
+                    {
+                        "durationMs":  500,
+                        "type":  "Wait"
+                    },
+                    {
+                        "type":  "Gx10Traverse",
+                        "durationMs":  30000,
+                        "stuckThreshold":  0.03,
+                        "stuckTriggerCount":  1,
+                        "maxRecoveryTurns":  10,
+                        "minHealthyMotionRatio":  0.25,
+                        "goal":  "Keep Alan moving through the rainy outdoor area into open traversable space. Follow clear paths, steer around the dumpster, fences, walls, and clutter, and do not repeatedly push into an obstacle."
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  2000
+                    },
+                    {
+                        "type":  "MarkStart"
+                    },
+                    {
+                        "type":  "Gx10Traverse",
+                        "durationMs":  35000,
+                        "stuckThreshold":  0.03,
+                        "stuckTriggerCount":  1,
+                        "maxRecoveryTurns":  10,
+                        "minHealthyMotionRatio":  0.25,
+                        "goal":  "Keep Alan moving through the rainy outdoor area into open traversable space. Follow clear paths, steer around the dumpster, fences, walls, and clutter, and do not repeatedly push into an obstacle."
+                    },
+                    {
+                        "type":  "MarkEnd"
+                    }
+                ]
+}

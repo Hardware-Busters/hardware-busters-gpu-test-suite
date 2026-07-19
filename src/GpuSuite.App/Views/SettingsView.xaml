@@ -1,0 +1,325 @@
+<UserControl x:Class="GpuSuite.App.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:GpuSuite.App.ViewModels"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance vm:SettingsViewModel}"
+             Background="Transparent">
+
+    <Grid Margin="28,24,28,24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,16">
+            <StackPanel>
+                <TextBlock Text="Settings" Style="{StaticResource H1TextStyle}"/>
+                <TextBlock Text="{Binding SettingsPath, StringFormat=settings.json · {0}}" Style="{StaticResource CaptionTextStyle}" Margin="0,4,0,0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+                <TextBlock Text="{Binding SaveStatus}" Foreground="{StaticResource StatusReadyBrush}" VerticalAlignment="Center" Margin="0,0,12,0" FontSize="12"/>
+                <Button Content="Reload" Command="{Binding ReloadCommand}" Margin="0,0,8,0"/>
+                <Button Content="Save" Style="{StaticResource PrimaryButtonStyle}" Command="{Binding SaveCommand}"/>
+            </StackPanel>
+        </Grid>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="0,0,8,0">
+            <StackPanel>
+
+                <!-- General -->
+                <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock Text="GENERAL" Style="{StaticResource LabelTextStyle}"/>
+                        <Grid Margin="0,2,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,6,12,0">
+                                <TextBlock Text="RESOLUTIONS (comma-separated)" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBox Text="{Binding ResolutionsCsv, UpdateSourceTrigger=LostFocus}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="0,6,12,0">
+                                <TextBlock Text="REPEATS / SCENE (min 3)" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBox Text="{Binding RepeatsPerScene, UpdateSourceTrigger=LostFocus}"
+                                         ToolTip="Runs per game × resolution. Baseline for every game (a game can request more in its detail page); the minimum is 3."/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" Margin="0,6,0,0">
+                                <TextBlock Text="COOLDOWN (s)" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBox Text="{Binding Config.CooldownSeconds, UpdateSourceTrigger=LostFocus}"/>
+                            </StackPanel>
+                        </Grid>
+                        <StackPanel Margin="0,10,0,0">
+                            <TextBlock Text="PREFERRED GPU (substring pin; empty = auto highest-load)" Style="{StaticResource LabelTextStyle}"/>
+                            <TextBox Text="{Binding Config.PreferredGpu, UpdateSourceTrigger=LostFocus, TargetNullValue=''}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Power -->
+                <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock Text="POWER" Style="{StaticResource LabelTextStyle}"/>
+                        <Grid Margin="0,2,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,6,12,0">
+                                <TextBlock Text="POWER SOURCE" Style="{StaticResource LabelTextStyle}"/>
+                                <ComboBox ItemsSource="{Binding PowerSourceOptions}" SelectedItem="{Binding Config.PowerSource, Mode=TwoWay}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="0,6,0,0">
+                                <TextBlock Text="POWENETICS COM PORT (empty = none)" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBox Text="{Binding Config.PoweneticsComPort, UpdateSourceTrigger=LostFocus, TargetNullValue=''}"/>
+                            </StackPanel>
+                        </Grid>
+                        <CheckBox Style="{StaticResource ToggleSwitchStyle}" Margin="0,12,0,0" Content="Auto-detect Powenetics (scan all COM ports)"
+                                  IsChecked="{Binding Config.PoweneticsAutoDetect, Mode=TwoWay}"/>
+                        <TextBlock Text="Keep OFF on a shared bench — probing writes init bytes to every serial port. Set the exact COM port instead."
+                                   Style="{StaticResource CaptionTextStyle}" Foreground="{StaticResource StatusNotInstalledBrush}" Margin="50,4,0,0" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Frames &amp; OSD -->
+                <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock Text="FRAMES &amp; OVERLAY" Style="{StaticResource LabelTextStyle}"/>
+                        <Grid Margin="0,2,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,6,12,0">
+                                <TextBlock Text="FRAME PROVIDER" Style="{StaticResource LabelTextStyle}"/>
+                                <ComboBox ItemsSource="{Binding FrameProviderOptions}" SelectedItem="{Binding Config.FrameProvider, Mode=TwoWay}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="0,6,0,0">
+                                <TextBlock Text="OSD REFRESH (ms)" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBox Text="{Binding Config.OsdIntervalMs, UpdateSourceTrigger=LostFocus}"/>
+                            </StackPanel>
+                        </Grid>
+                        <CheckBox Style="{StaticResource ToggleSwitchStyle}" Margin="0,12,0,0" Content="Live OSD during runs (RTSS)"
+                                  IsChecked="{Binding Config.Osd, Mode=TwoWay}"/>
+                        <CheckBox Style="{StaticResource ToggleSwitchStyle}" Margin="0,10,0,0" Content="Full debug run log"
+                                  IsChecked="{Binding Config.DebugFullRunLog, Mode=TwoWay}"
+                                  ToolTip="Saves trace-level launch, bot, vision, capture and validation detail under Results\Logs for each benchmark sweep."/>
+                        <TextBlock Text="Enabled by default for reviewer and beta builds. Every launch transition, bot action, vision probe, and validation decision is saved under Results\Logs for problem reports. Disable it only when a concise log is specifically required."
+                                   Style="{StaticResource CaptionTextStyle}" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                        <StackPanel Margin="0,12,0,0">
+                            <TextBlock Text="RTSS.EXE PATH (optional)" Style="{StaticResource LabelTextStyle}"/>
+                            <TextBox Text="{Binding Config.RtssExePath, UpdateSourceTrigger=LostFocus, TargetNullValue=''}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Vision compute (menu-nav AI model) -->
+                <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock Text="VISION COMPUTE (menu-nav AI model)" Style="{StaticResource LabelTextStyle}"/>
+                        <TextBlock Text="Where the vision model that reads game menus runs. It is unloaded before each measured benchmark window, so it never competes with the run."
+                                   Style="{StaticResource CaptionTextStyle}" Margin="0,2,0,8" TextWrapping="Wrap"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                            <RadioButton GroupName="VisionCompute" Content="Local GPU" Margin="0,0,20,0"
+                                         IsChecked="{Binding IsComputeGpu, Mode=TwoWay}"/>
+                            <RadioButton GroupName="VisionCompute" Content="Custom AI (local Ollama)" Margin="0,0,20,0"
+                                         IsChecked="{Binding IsComputeGx10, Mode=TwoWay}"
+                                         IsEnabled="{Binding Gx10Available}"
+                                         ToolTip="Selectable only when the configured Custom AI server responds to a probe."/>
+                            <RadioButton GroupName="VisionCompute" Content="OpenAI API" Margin="0,0,20,0"
+                                         IsChecked="{Binding IsComputeOpenAi, Mode=TwoWay}"/>
+                            <RadioButton GroupName="VisionCompute" Content="Anthropic API" Margin="0,0,20,0"
+                                         IsChecked="{Binding IsComputeAnthropic, Mode=TwoWay}"/>
+                            <RadioButton GroupName="VisionCompute" Content="Custom local Ollama" Margin="0,0,20,0"
+                                         IsChecked="{Binding IsComputeCustom, Mode=TwoWay}"/>
+                            <RadioButton GroupName="VisionCompute" Content="Auto (Custom AI/API/local)"
+                                         IsChecked="{Binding IsComputeAuto, Mode=TwoWay}"/>
+                        </StackPanel>
+
+                        <TextBlock Text="{Binding EffectiveComputeText}" Foreground="{StaticResource StatusReadyBrush}"
+                                   FontWeight="SemiBold" Margin="0,10,0,0" TextWrapping="Wrap"/>
+
+                        <Grid Margin="0,14,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                                <TextBlock Text="CUSTOM AI ENDPOINT (LOCAL OLLAMA)" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBox Text="{Binding Config.Gx10Endpoint, UpdateSourceTrigger=LostFocus, TargetNullValue=''}"/>
+                            </StackPanel>
+                            <Button Grid.Column="1" Content="Check Custom AI" VerticalAlignment="Bottom"
+                                    Command="{Binding CheckGx10Command}"/>
+                        </Grid>
+
+                        <TextBlock Text="{Binding Gx10StatusText}" Style="{StaticResource CaptionTextStyle}"
+                                   Margin="0,8,0,0" TextWrapping="Wrap"/>
+                        <TextBlock Text="The Custom AI option stays greyed out until the server responds. If it is offline, the local GPU handles the vision model automatically."
+                                   Style="{StaticResource CaptionTextStyle}" Foreground="{StaticResource StatusNotInstalledBrush}"
+                                   Margin="0,4,0,0" TextWrapping="Wrap"/>
+                        <Grid Margin="0,12,0,0">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                                <TextBlock Text="OPENAI VISION MODEL" Style="{StaticResource LabelTextStyle}"/>
+                                <ComboBox ItemsSource="{Binding OpenAiModelOptions}" IsEditable="True"
+                                          Text="{Binding Config.OpenAiVisionModel, UpdateSourceTrigger=LostFocus}"/>
+                                <TextBlock Text="REASONING EFFORT" Style="{StaticResource LabelTextStyle}" Margin="0,8,0,0"/>
+                                <ComboBox ItemsSource="{Binding EffortOptions}" SelectedItem="{Binding Config.OpenAiVisionEffort, Mode=TwoWay}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="ANTHROPIC VISION MODEL" Style="{StaticResource LabelTextStyle}"/>
+                                <ComboBox ItemsSource="{Binding AnthropicModelOptions}" IsEditable="True"
+                                          Text="{Binding Config.AnthropicVisionModel, UpdateSourceTrigger=LostFocus}"/>
+                                <TextBlock Text="THINKING EFFORT" Style="{StaticResource LabelTextStyle}" Margin="0,8,0,0"/>
+                                <ComboBox ItemsSource="{Binding EffortOptions}" SelectedItem="{Binding Config.AnthropicVisionEffort, Mode=TwoWay}"/>
+                            </StackPanel>
+                        </Grid>
+                        <Grid Margin="0,12,0,0">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                                <TextBlock Text="OPENAI API KEY" Style="{StaticResource LabelTextStyle}"/>
+                                <DockPanel Margin="0,2,0,0">
+                                    <Button DockPanel.Dock="Right" Content="Save key" Margin="8,0,0,0" Click="SaveOpenAiKey_Click"/>
+                                    <PasswordBox x:Name="OpenAiKeyBox" ToolTip="Stored in Windows Credential Manager, not settings.json."/>
+                                </DockPanel>
+                                <Button Content="Remove saved key" Command="{Binding RemoveOpenAiKeyCommand}" HorizontalAlignment="Left" Margin="0,6,0,0"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="ANTHROPIC API KEY" Style="{StaticResource LabelTextStyle}"/>
+                                <DockPanel Margin="0,2,0,0">
+                                    <Button DockPanel.Dock="Right" Content="Save key" Margin="8,0,0,0" Click="SaveAnthropicKey_Click"/>
+                                    <PasswordBox x:Name="AnthropicKeyBox" ToolTip="Stored in Windows Credential Manager, not settings.json."/>
+                                </DockPanel>
+                                <Button Content="Remove saved key" Command="{Binding RemoveAnthropicKeyCommand}" HorizontalAlignment="Left" Margin="0,6,0,0"/>
+                            </StackPanel>
+                        </Grid>
+                        <Grid Margin="0,12,0,0">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                                <TextBlock Text="CUSTOM LOCAL OLLAMA ENDPOINT" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBox Text="{Binding Config.CustomVisionEndpoint, UpdateSourceTrigger=LostFocus}" ToolTip="For another local AI or any reachable Ollama server, e.g. http://localhost:11434"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="CUSTOM LOCAL VISION MODEL" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBox Text="{Binding Config.CustomVisionModel, UpdateSourceTrigger=LostFocus}" ToolTip="The vision-capable model installed on that Ollama server."/>
+                            </StackPanel>
+                        </Grid>
+                        <TextBlock Text="{Binding CloudKeyStatus}" Style="{StaticResource CaptionTextStyle}" Margin="0,8,0,0" TextWrapping="Wrap"/>
+                        <TextBlock Text="Save cloud keys here to Windows Credential Manager, choose the model and effort, then select the provider. For another local AI/Ollama box, enter its endpoint + vision model and choose Custom local Ollama. Captured menu frames go only to the selected cloud provider while navigating; no key or cloud AI runs during the measured window."
+                                   Style="{StaticResource CaptionTextStyle}" Foreground="{StaticResource StatusNotInstalledBrush}" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Display safety -->
+                <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock Text="DISPLAY SAFETY (Elgato refresh cap)" Style="{StaticResource LabelTextStyle}"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                            <StackPanel Width="160">
+                                <TextBlock Text="MAX REFRESH (Hz)" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBox Text="{Binding Config.MaxRefreshHz, UpdateSourceTrigger=LostFocus}"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <CheckBox Style="{StaticResource ToggleSwitchStyle}" Margin="0,12,0,0" Content="Enforce refresh cap (guard the capture card)"
+                                  IsChecked="{Binding Config.EnforceRefreshCap, Mode=TwoWay}"/>
+                        <CheckBox Style="{StaticResource ToggleSwitchStyle}" Margin="0,10,0,0" Content="Kill game on refresh-cap violation"
+                                  IsChecked="{Binding Config.KillGameOnRefreshViolation, Mode=TwoWay}"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Tools / paths -->
+                <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock Text="TOOLS &amp; PATHS" Style="{StaticResource LabelTextStyle}"/>
+                        <StackPanel Margin="0,6,0,0">
+                            <TextBlock Text="PRESENTMON PATH" Style="{StaticResource LabelTextStyle}"/>
+                            <TextBox Text="{Binding Config.PresentMonPath, UpdateSourceTrigger=LostFocus, TargetNullValue=''}"/>
+                        </StackPanel>
+                        <Grid Margin="0,12,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                                <TextBlock Text="FFMPEG PATH (empty = PATH)" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBox Text="{Binding Config.FfmpegPath, UpdateSourceTrigger=LostFocus, TargetNullValue=''}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="CAPTURE CARD DEVICE" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBox Text="{Binding Config.CaptureCardDevice, UpdateSourceTrigger=LostFocus, TargetNullValue=''}"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Advanced: validation thresholds -->
+                <Expander Style="{StaticResource SectionExpanderStyle}" Header="Validation thresholds (advanced)">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,6,12,6">
+                            <TextBlock Text="MIN CAPTURE (s)" Style="{StaticResource LabelTextStyle}"/>
+                            <TextBox Text="{Binding Validation.MinCaptureSeconds, UpdateSourceTrigger=LostFocus}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,6,12,6">
+                            <TextBlock Text="MIN FRAME COUNT" Style="{StaticResource LabelTextStyle}"/>
+                            <TextBox Text="{Binding Validation.MinFrameCount, UpdateSourceTrigger=LostFocus}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,6,0,6">
+                            <TextBlock Text="MIN AVG FPS" Style="{StaticResource LabelTextStyle}"/>
+                            <TextBox Text="{Binding Validation.MinAvgFps, UpdateSourceTrigger=LostFocus}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,6,12,6">
+                            <TextBlock Text="MAX FRAME TIME (ms)" Style="{StaticResource LabelTextStyle}"/>
+                            <TextBox Text="{Binding Validation.MaxSingleFrameTimeMs, UpdateSourceTrigger=LostFocus}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,6,12,6">
+                            <TextBlock Text="MAX CAPTURE GAP (s)" Style="{StaticResource LabelTextStyle}"/>
+                            <TextBox Text="{Binding Validation.MaxCaptureGapSeconds, UpdateSourceTrigger=LostFocus}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="1" Grid.Column="2" Margin="0,6,0,6">
+                            <TextBlock Text="MAX STUTTER (%)" Style="{StaticResource LabelTextStyle}"/>
+                            <TextBox Text="{Binding Validation.MaxStutterPct, UpdateSourceTrigger=LostFocus}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,6,12,6">
+                            <TextBlock Text="MIN POWER SAMPLES" Style="{StaticResource LabelTextStyle}"/>
+                            <TextBox Text="{Binding Validation.MinPowerSamples, UpdateSourceTrigger=LostFocus}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="2" Grid.Column="1" Margin="0,6,12,6">
+                            <TextBlock Text="MIN TELEMETRY SAMPLES" Style="{StaticResource LabelTextStyle}"/>
+                            <TextBox Text="{Binding Validation.MinTelemetrySamples, UpdateSourceTrigger=LostFocus}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="2" Grid.Column="2" Margin="0,6,0,6">
+                            <TextBlock Text="OUTLIER FPS DEV (%)" Style="{StaticResource LabelTextStyle}"/>
+                            <TextBox Text="{Binding Validation.OutlierFpsDeviationPct, UpdateSourceTrigger=LostFocus}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="3" Grid.Column="0" Margin="0,6,12,6">
+                            <TextBlock Text="MAX AUTO-REPEATS" Style="{StaticResource LabelTextStyle}"/>
+                            <TextBox Text="{Binding Validation.MaxAutoRepeats, UpdateSourceTrigger=LostFocus}"/>
+                        </StackPanel>
+                    </Grid>
+                </Expander>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

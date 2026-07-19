@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- windows10.0.19041.0 (was windows8.0): the pre-flight Xbox probe uses WinRT
+         Windows.Management.Deployment.PackageManager (package status + Store update check).
+         Both consumers (App, Cli) already target this platform version. -->
+    <TargetFramework>net9.0-windows10.0.19041.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>GpuSuite.Engine</AssemblyName>
+    <RootNamespace>GpuSuite.Engine</RootNamespace>
+    <Platforms>x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GpuSuite.Core\GpuSuite.Core.csproj" />
+    <ProjectReference Include="..\GpuSuite.Measurement\GpuSuite.Measurement.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Nefarius.ViGEm.Client" Version="1.21.256" />
+  </ItemGroup>
+
+</Project>

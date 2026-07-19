@@ -1,0 +1,26 @@
+name: DCO
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  signed-off:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+      - name: Verify DCO 1.1 sign-offs
+        shell: bash
+        run: |
+          while read -r commit; do
+            author="$(git show -s --format='%an <%ae>' "$commit")"
+            git show -s --format='%B' "$commit" | grep -Fqx "Signed-off-by: $author" || {
+              echo "Missing or mismatched DCO sign-off for $commit; expected: $author" >&2
+              exit 1
+            }
+          done < <(git rev-list "${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}")

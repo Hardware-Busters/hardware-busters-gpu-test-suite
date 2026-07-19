@@ -1,0 +1,167 @@
+{
+    "id":  "forzahorizon6_benchmark_nav",
+    "inputDevice":  "Gamepad",
+    "loop":  false,
+    "actions":  [
+                    {
+                        "type":  "Wait",
+                        "durationMs":  2000
+                    },
+                    {
+                        "type":  "WaitForText",
+                        "text":  "Start Game",
+                        "durationMs":  240000,
+                        "pollMs":  2500
+                    },
+                    {
+                        "type":  "PressUntilText",
+                        "key":  "A",
+                        "text":  "Options",
+                        "durationMs":  120000,
+                        "pollMs":  3000
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "Down",
+                        "durationMs":  120
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  450
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "A",
+                        "durationMs":  130
+                    },
+                    {
+                        "type":  "WaitForText",
+                        "text":  "Difficulty",
+                        "durationMs":  15000,
+                        "pollMs":  1200
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "Down",
+                        "durationMs":  120
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  320
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "Down",
+                        "durationMs":  120
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  320
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "Down",
+                        "durationMs":  120
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  320
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "Down",
+                        "durationMs":  120
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  320
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "Down",
+                        "durationMs":  120
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  320
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "Down",
+                        "durationMs":  120
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  320
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "Down",
+                        "durationMs":  120
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  320
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "Down",
+                        "durationMs":  120
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  450
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "A",
+                        "durationMs":  130
+                    },
+                    {
+                        "type":  "WaitForText",
+                        "text":  "Benchmark",
+                        "durationMs":  12000,
+                        "pollMs":  1200,
+                        "required":  true
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "A",
+                        "durationMs":  130
+                    },
+                    {
+                        "type":  "WaitForText",
+                        "text":  "Yes",
+                        "durationMs":  8000,
+                        "pollMs":  1000
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "Down",
+                        "durationMs":  120
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  450
+                    },
+                    {
+                        "type":  "PadButtonTap",
+                        "key":  "A",
+                        "durationMs":  130
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  18000
+                    },
+                    {
+                        "type":  "MarkStart"
+                    },
+                    {
+                        "type":  "Wait",
+                        "durationMs":  90000
+                    },
+                    {
+                        "type":  "MarkEnd"
+                    }
+                ]
+}

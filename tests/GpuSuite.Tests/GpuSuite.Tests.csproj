@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0-windows10.0.19041.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <UseWPF>true</UseWPF>
+    <Platforms>x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="System.IO" />
+    <ProjectReference Include="..\..\src\GpuSuite.Core\GpuSuite.Core.csproj" />
+    <ProjectReference Include="..\..\src\GpuSuite.Engine\GpuSuite.Engine.csproj" />
+    <ProjectReference Include="..\..\src\GpuSuite.Authoring\GpuSuite.Authoring.csproj" />
+    <ProjectReference Include="..\..\src\GpuSuite.Reporting\GpuSuite.Reporting.csproj" />
+    <ProjectReference Include="..\..\src\GpuSuite.Calibration\GpuSuite.Calibration.csproj" />
+    <ProjectReference Include="..\..\src\GpuSuite.Load\GpuSuite.Load.csproj" />
+    <ProjectReference Include="..\..\src\GpuSuite.App\GpuSuite.App.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="IntegrityTests.cs;CalibrationAndResolutionTests.cs;BrandingAndSupportTests.cs" />
+  </ItemGroup>
+</Project>
