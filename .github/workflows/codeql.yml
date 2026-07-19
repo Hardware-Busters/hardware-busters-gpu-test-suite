@@ -22,4 +22,4 @@ jobs:
           languages: csharp
           build-mode: manual
       - run: dotnet build GpuTestSuite.sln -c Release --nologo
-      - uses: github/codeql-action/analyze@0fa1882f994fbd81a47ab0804f93354f5ea40147 # v3.28.17
+      - uses: github/codeql-action/analyze@60168efe1c415ce0f5521ea06d5c2062adbeed1b # v3.28.17
