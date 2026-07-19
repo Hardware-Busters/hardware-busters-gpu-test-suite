@@ -49,9 +49,13 @@ jobs:
         run: |
           $setup = 'artifacts/installer/HardwareBustersGpuTestSuite-Setup.exe'
           if (-not (Test-Path $setup)) { throw 'Installer output is missing.' }
-          & $setup /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /DIR="$env:TEMP\HwbGpuSuiteSmoke"
-          $app = "$env:TEMP\HwbGpuSuiteSmoke\GpuSuite.App.exe"
-          if ($LASTEXITCODE -ne 0 -or -not (Test-Path $app)) { throw 'Installed executable smoke check failed.' }
+          $smokeRoot = Join-Path $env:RUNNER_TEMP 'HwbGpuSuiteSmoke'
+          if (Test-Path -LiteralPath $smokeRoot) { Remove-Item -LiteralPath $smokeRoot -Recurse -Force }
+          New-Item -ItemType Directory -Path $smokeRoot -Force | Out-Null
+          $installer = Start-Process -FilePath $setup -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', ('/DIR="{0}"' -f $smokeRoot)) -Wait -PassThru
+          if ($installer.ExitCode -ne 0) { throw "Installer smoke setup failed with exit code $($installer.ExitCode)." }
+          $app = Join-Path $smokeRoot 'GpuSuite.App.exe'
+          if (-not (Test-Path -LiteralPath $app)) { throw 'Installed executable smoke check failed: GpuSuite.App.exe is missing.' }
           $process = Start-Process $app -PassThru
           Start-Sleep -Seconds 5
           if ($process.HasExited) { throw 'Installed executable exited before launch smoke completed.' }
