@@ -37,6 +37,7 @@ jobs:
         run: |
           Copy-Item profiles release-stage\profiles -Recurse -Force
           Copy-Item settings.example.json release-stage\settings.json -Force
+          Copy-Item REQUIREMENTS.txt release-stage -Force
           Copy-Item LICENSE,NOTICE release-stage -Force
           Copy-Item LICENSES release-stage\LICENSES -Recurse -Force
           Copy-Item audit\THIRD-PARTY-NOTICES.md release-stage -Force

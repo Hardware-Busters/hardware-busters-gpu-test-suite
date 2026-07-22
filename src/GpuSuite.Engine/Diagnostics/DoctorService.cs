@@ -232,15 +232,12 @@ public sealed class DoctorService
             var devices = await grabber.ListVideoDevicesAsync();
             if (devices.Count == 0)
                 return new("Capture card (Elgato/HDMI)", DoctorStatus.Hardware, "no DirectShow video devices found — is the capture card connected?");
-            string configured = _cfg.CaptureCardDevice;
-            bool match = !string.IsNullOrWhiteSpace(configured) &&
-                         devices.Any(d => d.Contains(configured, StringComparison.OrdinalIgnoreCase));
-            if (match)
-                return new("Capture card (Elgato/HDMI)", DoctorStatus.Ok, $"configured device present: \"{configured}\".");
+            var qualification = CaptureCardSupportPolicy.Evaluate(_cfg.CaptureCardDevice, devices);
+            if (qualification.IsQualified)
+                return new("Capture card (Elgato/HDMI)", DoctorStatus.Ok, qualification.Detail);
             return new("Capture card (Elgato/HDMI)", DoctorStatus.Hardware,
-                $"{devices.Count} device(s) seen ({string.Join("; ", devices)}) but settings.captureCardDevice " +
-                (string.IsNullOrWhiteSpace(configured) ? "is not set." : $"\"{configured}\" did not match."),
-                FixHint: "Set settings.captureCardDevice to one of the listed names (see: gpusuite grab --list). Vision-nav + grabs need it.");
+                qualification.Detail,
+                FixHint: $"Set settings.captureCardDevice to exactly \"{CaptureCardSupportPolicy.QualifiedDeviceName}\" and confirm it appears in `gpusuite grab --list`. Other cards remain available for diagnostics but are not qualified for the full automated workflow.");
         }
         catch (Exception ex)
         {
