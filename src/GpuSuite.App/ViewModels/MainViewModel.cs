@@ -34,7 +34,7 @@ public partial class MainViewModel : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(ReportFeedbackCommand))]
     private bool isPreparingFeedback;
 
-    public string FeedbackButtonText => IsPreparingFeedback ? "Opening issue formβ€¦" : "Open public issue";
+    public string FeedbackButtonText => IsPreparingFeedback ? "Opening issue form…" : "Open public issue";
 
     public MainViewModel(Workspace ws, DashboardViewModel dashboard, GameListViewModel games, CatalogViewModel catalog,
         RunViewModel run, CoolerViewModel cooler, ResultsViewModel results, SettingsViewModel settings,

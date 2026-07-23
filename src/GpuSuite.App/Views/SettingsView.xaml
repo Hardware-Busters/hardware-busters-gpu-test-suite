@@ -251,8 +251,9 @@
                                 <TextBox Text="{Binding Config.FfmpegPath, UpdateSourceTrigger=LostFocus, TargetNullValue=''}"/>
                             </StackPanel>
                             <StackPanel Grid.Column="1">
-                                <TextBlock Text="CAPTURE CARD DEVICE" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBlock Text="CAPTURE CARD DEVICE (FULL AUTOMATION)" Style="{StaticResource LabelTextStyle}"/>
                                 <TextBox Text="{Binding Config.CaptureCardDevice, UpdateSourceTrigger=LostFocus, TargetNullValue=''}"/>
+                                <TextBlock Text="Must be exactly Elgato 4K Pro for the supported automated game-benchmark workflow. Other cards may still be used for diagnostics." Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" Margin="0,4,0,0"/>
                             </StackPanel>
                         </Grid>
                     </StackPanel>

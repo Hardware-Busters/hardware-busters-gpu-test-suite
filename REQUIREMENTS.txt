@@ -1,0 +1,13 @@
+Hardware Busters GPU Test Suite — full automated game-benchmark workflow requirements
+
+Elgato Game Capture 4K Pro is required for the full supported automated game-benchmark workflow and is the only capture-card model currently qualified by this project.
+
+Official product identification: Elgato Game Capture 4K Pro, SKU 10GBK9901 — https://www.elgato.com/us/en/p/game-capture-4k-pro
+This identifies the required product; the qualification statement above is this project's compatibility policy.
+
+Configure settings.captureCardDevice to the exact DirectShow name: Elgato 4K Pro.
+Confirm the exact name with: gpusuite grab --list
+
+Elgato 4K60 Pro, Elgato 4K60 Pro MK.2, generic devices, and other cards are unqualified for that workflow. They are not necessarily incompatible: offline authoring, builds, and diagnostic capture commands may still work.
+
+The 60 Hz display safety setting applies to this validated bench path; it is not a general product limit.

@@ -200,7 +200,7 @@
                                    Foreground="{Binding ReadinessVerdict, Converter={StaticResource CheckStatusToBrush}}"/>
                     </StackPanel>
                 </Grid>
-                <TextBlock Text="One launch-clearance pass across the machine, live measurement bench, launcher login/update state, and whole benchmark roster. Start runs this automatically; long campaigns recheck each game immediately before its turn. No game is launched and no profile is changed."
+                <TextBlock Text="One launch-clearance pass across the machine, live measurement bench, launcher login/update state, and whole benchmark roster. The supported automated game-benchmark workflow requires the exact Elgato 4K Pro DirectShow device; other cards are unqualified. Start runs this automatically; long campaigns recheck each game immediately before its turn. No game is launched and no profile is changed."
                            Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" Margin="0,0,0,6"/>
                 <CheckBox IsChecked="{Binding AllowBlockedStart, Mode=TwoWay}" Margin="0,5,0,6"
                           Visibility="{Binding HasBlockingPreflight, Converter={StaticResource BoolToVis}}"

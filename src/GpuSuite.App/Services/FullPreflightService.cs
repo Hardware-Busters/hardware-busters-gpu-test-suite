@@ -114,7 +114,7 @@ public sealed class FullPreflightService
         return new FullPreflightResult { Games = games, Groups = [machine, bench] };
     }, ct);
 
-    private static GameCheck MapDoctorCheck(DoctorCheck check)
+    internal static GameCheck MapDoctorCheck(DoctorCheck check)
     {
         var status = check.Status switch
         {

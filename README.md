@@ -32,6 +32,8 @@ dotnet test tests/GpuSuite.Tests/GpuSuite.Tests.csproj -c Release -p:Platform=x6
 
 Copy `settings.example.json` to `settings.json` and configure only your own local tools and hardware. Do not commit it.
 
+**Elgato Game Capture 4K Pro is required for the full supported automated game-benchmark workflow and is the only capture-card model currently qualified by this project.** Set `captureCardDevice` to the exact DirectShow name `Elgato 4K Pro`. Elgato 4K60 Pro/MK.2 and other cards are unqualified for that workflow, although offline authoring, builds, and diagnostics may still work. See [REQUIREMENTS.txt](REQUIREMENTS.txt); the 60 Hz safety setting is this validated bench path, not a general product limit.
+
 ## PresentMon
 
 PresentMon is not distributed in this repository. Follow [tools/PresentMon/README.md](tools/PresentMon/README.md) to obtain a verified upstream release and place it locally. Its license and attribution are recorded in [NOTICE](NOTICE).
