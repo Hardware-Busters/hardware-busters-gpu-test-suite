@@ -47,9 +47,45 @@ public sealed class CaptureCardSupportPolicyTests
     [Fact]
     public void FullPreflightMapsCaptureCardHardwareFindingToBlocker()
     {
-        var check = new DoctorCheck("Capture card (Elgato/HDMI)", DoctorStatus.Hardware, "unqualified");
+        var check = new DoctorCheck("Capture-card model (full automation)", DoctorStatus.Hardware, "unqualified");
         var mapped = FullPreflightService.MapDoctorCheck(check);
 
         Assert.Equal(CheckStatus.Blocker, mapped.Status);
+    }
+
+    [Fact]
+    public void FullPreflightMapsFfmpegVisionAndCaptureStreamHardwareFindingsToBlockers()
+    {
+        Assert.Equal(CheckStatus.Blocker, FullPreflightService.MapDoctorCheck(
+            new DoctorCheck("FFmpeg (capture-card vision)", DoctorStatus.Warn, "missing")).Status);
+        Assert.Equal(CheckStatus.Blocker, FullPreflightService.MapDoctorCheck(
+            new DoctorCheck("Capture-card vision stream (FFmpeg)", DoctorStatus.Hardware, "no frame")).Status);
+    }
+
+    [Fact]
+    public void FullPreflightStartsWithTheFourOrderedMeasurementAndVisionChainRows()
+    {
+        IReadOnlyList<DoctorCheck> doctor =
+        [
+            new(".NET 9 desktop runtime", DoctorStatus.Ok, "present"),
+            new("Capture-card vision stream (FFmpeg)", DoctorStatus.Ok, "bounded stream probe; no image retained"),
+            new("PresentMon (FPS / frametime)", DoctorStatus.Ok, "present"),
+            new("Capture-card model (full automation)", DoctorStatus.Ok, "qualified"),
+            new("RTSS / RivaTuner (FPS / frametime fallback)", DoctorStatus.Warn, "optional"),
+            new("FFmpeg (capture-card vision)", DoctorStatus.Ok, "present")
+        ];
+
+        var rows = FullPreflightService.BuildMachineChecks(doctor);
+
+        Assert.Equal(new[]
+        {
+            "FPS / frametime — PresentMon",
+            "FPS / frametime — RTSS",
+            "Vision transport — FFmpeg",
+            "Vision hardware — Elgato Game Capture 4K Pro"
+        }, rows.Take(4).Select(r => r.Name));
+        Assert.Equal(2, rows.Count(r => r.Name.StartsWith("FPS / frametime —", StringComparison.Ordinal)));
+        Assert.Single(rows, r => r.Name == "Vision hardware — Elgato Game Capture 4K Pro");
+        Assert.Contains("bounded stream probe; no image retained", rows[3].Detail);
     }
 }

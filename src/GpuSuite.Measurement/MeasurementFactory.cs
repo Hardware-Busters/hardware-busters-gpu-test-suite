@@ -11,6 +11,22 @@ namespace GpuSuite.Measurement;
 /// <summary>Resolves the per-game capture pin before the machine-wide default.</summary>
 public static class FrameProviderPolicy
 {
+    /// <summary>
+    /// Initial source probes must not arm RTSS for a resolved roster. RTSS is a global render hook, so
+    /// profile-aware runs start it only from <see cref="MeasurementFactory.PrepareFrameBackend"/> at the
+    /// compatible game boundary. A null plan is retained for legacy stand-alone diagnostics.
+    /// </summary>
+    public static bool ShouldStartRtssDuringInitialProbe(
+        string? globalProvider,
+        bool presentMonLive,
+        bool? planUsesRtss,
+        bool allowRtssStartup = true)
+    {
+        if (!allowRtssStartup || planUsesRtss.HasValue) return false;
+        string global = (globalProvider ?? "auto").Trim().ToLowerInvariant();
+        return global == "rtss" || (global == "auto" && !presentMonLive);
+    }
+
     public static string Resolve(string? globalProvider, string? profileProvider, bool presentMonLive, bool forbidRtss = false)
     {
         if (forbidRtss) return "presentmon";
@@ -90,8 +106,10 @@ public sealed class MeasurementFactory : IDisposable
     /// profile forces <c>frameProvider:"rtss"</c> — RTSS (the global D3D hook that crashes Ratchet, see
     /// HANDOVER §9.2) is started LAZILY based on this. Pass <c>false</c> for an all-PresentMon plan so
     /// neither the frame probe NOR the OSD drags RTSS in; <c>null</c> (callers with no plan — the probe
-    /// verb, cooler path) keeps the legacy eager behavior.</summary>
-    public List<string> ProbeAll(bool? planUsesRtss = null)
+    /// verb, cooler path) keeps the legacy eager behavior. <paramref name="allowRtssStartup"/> is false for
+    /// full pre-flight: it may inspect an already-running RTSS shared-memory mapping, but never starts the
+    /// global hook merely to check a later game.</summary>
+    public List<string> ProbeAll(bool? planUsesRtss = null, bool allowRtssStartup = true)
     {
         var report = new List<string>();
 
@@ -118,27 +136,21 @@ public sealed class MeasurementFactory : IDisposable
         PresentMonLive = pmOk;
         string fp = (_cfg.FrameProvider ?? "presentmon").Trim().ToLowerInvariant();
 
-        // RTSS is needed BOTH as a frame backend AND to render the live OSD overlay — but it is the GLOBAL
-        // D3D hook that crashes Ratchet (HANDOVER §9.2), so it must start LAZILY: only when THIS run needs
-        // it — the global provider is rtss/auto, OR the resolved plan contains a per-game
-        // frameProvider:"rtss" title (planUsesRtss, from the orchestrator). The OSD alone no longer drags
-        // RTSS into an all-PresentMon sweep (pre-2026-07-02, forgetting --no-osd silently re-armed the
-        // Ratchet crash); with no RTSS the overlay is skipped and logged. planUsesRtss=null (probe verb /
-        // cooler path — no plan) keeps the legacy eager behavior.
-        // Do not start RTSS merely because a later game in a mixed roster needs it. Its global hook can
-        // crash a PresentMon-pinned game (Ratchet), so mixed suites switch backends at each game boundary.
-        // Auto prefers PresentMon when it is live; an RTSS game starts RTSS on demand in PrepareFrameBackend.
-        bool rtssForFrames = (fp == "rtss" || (fp == "auto" && !pmOk)) && !_cfg.ForceSyntheticFrames;
+        // RTSS is a global D3D hook that can crash Ratchet. A resolved roster NEVER starts it here;
+        // PrepareFrameBackend owns that transition at each compatible game boundary. A null plan keeps the
+        // legacy stand-alone diagnostic behavior only.
+        bool rtssForFrames = !_cfg.ForceSyntheticFrames &&
+                             FrameProviderPolicy.ShouldStartRtssDuringInitialProbe(fp, pmOk, planUsesRtss, allowRtssStartup);
         bool rtssForOsd = _cfg.Osd && !string.IsNullOrWhiteSpace(_cfg.RtssExePath) && rtssForFrames;
         if (_cfg.Osd && !rtssForOsd && !rtssForFrames)
             report.Add("[OSD]       skipped — no RTSS game in this run plan, so RTSS (the global hook that crashes Ratchet) stays closed; the overlay renders only in RTSS-group sweeps.");
-        if (rtssForFrames || rtssForOsd)
+        if ((rtssForFrames || rtssForOsd) && allowRtssStartup)
             EnsureRtssRunning();
         // Probe the RTSS frame backend whenever RTSS is running — for the global rtss/auto provider AND so a
         // PER-GAME frameProvider="rtss" override (AppContainer titles) can actually use it. Without this,
         // _rtssLive stayed false when the global provider was "presentmon", and the per-game override silently
         // fell through to PresentMon (which can't trace a sandboxed game's exclusive-fullscreen benchmark).
-        if (rtssForFrames || rtssForOsd)
+        if ((rtssForFrames || rtssForOsd) && (allowRtssStartup || IsRtssRunning()))
         {
             string rtssDetail = "synthetic frames forced";
             _rtssLive = !_cfg.ForceSyntheticFrames && RtssFrameProvider.Probe(out rtssDetail);
@@ -146,6 +158,10 @@ public sealed class MeasurementFactory : IDisposable
                 report.Add($"[Frames]    RTSS {(_rtssLive ? "LIVE" : "unavailable")} — {rtssDetail}");
             else
                 report.Add($"[OSD]       RTSS started for the live overlay (frames via {fp}; RTSS frame backend {(_rtssLive ? "available" : "unavailable")} for games that force it).");
+        }
+        else if (planUsesRtss == true)
+        {
+            report.Add("[Frames]    RTSS required by the enabled roster but intentionally not started during full pre-flight; installed/path readiness is reported separately and runtime starts it only at a compatible game boundary.");
         }
 
         if (pmOk)

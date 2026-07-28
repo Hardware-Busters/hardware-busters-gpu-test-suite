@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using GpuSuite.Core.Config;
 using GpuSuite.Core.Diagnostics;
 using GpuSuite.Core.Models;
+using GpuSuite.Engine.Diagnostics;
 using GpuSuite.Measurement;
 
 namespace GpuSuite.Engine.Validation;
@@ -22,7 +23,10 @@ public sealed class HardwareValidator
 
     public HardwareValidator(SuiteConfig cfg, RunLogger log) { _cfg = cfg; _log = log; }
 
-    public HardwareValidationResult Validate(MeasurementFactory factory)
+    public HardwareValidationResult Validate(
+        MeasurementFactory factory,
+        FrameCapturePreflightPlan? framePlan = null,
+        bool? rtssReadyForLazyStart = null)
     {
         var hv = _cfg.HardwareValidation;
         var r = new HardwareValidationResult();
@@ -86,16 +90,19 @@ public sealed class HardwareValidator
                 : HardwareCheck.Fail("Monitor attached", "no display detected (capture/refresh control would fail)"));
         }
 
-        // ---- PresentMon (or RTSS when a game forces it) available ----
+        // ---- FPS / frametime backend (PresentMon and/or RTSS, never the vision capture card) ----
         if (hv.RequirePresentMon)
         {
-            bool rtssWanted = (_cfg.FrameProvider ?? "").Trim().Equals("rtss", StringComparison.OrdinalIgnoreCase);
-            bool framesOk = factory.PresentMonLive || (rtssWanted && factory.RtssLive) || _cfg.ForceSyntheticFrames;
-            string detail = _cfg.ForceSyntheticFrames ? "synthetic frames forced (capture not required)"
+            bool rtssAvailable = rtssReadyForLazyStart ?? factory.RtssLive;
+            var verdict = framePlan?.Evaluate(factory.PresentMonLive, rtssAvailable, _cfg.ForceSyntheticFrames);
+            bool framesOk = verdict?.IsReady ?? (factory.PresentMonLive || rtssAvailable || _cfg.ForceSyntheticFrames);
+            string detail = verdict?.Detail ?? (_cfg.ForceSyntheticFrames ? "synthetic frames forced (capture not required)"
                 : factory.PresentMonLive ? "PresentMon available"
                 : factory.RtssLive ? "RTSS frame backend available"
-                : "no frame-capture backend available";
-            r.Checks.Add(framesOk ? HardwareCheck.Pass("Frame capture", detail) : HardwareCheck.Fail("Frame capture", detail));
+                : "no FPS / frametime backend available");
+            r.Checks.Add(framesOk
+                ? HardwareCheck.Pass("FPS / frametime capture", detail)
+                : HardwareCheck.Fail("FPS / frametime capture", detail));
         }
 
         // ---- telemetry alive ----

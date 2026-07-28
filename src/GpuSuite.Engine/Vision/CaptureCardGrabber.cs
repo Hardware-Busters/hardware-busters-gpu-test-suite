@@ -43,6 +43,30 @@ public sealed class CaptureCardGrabber
     public bool FfmpegResolved => _ffmpeg == "ffmpeg" || File.Exists(_ffmpeg);
 
     /// <summary>
+    /// Opens the configured DirectShow video stream for a bounded number of frames and discards them to
+    /// ffmpeg's null muxer. This is the full pre-flight transport probe: it never writes, retains, or OCRs
+    /// an image, and it does not launch a game.
+    /// </summary>
+    public async Task<bool> ProbeVideoAsync(int frames = 2, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(_device)) { _log.Warn("Vision", "No capture-card device set for the stream probe."); return false; }
+        if (!FfmpegResolved) { _log.Warn("Vision", $"ffmpeg not found at '{_ffmpeg}' (set settings.ffmpegPath)."); return false; }
+
+        string[] args =
+        {
+            "-hide_banner", "-loglevel", "error", "-f", "dshow", "-rtbufsize", "200M", "-i", $"video={_device}",
+            "-frames:v", Math.Max(1, frames).ToString(), "-an", "-f", "null", "-"
+        };
+        bool ok; string stderr;
+        await s_device.WaitAsync(ct).ConfigureAwait(false);
+        try { (ok, stderr) = await RunAsync(_ffmpeg, args, TimeSpan.FromSeconds(8), ct).ConfigureAwait(false); }
+        finally { s_device.Release(); }
+        if (ok) _log.Info("Vision", $"Capture-card stream probe passed for \"{_device}\"; no image retained.");
+        else _log.Warn("Vision", $"Capture-card stream probe failed for \"{_device}\": {stderr.Trim()}");
+        return ok;
+    }
+
+    /// <summary>
     /// Grab one frame to <paramref name="outPng"/>. Grabs <paramref name="warmupFrames"/> frames and keeps
     /// the LAST (ffmpeg -update 1 overwrites the same file each frame) to skip the capture device's warm-up
     /// — the first frame off a card is frequently black. Returns true only when a non-trivial PNG was written.

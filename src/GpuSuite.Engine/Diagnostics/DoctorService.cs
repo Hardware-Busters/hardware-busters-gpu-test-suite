@@ -50,21 +50,29 @@ public sealed class DoctorService
     public DoctorService(SuiteConfig cfg, RunLogger log) { _cfg = cfg; _log = log; }
 
     /// <summary>Run every check. <paramref name="llmModel"/> is the Ollama model the nav supervisor expects.</summary>
-    public async Task<List<DoctorCheck>> RunAsync(string llmModel, CancellationToken ct)
+    public async Task<List<DoctorCheck>> RunAsync(
+        string llmModel,
+        CancellationToken ct,
+        FrameCapturePreflightPlan? framePlan = null)
     {
+        // Full pre-flight supplies the enabled roster. The stand-alone doctor remains conservative and
+        // derives a generic plan from the selected global backend.
+        var plan = framePlan ?? GenericFramePlan(_cfg.FrameProvider);
+        var presentMon = CheckPresentMon(plan);
+        var rtss = CheckRtss(plan, presentMon.Status == DoctorStatus.Ok);
         var checks = new List<DoctorCheck>
         {
             await CheckDotnetRuntimeAsync(ct),
             await CheckFfmpegAsync(ct),
-            CheckPresentMon(),
-            CheckRtss(),
+            presentMon,
+            rtss,
             CheckViGEm(),
             await CheckOllamaAsync(llmModel, ct),
             await CheckGx10Async(ct),
-            await CheckCaptureCardAsync(ct),
             CheckPowenetics(),
             CheckProfiles(),
         };
+        checks.AddRange(await CheckCaptureCardsAsync(ct));
         return checks;
     }
 
@@ -92,25 +100,27 @@ public sealed class DoctorService
         if (code == 0)
         {
             var first = outp.Split('\n').FirstOrDefault()?.Trim() ?? "ffmpeg";
-            return new("ffmpeg (capture-card grabs)", DoctorStatus.Ok, first);
+            return new("FFmpeg (capture-card vision)", DoctorStatus.Ok, first);
         }
-        return new("ffmpeg (capture-card grabs)", DoctorStatus.Warn,
+        return new("FFmpeg (capture-card vision)", DoctorStatus.Warn,
             $"not found ({(string.IsNullOrWhiteSpace(_cfg.FfmpegPath) ? "not on PATH" : _cfg.FfmpegPath)}).",
-            FixHint: "Needed for `grab` / vision-nav OCR off the capture card. Set settings.ffmpegPath if installed elsewhere.",
+            FixHint: "Required for the supported Elgato vision input: install ffmpeg or set settings.ffmpegPath, then re-run full pre-flight. This is separate from PresentMon/RTSS FPS measurement.",
             FixCommand: "winget install --id Gyan.FFmpeg -e --accept-source-agreements --accept-package-agreements");
     }
 
-    private DoctorCheck CheckPresentMon()
+    private DoctorCheck CheckPresentMon(FrameCapturePreflightPlan plan)
     {
         var p = ResolveAppPath(_cfg.PresentMonPath);
         if (p is not null)
-            return new("PresentMon (frame capture)", DoctorStatus.Ok, p);
-        return new("PresentMon (frame capture)", DoctorStatus.Missing,
+            return new("PresentMon (FPS / frametime)", DoctorStatus.Ok, p);
+        return new("PresentMon (FPS / frametime)", plan.RequiresPresentMon ? DoctorStatus.Missing : DoctorStatus.Warn,
             $"not found at '{_cfg.PresentMonPath}'.",
-            FixHint: "PresentMon ships in the suite's tools/ folder — copy the tools/ directory alongside gpusuite.exe, or set settings.presentMonPath. (No package install; it's a bundled binary.)");
+            FixHint: plan.RequiresPresentMon
+                ? "Required by the enabled roster (including RTSS-forbidden titles): copy tools/ alongside gpusuite.exe or set settings.presentMonPath. FPS / frametime validation will otherwise fail safe."
+                : "No enabled title currently requires PresentMon, but it is the preferred FPS / frametime backend. Copy tools/ alongside gpusuite.exe or set settings.presentMonPath.");
     }
 
-    private DoctorCheck CheckRtss()
+    private DoctorCheck CheckRtss(FrameCapturePreflightPlan plan, bool presentMonAvailable)
     {
         var candidates = new[]
         {
@@ -120,15 +130,20 @@ public sealed class DoctorService
         };
         var found = candidates.FirstOrDefault(c => !string.IsNullOrWhiteSpace(c) && File.Exists(c));
         bool running = Process.GetProcessesByName("RTSS").Length > 0;
-        if (found is not null || running)
-            return new("RTSS / RivaTuner (rtss capture + OSD)", DoctorStatus.Ok,
-                running ? "RTSS is running." : $"installed: {found}");
-        // Only an issue when the rtss backend or the OSD is in use.
-        bool needed = _cfg.FrameProvider.Equals("rtss", StringComparison.OrdinalIgnoreCase)
-                      || _cfg.FrameProvider.Equals("auto", StringComparison.OrdinalIgnoreCase) || _cfg.Osd;
-        return new("RTSS / RivaTuner (rtss capture + OSD)", needed ? DoctorStatus.Missing : DoctorStatus.Warn,
-            "not installed / not running.",
-            FixHint: "Install RivaTuner Statistics Server (ships with MSI Afterburner or the Powenetics V2 kit). Set settings.rtssExePath so the suite can auto-start it. Required for the rtss frame backend and the live OSD.");
+        bool configuredForLazyStart = !string.IsNullOrWhiteSpace(_cfg.RtssExePath) && File.Exists(_cfg.RtssExePath);
+        if (running || configuredForLazyStart)
+            return new("RTSS / RivaTuner (FPS / frametime fallback)", DoctorStatus.Ok,
+                running ? "RTSS is running (it will still remain closed for RTSS-forbidden titles)." : $"configured for lazy start: {_cfg.RtssExePath} (full pre-flight does not start it).");
+        // Do not let a global OSD setting turn RTSS into a requirement: it is a global hook and stays lazy
+        // until a compatible game needs it. Ratchet-style profiles are covered by RequiresPresentMon.
+        bool needed = plan.RequiresRtss || (plan.MayUseRtssFallback && !presentMonAvailable);
+        string state = found is null ? "not installed / not running."
+            : $"installed at {found}, but settings.rtssExePath is not configured and RTSS is not running.";
+        return new("RTSS / RivaTuner (FPS / frametime fallback)", needed ? DoctorStatus.Missing : DoctorStatus.Warn,
+            state,
+            FixHint: needed
+                ? "Required by the enabled roster or its auto fallback: install RivaTuner Statistics Server and set settings.rtssExePath. It is started only at a compatible game boundary; do not use it to bypass an RTSS-forbidden profile."
+                : "Not required by the enabled roster. Install/configure it only for RTSS-pinned games or the optional live OSD; full pre-flight will not start it.");
     }
 
     private DoctorCheck CheckViGEm()
@@ -219,30 +234,89 @@ public sealed class DoctorService
             FixHint: "Optional: bring a Custom AI server online (Ollama serving on the LAN) to run the vision model off-bench. Check it in Settings.");
     }
 
-    private async Task<DoctorCheck> CheckCaptureCardAsync(CancellationToken ct)
+    private async Task<IReadOnlyList<DoctorCheck>> CheckCaptureCardsAsync(CancellationToken ct)
     {
         // Needs ffmpeg to enumerate DirectShow devices; skip cleanly if ffmpeg is absent.
         string exe = string.IsNullOrWhiteSpace(_cfg.FfmpegPath) ? "ffmpeg" : _cfg.FfmpegPath;
         var (probe, _, _) = await RunProcAsync(exe, "-version", 5000, ct);
         if (probe != 0)
-            return new("Capture card (Elgato/HDMI)", DoctorStatus.Hardware, "skipped — ffmpeg not available to enumerate devices.");
+            return
+            [
+                new("Capture-card model (full automation)", DoctorStatus.Hardware,
+                    "not checked — FFmpeg is unavailable, so DirectShow devices cannot be enumerated.",
+                    "Install/configure FFmpeg first, then re-run full pre-flight. The supported workflow requires the exact Elgato 4K Pro."),
+                new("Capture-card vision stream (FFmpeg)", DoctorStatus.Hardware,
+                    "not checked — FFmpeg is unavailable.",
+                    "Install/configure FFmpeg first. This is the vision/OCR input, not the FPS / frametime backend.")
+            ];
         try
         {
             var grabber = new CaptureCardGrabber(_cfg.FfmpegPath, _cfg.CaptureCardDevice, _log);
-            var devices = await grabber.ListVideoDevicesAsync();
+            var devices = await grabber.ListVideoDevicesAsync(ct);
             if (devices.Count == 0)
-                return new("Capture card (Elgato/HDMI)", DoctorStatus.Hardware, "no DirectShow video devices found — is the capture card connected?");
+                return
+                [
+                    new("Capture-card model (full automation)", DoctorStatus.Hardware,
+                        "no DirectShow video devices found — is the Elgato Game Capture 4K Pro connected and powered?",
+                        $"The full supported workflow requires the exact DirectShow name \"{CaptureCardSupportPolicy.QualifiedDeviceName}\"."),
+                    new("Capture-card vision stream (FFmpeg)", DoctorStatus.Hardware,
+                        "not checked because no DirectShow video device was enumerated.")
+                ];
             var qualification = CaptureCardSupportPolicy.Evaluate(_cfg.CaptureCardDevice, devices);
             if (qualification.IsQualified)
-                return new("Capture card (Elgato/HDMI)", DoctorStatus.Ok, qualification.Detail);
-            return new("Capture card (Elgato/HDMI)", DoctorStatus.Hardware,
-                qualification.Detail,
-                FixHint: $"Set settings.captureCardDevice to exactly \"{CaptureCardSupportPolicy.QualifiedDeviceName}\" and confirm it appears in `gpusuite grab --list`. Other cards remain available for diagnostics but are not qualified for the full automated workflow.");
+            {
+                var stream = await ProbeQualifiedCaptureStreamAsync(grabber, ct);
+                return
+                [
+                    new("Capture-card model (full automation)", DoctorStatus.Ok, qualification.Detail),
+                    stream
+                ];
+            }
+            return
+            [
+                new("Capture-card model (full automation)", DoctorStatus.Hardware,
+                    qualification.Detail,
+                    FixHint: $"Set settings.captureCardDevice to exactly \"{CaptureCardSupportPolicy.QualifiedDeviceName}\" and confirm it appears in `gpusuite grab --list`. Other cards remain available for diagnostics but are not qualified for the full automated workflow."),
+                new("Capture-card vision stream (FFmpeg)", DoctorStatus.Hardware,
+                    "not probed until the exact qualified Elgato 4K Pro is configured and enumerated.",
+                    "This probe briefly consumes frames to FFmpeg's null sink; no image is written or retained, and it never launches a game.")
+            ];
         }
         catch (Exception ex)
         {
-            return new("Capture card (Elgato/HDMI)", DoctorStatus.Hardware, $"enumeration error: {ex.Message}");
+            return
+            [
+                new("Capture-card model (full automation)", DoctorStatus.Hardware, $"enumeration error: {ex.Message}"),
+                new("Capture-card vision stream (FFmpeg)", DoctorStatus.Hardware, "not probed because capture-card enumeration failed.")
+            ];
         }
+    }
+
+    private async Task<DoctorCheck> ProbeQualifiedCaptureStreamAsync(CaptureCardGrabber grabber, CancellationToken ct)
+    {
+        using var probeCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        probeCts.CancelAfter(TimeSpan.FromSeconds(8));
+        bool live = await grabber.ProbeVideoAsync(frames: 2, ct: probeCts.Token).ConfigureAwait(false);
+        return live
+            ? new("Capture-card vision stream (FFmpeg)", DoctorStatus.Ok,
+                "qualified Elgato bounded stream probe passed; no image retained.")
+            : new("Capture-card vision stream (FFmpeg)", DoctorStatus.Hardware,
+                "qualified Elgato was enumerated but its bounded stream probe did not complete within 8 seconds.",
+                "Check the HDMI source/cable, power, input signal, and 60 Hz validated bench path; then re-run full pre-flight. This is vision/OCR input, not FPS / frametime capture.");
+    }
+
+    private static FrameCapturePreflightPlan GenericFramePlan(string? globalProvider)
+    {
+        string global = (globalProvider ?? "auto").Trim().ToLowerInvariant();
+        return global switch
+        {
+            "rtss" => new(true, RequiresPresentMon: false, RequiresRtss: true, MayUseRtssFallback: false,
+                PresentMonGames: Array.Empty<string>(), RtssGames: ["current global configuration"], AutoGames: Array.Empty<string>()),
+            "presentmon" => new(true, RequiresPresentMon: true, RequiresRtss: false, MayUseRtssFallback: false,
+                PresentMonGames: ["current global configuration"], RtssGames: Array.Empty<string>(), AutoGames: Array.Empty<string>()),
+            _ => new(true, RequiresPresentMon: false, RequiresRtss: false, MayUseRtssFallback: true,
+                PresentMonGames: Array.Empty<string>(), RtssGames: Array.Empty<string>(), AutoGames: ["current global configuration"])
+        };
     }
 
     private DoctorCheck CheckPowenetics()

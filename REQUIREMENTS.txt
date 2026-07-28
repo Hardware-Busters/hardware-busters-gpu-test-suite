@@ -10,4 +10,6 @@ Confirm the exact name with: gpusuite grab --list
 
 Elgato 4K60 Pro, Elgato 4K60 Pro MK.2, generic devices, and other cards are unqualified for that workflow. They are not necessarily incompatible: offline authoring, builds, and diagnostic capture commands may still work.
 
+Full pre-flight checks the enabled roster's PresentMon/RTSS FPS and frametime requirement separately from FFmpeg and the Elgato vision stream. It runs a bounded stream probe; no image is retained, and this vision input is never used as an FPS source. An advanced launch override cannot bypass runtime frame validation.
+
 The 60 Hz display safety setting applies to this validated bench path; it is not a general product limit.

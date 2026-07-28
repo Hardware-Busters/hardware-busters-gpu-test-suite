@@ -34,6 +34,11 @@ Copy `settings.example.json` to `settings.json` and configure only your own loca
 
 **Elgato Game Capture 4K Pro is required for the full supported automated game-benchmark workflow and is the only capture-card model currently qualified by this project.** Set `captureCardDevice` to the exact DirectShow name `Elgato 4K Pro`. Elgato 4K60 Pro/MK.2 and other cards are unqualified for that workflow, although offline authoring, builds, and diagnostics may still work. See [REQUIREMENTS.txt](REQUIREMENTS.txt); the 60 Hz safety setting is this validated bench path, not a general product limit.
 
+Full pre-flight checks the enabled roster's **PresentMon/RTSS FPS and frametime** requirement separately from the
+**FFmpeg + Elgato vision stream** used for OCR/navigation/motion. It confirms the exact qualified device with a
+bounded stream probe; no image is retained. The advanced launch override cannot create trustworthy frame evidence or
+bypass runtime validation: invalid runs are still rejected.
+
 ## PresentMon
 
 PresentMon is not distributed in this repository. Follow [tools/PresentMon/README.md](tools/PresentMon/README.md) to obtain a verified upstream release and place it locally. Its license and attribution are recorded in [NOTICE](NOTICE).
