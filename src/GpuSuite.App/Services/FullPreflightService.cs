@@ -43,8 +43,8 @@ public sealed record FullPreflightProgress(int Step, int TotalSteps, string Head
 
 /// <summary>
 /// Runs the complete launch-nothing clearance pass used by the Run page: software/services, live measurement
-/// hardware, and every game profile. It starts required store clients so login/update state can refresh and may
-/// start RTSS/Ollama's normal probe path, but never launches a game,
+/// hardware, and every game profile. It starts required store clients so login/update state can refresh, but never
+/// arms RTSS's global hook, launches a game,
 /// edits a profile, installs software, or changes benchmark settings.
 /// </summary>
 public sealed class FullPreflightService
@@ -67,6 +67,7 @@ public sealed class FullPreflightService
         progress?.Report(new FullPreflightProgress(0, totalSteps,
             "Preparing full pre-flight", "Loading the complete benchmark profile inventory."));
         var profiles = _profiles.LoadAll();
+        var framePlan = FrameCapturePreflightPlan.Build(profiles, cfg.FrameProvider);
 
         progress?.Report(new FullPreflightProgress(1, totalSteps,
             "Checking launcher sessions", "Starting required store clients and refreshing login/update state."));
@@ -80,32 +81,40 @@ public sealed class FullPreflightService
         progress?.Report(new FullPreflightProgress(3, totalSteps,
             "Checking machine services", "Verifying runtimes, capture tools, controller support, and AI services."));
         using var log = new RunLogger(null, echoToConsole: false);
-        var doctor = await new DoctorService(cfg, log).RunAsync(cfg.NavSupervisorVisionModel, ct).ConfigureAwait(false);
+        var doctor = await new DoctorService(cfg, log).RunAsync(cfg.NavSupervisorVisionModel, ct, framePlan).ConfigureAwait(false);
         var machine = new PreflightGroup
         {
             Id = "machine",
             Name = "Machine & services",
-            Description = "Runtime, capture tools, controller driver, capture card, and AI services.",
-            Checks = doctor.Select(MapDoctorCheck).ToList()
+            Description = "Runtime, FPS/frametime tools, FFmpeg vision input, qualified capture card, controller driver, and AI services.",
+            Checks = BuildMachineChecks(doctor)
         };
 
         progress?.Report(new FullPreflightProgress(4, totalSteps,
-            "Probing the live benchmark bench", "Checking frame capture, telemetry, power, temperatures, storage, and vision."));
-        bool usesRtss = profiles.Where(p => p.Enabled)
-            .Any(p => string.Equals(p.FrameProvider, "rtss", StringComparison.OrdinalIgnoreCase));
+            "Probing the live benchmark bench", "Checking FPS/frametime readiness, telemetry, power, temperatures, storage, and vision."));
+        bool usesRtss = framePlan.RequiresRtss;
         using var factory = new MeasurementFactory(cfg);
-        factory.ProbeAll(usesRtss);
-        var hardware = new HardwareValidator(cfg, log).Validate(factory);
+        // Full pre-flight must not arm RTSS's global hook. Doctor verifies installation/readiness; the
+        // runtime still starts RTSS only at a compatible game boundary.
+        factory.ProbeAll(usesRtss, allowRtssStartup: false);
+        bool rtssReadyForLazyStart = doctor.Any(c =>
+            c.Component.StartsWith("RTSS / RivaTuner", StringComparison.OrdinalIgnoreCase) &&
+            c.Status == DoctorStatus.Ok);
+        var hardware = new HardwareValidator(cfg, log).Validate(factory, framePlan, rtssReadyForLazyStart);
         var bench = new PreflightGroup
         {
             Id = "bench",
             Name = "Live benchmark bench",
-            Description = "GPU identity, frame capture, telemetry, power, disk, temperature, and vision endpoint.",
-            Checks = hardware.Checks.Select(c => new GameCheck(
+            Description = "GPU identity, FPS/frametime backend, telemetry, power, disk, temperature, and vision endpoint.",
+            // The machine group starts with the one authoritative FPS chain. Keep the runtime validator's
+            // duplicate row out of this UI-only snapshot; it remains intact for every game at run time.
+            Checks = hardware.Checks.Where(c => !c.Name.Equals("FPS / frametime capture", StringComparison.OrdinalIgnoreCase)).Select(c => new GameCheck(
                 c.Name,
                 c.Passed ? CheckStatus.Ok : c.Fatal ? CheckStatus.Blocker : CheckStatus.Warn,
                 c.Detail,
-                c.Passed ? null : c.Fatal ? "Resolve this before starting the sweep." : "Benchmarking can continue using the documented fallback."))
+                c.Passed ? null : c.Name.StartsWith("FPS / frametime", StringComparison.OrdinalIgnoreCase)
+                    ? "Install/configure the listed FPS / frametime backend and re-run pre-flight. An override cannot create trustworthy frame data; runtime validation still rejects invalid runs."
+                    : c.Fatal ? "Resolve this before starting the sweep." : "Benchmarking can continue using the documented fallback."))
                 .ToList()
         };
 
@@ -114,6 +123,59 @@ public sealed class FullPreflightService
         return new FullPreflightResult { Games = games, Groups = [machine, bench] };
     }, ct);
 
+    /// <summary>Builds the operator-facing machine chain in a fixed order before ancillary doctor rows.</summary>
+    internal static IReadOnlyList<GameCheck> BuildMachineChecks(IReadOnlyList<DoctorCheck> doctor)
+    {
+        // Look these up by the shared DoctorComponents constants, not by hand-written prefixes. The rows this
+        // screen depends on are a contract with DoctorService; when both sides carried their own literals a
+        // rename silently orphaned the lookup and the row degraded to an Info "Not reported by this pre-flight
+        // run" — i.e. it failed OPEN. Referencing the constants makes a rename a compile error.
+        DoctorCheck? presentMon = doctor.FirstOrDefault(c => c.Component.StartsWith(DoctorComponents.PresentMon, StringComparison.OrdinalIgnoreCase));
+        DoctorCheck? rtss = doctor.FirstOrDefault(c => c.Component.StartsWith(DoctorComponents.Rtss, StringComparison.OrdinalIgnoreCase));
+        DoctorCheck? ffmpeg = doctor.FirstOrDefault(c => c.Component.StartsWith(DoctorComponents.Ffmpeg, StringComparison.OrdinalIgnoreCase));
+        DoctorCheck? cardModel = doctor.FirstOrDefault(c => c.Component.StartsWith(DoctorComponents.CaptureCardModel, StringComparison.OrdinalIgnoreCase));
+        DoctorCheck? cardStream = doctor.FirstOrDefault(c => c.Component.StartsWith(DoctorComponents.CaptureCardStream, StringComparison.OrdinalIgnoreCase));
+
+        var result = new List<GameCheck>
+        {
+            Rename(presentMon, "FPS / frametime — PresentMon"),
+            Rename(rtss, "FPS / frametime — RTSS"),
+            Rename(ffmpeg, "Vision transport — FFmpeg"),
+            MergeElgato(cardModel, cardStream)
+        };
+
+        result.AddRange(doctor.Where(c =>
+                !ReferenceEquals(c, presentMon) && !ReferenceEquals(c, rtss) && !ReferenceEquals(c, ffmpeg) &&
+                !ReferenceEquals(c, cardModel) && !ReferenceEquals(c, cardStream))
+            .Select(MapDoctorCheck));
+        return result;
+    }
+
+    private static GameCheck Rename(DoctorCheck? check, string name) => check is null
+        ? new GameCheck(name, CheckStatus.Info, "Not reported by this pre-flight run.", null)
+        : MapDoctorCheck(check) with { Name = name };
+
+    private static GameCheck MergeElgato(DoctorCheck? model, DoctorCheck? stream)
+    {
+        var checks = new[] { model, stream }.Where(c => c is not null).Cast<DoctorCheck>().ToArray();
+        if (checks.Length == 0)
+            return new GameCheck("Vision hardware — Elgato Game Capture 4K Pro", CheckStatus.Info, "Not reported by this pre-flight run.", null);
+
+        var mapped = checks.Select(MapDoctorCheck).ToArray();
+        CheckStatus status = mapped.Select(c => c.Status).OrderByDescending(StatusRank).First();
+        string detail = string.Join("  ", mapped.Select(c => c.Detail));
+        string? hint = mapped.Select(c => c.Fix).FirstOrDefault(h => !string.IsNullOrWhiteSpace(h));
+        return new GameCheck("Vision hardware — Elgato Game Capture 4K Pro", status, detail, hint);
+    }
+
+    private static int StatusRank(CheckStatus status) => status switch
+    {
+        CheckStatus.Blocker => 3,
+        CheckStatus.Warn => 2,
+        CheckStatus.Info => 1,
+        _ => 0
+    };
+
     internal static GameCheck MapDoctorCheck(DoctorCheck check)
     {
         var status = check.Status switch
@@ -121,14 +183,18 @@ public sealed class FullPreflightService
             DoctorStatus.Ok => CheckStatus.Ok,
             DoctorStatus.Missing => CheckStatus.Blocker,
             DoctorStatus.Warn => CheckStatus.Warn,
-            DoctorStatus.Hardware when check.Component.StartsWith("Capture card", StringComparison.OrdinalIgnoreCase)
+            // A capture-card Hardware finding is a hard Blocker: the full automated workflow cannot run
+            // without the qualified card, so it must never be softened to Info the way ordinary
+            // absent-hardware rows are. Keyed off the shared constant so the escalation cannot be lost to
+            // a rename on the DoctorService side.
+            DoctorStatus.Hardware when check.Component.StartsWith(DoctorComponents.CaptureCardPrefix, StringComparison.OrdinalIgnoreCase)
                 => CheckStatus.Blocker,
             DoctorStatus.Hardware => CheckStatus.Info,
             _ => CheckStatus.Info
         };
 
         // Vision/OCR bots cannot operate without ffmpeg even though the generic doctor permits degraded use.
-        if (check.Component.StartsWith("ffmpeg", StringComparison.OrdinalIgnoreCase) && check.Status != DoctorStatus.Ok)
+        if (check.Component.StartsWith("FFmpeg", StringComparison.OrdinalIgnoreCase) && check.Status != DoctorStatus.Ok)
             status = CheckStatus.Blocker;
 
         return new GameCheck(check.Component, status, check.Detail, check.FixHint);

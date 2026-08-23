@@ -1,38 +1,38 @@
 {
-    "id":  "forzahorizon6_rerun",
-    "inputDevice":  "Gamepad",
-    "loop":  false,
-    "actions":  [
-                    {
-                        "type":  "WaitForText",
-                        "text":  "Restart",
-                        "durationMs":  45000,
-                        "pollMs":  1500,
-                        "required":  true
-                    },
-                    {
-                        "type":  "PressUntilText",
-                        "key":  "Y",
-                        "text":  "Restart",
-                        "waitForAbsent":  true,
-                        "minConsecutive":  2,
-                        "durationMs":  30000,
-                        "pollMs":  1500,
-                        "required":  true
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  18000
-                    },
-                    {
-                        "type":  "MarkStart"
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  45000
-                    },
-                    {
-                        "type":  "MarkEnd"
-                    }
-                ]
+  "id": "forzahorizon6_rerun",
+  "inputDevice": "Gamepad",
+  "loop": false,
+  "actions": [
+    {
+      "type": "WaitForText",
+      "text": "Restart",
+      "durationMs": 45000,
+      "pollMs": 1500,
+      "required": true
+    },
+    {
+      "type": "PressUntilText",
+      "key": "Y",
+      "text": "Restart",
+      "waitForAbsent": true,
+      "minConsecutive": 2,
+      "durationMs": 30000,
+      "pollMs": 1500,
+      "required": true
+    },
+    {
+      "type": "Wait",
+      "durationMs": 18000
+    },
+    {
+      "type": "MarkStart"
+    },
+    {
+      "type": "Wait",
+      "durationMs": 45000
+    },
+    {
+      "type": "MarkEnd"
+    }
+  ]
 }

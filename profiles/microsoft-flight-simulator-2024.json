@@ -1,230 +1,228 @@
 {
-    "id":  "microsoft-flight-simulator-2024",
-    "settingsFingerprintKeys":  [
-                                    {
-                                        "label":  "upscaler",
-                                        "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
-                                        "pattern":  "(?m)^\\s*AntiAliasing (\\S+)"
-                                    },
-                                    {
-                                        "label":  "dlssMode",
-                                        "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
-                                        "pattern":  "(?m)^\\s*DLSSMode (\\S+)"
-                                    },
-                                    {
-                                        "label":  "primaryScaling",
-                                        "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
-                                        "pattern":  "(?m)^\\s*PrimaryScaling (\\S+)"
-                                    },
-                                    {
-                                        "label":  "frameGen",
-                                        "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
-                                        "pattern":  "(?m)^\\s*FrameGeneration (\\S+)",
-                                        "isFrameGen":  true,
-                                        "frameGenOffValues":  [
-                                                                  "NONE",
-                                                                  "OFF"
-                                                              ]
-                                    },
-                                    {
-                                        "label":  "outputW",
-                                        "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
-                                        "pattern":  "(?m)^\\s*FullScreenResolution (\\d+) \\d+"
-                                    },
-                                    {
-                                        "label":  "outputH",
-                                        "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
-                                        "pattern":  "(?m)^\\s*FullScreenResolution \\d+ (\\d+)"
-                                    }
-                                ],
-    "name":  "Microsoft Flight Simulator 2024",
-    "engine":  "Asobo Engine (proprietary)",
-    "enabled":  true,
-    "repeats":  3,
-    "supportedResolutions":  [
-                                 "1080p",
-                                 "1440p",
-                                 "4K"
-                             ],
-    "graphicsPreset":  "Ultra",
-    "variants":  [
-                     {
-                         "id":  "as-set",
-                         "name":  "As configured in-game",
-                         "enabled":  true,
-                         "settings":  {
-
-                                      }
-                     },
-                     {
-                         "id":  "native",
-                         "name":  "Native (no upscaling)",
-                         "enabled":  false,
-                         "settings":  {
-                                          "upscaler":  "Off",
-                                          "frameGen":  "Off"
-                                      }
-                     },
-                     {
-                         "id":  "dlss-q",
-                         "name":  "DLSS Quality (no RT)",
-                         "enabled":  false,
-                         "settings":  {
-                                          "upscaler":  "DLSS",
-                                          "upscalerQuality":  "Quality",
-                                          "frameGen":  "Off"
-                                      }
-                     },
-                     {
-                         "id":  "dlss-fg",
-                         "name":  "DLSS Quality + Frame Gen",
-                         "enabled":  false,
-                         "settings":  {
-                                          "upscaler":  "DLSS",
-                                          "upscalerQuality":  "Quality",
-                                          "frameGen":  "On"
-                                      }
-                     }
-                 ],
-    "settings":  [
-                     {
-                         "key":  "upscaler",
-                         "label":  "Upscaling Method",
-                         "options":  [
-                                         "Off",
-                                         "DLSS",
-                                         "FSR",
-                                         "XeSS"
-                                     ],
-                         "default":  "DLSS",
-                         "apply":  {
-                                       "method":  "config-file",
-                                       "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
-                                       "valueMap":  {
-                                                        "Off":  "TAA",
-                                                        "DLSS":  "DLSS",
-                                                        "FSR":  "FSR",
-                                                        "XeSS":  "XESS"
-                                                    },
-                                       "edits":  [
-                                                     {
-                                                         "pattern":  "(?m)(^\\s*AntiAliasing\\s+)\\S+",
-                                                         "replacement":  "${1}{VALUE}"
-                                                     }
-                                                 ]
-                                   }
-                     },
-                     {
-                         "key":  "upscalerQuality",
-                         "label":  "Upscaler Quality",
-                         "options":  [
-                                         "Quality",
-                                         "Balanced",
-                                         "Performance",
-                                         "UltraPerformance",
-                                         "DLAA"
-                                     ],
-                         "default":  "Quality",
-                         "apply":  {
-                                       "method":  "config-file",
-                                       "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
-                                       "valueMap":  {
-                                                        "Quality":  "QUALITY",
-                                                        "Balanced":  "BALANCED",
-                                                        "Performance":  "PERFORMANCE",
-                                                        "UltraPerformance":  "ULTRA_PERFORMANCE",
-                                                        "DLAA":  "DLAA"
-                                                    },
-                                       "edits":  [
-                                                     {
-                                                         "pattern":  "(?m)(^\\s*DLSSMode\\s+)\\S+",
-                                                         "replacement":  "${1}{VALUE}"
-                                                     }
-                                                 ]
-                                   }
-                     },
-                     {
-                         "key":  "frameGen",
-                         "label":  "Frame Generation",
-                         "options":  [
-                                         "On",
-                                         "Off"
-                                     ],
-                         "default":  "Off",
-                         "apply":  {
-                                       "method":  "config-file",
-                                       "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
-                                       "valueMap":  {
-                                                        "On":  "DLSSG",
-                                                        "Off":  "NONE"
-                                                    },
-                                       "edits":  [
-                                                     {
-                                                         "pattern":  "(?m)(^\\s*FrameGeneration\\s+)\\S+",
-                                                         "replacement":  "${1}{VALUE}"
-                                                     }
-                                                 ]
-                                   }
-                     }
-                 ],
-    "captureProcessName":  "FlightSimulator2024.exe",
-    "frameProvider":  "rtss",
-    "startupGraceSeconds":  480,
-    "launch":  {
-                   "store":  "Xbox",
-                   "gameId":  "Microsoft.Limitless_8wekyb3d8bbwe!App"
-               },
-    "resolutionApply":  {
-                            "method":  "config-file",
-                            "configFilePath":  "${LOCAL_CONFIGURATION_PATH}",
-                            "switchDesktopMode":  true,
-                            "fingerprintWidthLabel":  "outputW",
-                            "fingerprintHeightLabel":  "outputH",
-                            "edits":  [
-                                          {
-                                              "pattern":  "(?m)^(\\s*Resolution )\\d+ \\d+",
-                                              "replacement":  "${1}{WIDTH} {HEIGHT}"
-                                          },
-                                          {
-                                              "pattern":  "(?m)^(\\s*FullScreenResolution )\\d+ \\d+",
-                                              "replacement":  "${1}{WIDTH} {HEIGHT}"
-                                          }
-                                      ]
-                        },
-    "settingsVerify":  {
-                           "method":  "none"
-                       },
-    "scenes":  [
-                   {
-                       "id":  "scripted-scene",
-                       "name":  "Belayim Precision-Landing β€” loaded \u0027Ready to fly\u0027 scene",
-                       "kind":  "BotDriven",
-                       "captureSeconds":  420,
-                       "warmupSeconds":  0,
-                       "readinessTimeoutSeconds":  600,
-                       "botScript":  "msfs2024_landing_nav",
-                       "singleLaunchRepeats":  true,
-                       "reRunBotScript":  "msfs2024_measure_only",
-                       "measuredMotionFloor":  0.005,
-                       "completion":  {
-                                          "method":  "duration",
-                                          "gameplayBandCeilingFps":  500
-                                      }
-                   },
-                   {
-                       "id":  "dynamic-flight",
-                       "name":  "Belayim Precision-Landing β€” controlled H125 flight",
-                       "kind":  "BotDriven",
-                       "captureSeconds":  600,
-                       "warmupSeconds":  0,
-                       "readinessTimeoutSeconds":  600,
-                       "botScript":  "msfs2024_dynamic_flight",
-                       "singleLaunchRepeats":  false,
-                       "measuredMotionFloor":  0.01,
-                       "completion":  {
-                                          "method":  "duration",
-                                          "gameplayBandCeilingFps":  500
-                                      }
-                   }
-               ]
+  "id": "microsoft-flight-simulator-2024",
+  "settingsFingerprintKeys": [
+    {
+      "label": "upscaler",
+      "configFilePath": "${LOCAL_CONFIGURATION_PATH}",
+      "pattern": "(?m)^\\s*AntiAliasing (\\S+)"
+    },
+    {
+      "label": "dlssMode",
+      "configFilePath": "${LOCAL_CONFIGURATION_PATH}",
+      "pattern": "(?m)^\\s*DLSSMode (\\S+)"
+    },
+    {
+      "label": "primaryScaling",
+      "configFilePath": "${LOCAL_CONFIGURATION_PATH}",
+      "pattern": "(?m)^\\s*PrimaryScaling (\\S+)"
+    },
+    {
+      "label": "frameGen",
+      "configFilePath": "${LOCAL_CONFIGURATION_PATH}",
+      "pattern": "(?m)^\\s*FrameGeneration (\\S+)",
+      "isFrameGen": true,
+      "frameGenOffValues": [
+        "NONE",
+        "OFF"
+      ]
+    },
+    {
+      "label": "outputW",
+      "configFilePath": "${LOCAL_CONFIGURATION_PATH}",
+      "pattern": "(?m)^\\s*FullScreenResolution (\\d+) \\d+"
+    },
+    {
+      "label": "outputH",
+      "configFilePath": "${LOCAL_CONFIGURATION_PATH}",
+      "pattern": "(?m)^\\s*FullScreenResolution \\d+ (\\d+)"
+    }
+  ],
+  "name": "Microsoft Flight Simulator 2024",
+  "engine": "Asobo Engine (proprietary)",
+  "enabled": true,
+  "repeats": 3,
+  "supportedResolutions": [
+    "1080p",
+    "1440p",
+    "4K"
+  ],
+  "graphicsPreset": "Ultra",
+  "variants": [
+    {
+      "id": "as-set",
+      "name": "As configured in-game",
+      "enabled": true,
+      "settings": {}
+    },
+    {
+      "id": "native",
+      "name": "Native (no upscaling)",
+      "enabled": false,
+      "settings": {
+        "upscaler": "Off",
+        "frameGen": "Off"
+      }
+    },
+    {
+      "id": "dlss-q",
+      "name": "DLSS Quality (no RT)",
+      "enabled": false,
+      "settings": {
+        "upscaler": "DLSS",
+        "upscalerQuality": "Quality",
+        "frameGen": "Off"
+      }
+    },
+    {
+      "id": "dlss-fg",
+      "name": "DLSS Quality + Frame Gen",
+      "enabled": false,
+      "settings": {
+        "upscaler": "DLSS",
+        "upscalerQuality": "Quality",
+        "frameGen": "On"
+      }
+    }
+  ],
+  "settings": [
+    {
+      "key": "upscaler",
+      "label": "Upscaling Method",
+      "options": [
+        "Off",
+        "DLSS",
+        "FSR",
+        "XeSS"
+      ],
+      "default": "DLSS",
+      "apply": {
+        "method": "config-file",
+        "configFilePath": "${LOCAL_CONFIGURATION_PATH}",
+        "valueMap": {
+          "Off": "TAA",
+          "DLSS": "DLSS",
+          "FSR": "FSR",
+          "XeSS": "XESS"
+        },
+        "edits": [
+          {
+            "pattern": "(?m)(^\\s*AntiAliasing\\s+)\\S+",
+            "replacement": "${1}{VALUE}"
+          }
+        ]
+      }
+    },
+    {
+      "key": "upscalerQuality",
+      "label": "Upscaler Quality",
+      "options": [
+        "Quality",
+        "Balanced",
+        "Performance",
+        "UltraPerformance",
+        "DLAA"
+      ],
+      "default": "Quality",
+      "apply": {
+        "method": "config-file",
+        "configFilePath": "${LOCAL_CONFIGURATION_PATH}",
+        "valueMap": {
+          "Quality": "QUALITY",
+          "Balanced": "BALANCED",
+          "Performance": "PERFORMANCE",
+          "UltraPerformance": "ULTRA_PERFORMANCE",
+          "DLAA": "DLAA"
+        },
+        "edits": [
+          {
+            "pattern": "(?m)(^\\s*DLSSMode\\s+)\\S+",
+            "replacement": "${1}{VALUE}"
+          }
+        ]
+      }
+    },
+    {
+      "key": "frameGen",
+      "label": "Frame Generation",
+      "options": [
+        "On",
+        "Off"
+      ],
+      "default": "Off",
+      "apply": {
+        "method": "config-file",
+        "configFilePath": "${LOCAL_CONFIGURATION_PATH}",
+        "valueMap": {
+          "On": "DLSSG",
+          "Off": "NONE"
+        },
+        "edits": [
+          {
+            "pattern": "(?m)(^\\s*FrameGeneration\\s+)\\S+",
+            "replacement": "${1}{VALUE}"
+          }
+        ]
+      }
+    }
+  ],
+  "captureProcessName": "FlightSimulator2024.exe",
+  "frameProvider": "rtss",
+  "startupGraceSeconds": 480,
+  "launch": {
+    "store": "Xbox",
+    "gameId": "Microsoft.Limitless_8wekyb3d8bbwe!App"
+  },
+  "resolutionApply": {
+    "method": "config-file",
+    "configFilePath": "${LOCAL_CONFIGURATION_PATH}",
+    "switchDesktopMode": true,
+    "fingerprintWidthLabel": "outputW",
+    "fingerprintHeightLabel": "outputH",
+    "edits": [
+      {
+        "pattern": "(?m)^(\\s*Resolution )\\d+ \\d+",
+        "replacement": "${1}{WIDTH} {HEIGHT}"
+      },
+      {
+        "pattern": "(?m)^(\\s*FullScreenResolution )\\d+ \\d+",
+        "replacement": "${1}{WIDTH} {HEIGHT}"
+      }
+    ]
+  },
+  "settingsVerify": {
+    "method": "none"
+  },
+  "scenes": [
+    {
+      "id": "scripted-scene",
+      "name": "Belayim Precision-Landing — loaded 'Ready to fly' scene",
+      "kind": "BotDriven",
+      "captureSeconds": 420,
+      "warmupSeconds": 0,
+      "readinessTimeoutSeconds": 600,
+      "botScript": "msfs2024_landing_nav",
+      "singleLaunchRepeats": true,
+      "reRunBotScript": "msfs2024_measure_only",
+      "measuredMotionFloor": 0.005,
+      "completion": {
+        "method": "duration",
+        "gameplayBandCeilingFps": 500
+      }
+    },
+    {
+      "id": "dynamic-flight",
+      "name": "Belayim Precision-Landing — controlled H125 flight",
+      "kind": "BotDriven",
+      "captureSeconds": 600,
+      "warmupSeconds": 0,
+      "readinessTimeoutSeconds": 600,
+      "botScript": "msfs2024_dynamic_flight",
+      "singleLaunchRepeats": false,
+      "measuredMotionFloor": 0.01,
+      "completion": {
+        "method": "duration",
+        "gameplayBandCeilingFps": 500
+      }
+    }
+  ]
 }

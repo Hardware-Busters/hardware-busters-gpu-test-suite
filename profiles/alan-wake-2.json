@@ -1,421 +1,419 @@
 {
-    "id":  "alan-wake-2",
-    "settingsFingerprintKeys":  [
-                                    {
-                                        "label":  "renderW",
-                                        "configFilePath":  "%LOCALAPPDATA%\\Remedy\\AlanWake2\\renderer.ini",
-                                        "pattern":  "\"m_iRenderResolutionX\":\\s*(\\d+)"
-                                    },
-                                    {
-                                        "label":  "renderH",
-                                        "configFilePath":  "%LOCALAPPDATA%\\Remedy\\AlanWake2\\renderer.ini",
-                                        "pattern":  "\"m_iRenderResolutionY\":\\s*(\\d+)"
-                                    },
-                                    {
-                                        "label":  "outputW",
-                                        "configFilePath":  "%LOCALAPPDATA%\\Remedy\\AlanWake2\\renderer.ini",
-                                        "pattern":  "\"m_iOutputResolutionX\":\\s*(\\d+)"
-                                    },
-                                    {
-                                        "label":  "outputH",
-                                        "configFilePath":  "%LOCALAPPDATA%\\Remedy\\AlanWake2\\renderer.ini",
-                                        "pattern":  "\"m_iOutputResolutionY\":\\s*(\\d+)"
-                                    },
-                                    {
-                                        "label":  "frameGenMode",
-                                        "configFilePath":  "%LOCALAPPDATA%\\Remedy\\AlanWake2\\renderer.ini",
-                                        "pattern":  "\"m_eDLSSFGMode\":\\s*\"?(\\d+)\"?",
-                                        "isFrameGen":  true,
-                                        "frameGenOffValues":  [
-                                                                  "0"
-                                                              ]
-                                    },
-                                    {
-                                        "label":  "ptQuality",
-                                        "configFilePath":  "%LOCALAPPDATA%\\Remedy\\AlanWake2\\renderer.ini",
-                                        "pattern":  "\"m_ePTQuality\":\\s*\"?(-?\\d+)\"?"
-                                    },
-                                    {
-                                        "label":  "rayReconstruction",
-                                        "configFilePath":  "%LOCALAPPDATA%\\Remedy\\AlanWake2\\renderer.ini",
-                                        "pattern":  "\"m_DLSSRR\":\\s*\"?(true|false)"
-                                    }
-                                ],
-    "name":  "Alan Wake II",
-    "engine":  "Northlight Engine (Remedy)",
-    "enabled":  true,
-    "repeats":  3,
-    "supportedResolutions":  [
-                                 "4K"
-                             ],
-    "graphicsPreset":  "High",
-    "settings":  [
-                     {
-                         "key":  "upscaler",
-                         "label":  "Upscaling Method",
-                         "options":  [
-                                         "DLSS"
-                                     ],
-                         "default":  "",
-                         "apply":  {
-                                       "method":  "config-file",
-                                       "configFilePath":  "%LOCALAPPDATA%\\Remedy\\AlanWake2\\renderer.ini",
-                                       "valueMap":  {
-                                                        "DLSS":  "2"
-                                                    },
-                                       "edits":  [
-                                                     {
-                                                         "pattern":  "(\"m_eSSAAMethod\":\\s*\")\\d+",
-                                                         "replacement":  "${1}{VALUE}"
-                                                     }
-                                                 ]
-                                   }
-                     },
-                     {
-                         "key":  "upscalerQuality",
-                         "label":  "Upscaler Quality (render scale)",
-                         "options":  [
-                                         "Quality",
-                                         "Balanced",
-                                         "Performance",
-                                         "DLAA"
-                                     ],
-                         "default":  "",
-                         "apply":  {
-                                       "method":  "config-file",
-                                       "configFilePath":  "%LOCALAPPDATA%\\Remedy\\AlanWake2\\renderer.ini",
-                                       "valueMap":  {
-                                                        "Quality":  "0.6667",
-                                                        "Balanced":  "0.58",
-                                                        "Performance":  "0.5",
-                                                        "DLAA":  "1.0"
-                                                    },
-                                       "edits":  [
-                                                     {
-                                                         "pattern":  "(\"m_iOutputResolutionX\":\\s*)\\d+",
-                                                         "replacement":  "${1}{RESW}"
-                                                     },
-                                                     {
-                                                         "pattern":  "(\"m_iOutputResolutionY\":\\s*)\\d+",
-                                                         "replacement":  "${1}{RESH}"
-                                                     },
-                                                     {
-                                                         "pattern":  "(\"m_iRenderResolutionX\":\\s*)\\d+",
-                                                         "replacement":  "${1}{VALUExRESW}"
-                                                     },
-                                                     {
-                                                         "pattern":  "(\"m_iRenderResolutionY\":\\s*)\\d+",
-                                                         "replacement":  "${1}{VALUExRESH}"
-                                                     }
-                                                 ]
-                                   }
-                     },
-                     {
-                         "key":  "rt",
-                         "label":  "Ray Tracing Preset",
-                         "options":  [
-                                         "Off",
-                                         "Low",
-                                         "Medium",
-                                         "High",
-                                         "Ultra"
-                                     ],
-                         "default":  "",
-                         "apply":  {
-                                       "method":  "config-file",
-                                       "configFilePath":  "%LOCALAPPDATA%\\Remedy\\AlanWake2\\renderer.ini",
-                                       "edits":  [
-                                                     {
-                                                         "pattern":  "(\"m_ePTQuality\":\\s*\"?)-?\\d+",
-                                                         "replacement":  "${1}{VALUE}",
-                                                         "valueMap":  {
-                                                                          "Off":  "0",
-                                                                          "Low":  "0",
-                                                                          "Medium":  "2",
-                                                                          "High":  "3",
-                                                                          "Ultra":  "4"
-                                                                      }
-                                                     },
-                                                     {
-                                                         "pattern":  "(\"m_ePTDenoisingQuality\":\\s*\"?)-?\\d+",
-                                                         "replacement":  "${1}{VALUE}",
-                                                         "valueMap":  {
-                                                                          "Off":  "0",
-                                                                          "Low":  "0",
-                                                                          "Medium":  "1",
-                                                                          "High":  "2",
-                                                                          "Ultra":  "2"
-                                                                      }
-                                                     },
-                                                     {
-                                                         "pattern":  "(\"m_eRTReSTIRQuality\":\\s*\"?)-?\\d+",
-                                                         "replacement":  "${1}{VALUE}",
-                                                         "valueMap":  {
-                                                                          "Off":  "0",
-                                                                          "Low":  "1",
-                                                                          "Medium":  "1",
-                                                                          "High":  "1",
-                                                                          "Ultra":  "1"
-                                                                      }
-                                                     },
-                                                     {
-                                                         "pattern":  "(\"m_eRTDirectLightDenoisingQuality\":\\s*\"?)-?\\d+",
-                                                         "replacement":  "${1}{VALUE}",
-                                                         "valueMap":  {
-                                                                          "Off":  "0",
-                                                                          "Low":  "0",
-                                                                          "Medium":  "1",
-                                                                          "High":  "1",
-                                                                          "Ultra":  "1"
-                                                                      }
-                                                     },
-                                                     {
-                                                         "pattern":  "(\"m_eRTTransparentQuality\":\\s*\"?)-?\\d+",
-                                                         "replacement":  "${1}{VALUE}",
-                                                         "valueMap":  {
-                                                                          "Off":  "0",
-                                                                          "Low":  "1",
-                                                                          "Medium":  "2",
-                                                                          "High":  "2",
-                                                                          "Ultra":  "3"
-                                                                      }
-                                                     },
-                                                     {
-                                                         "pattern":  "(\"m_eRTReflectionQuality\":\\s*\"?)-?\\d+",
-                                                         "replacement":  "${1}{VALUE}",
-                                                         "valueMap":  {
-                                                                          "Off":  "0",
-                                                                          "Low":  "0",
-                                                                          "Medium":  "0",
-                                                                          "High":  "0",
-                                                                          "Ultra":  "0"
-                                                                      }
-                                                     },
-                                                     {
-                                                         "pattern":  "(\"m_eRTIndirectDiffuseQuality\":\\s*\"?)-?\\d+",
-                                                         "replacement":  "${1}{VALUE}",
-                                                         "valueMap":  {
-                                                                          "Off":  "0",
-                                                                          "Low":  "0",
-                                                                          "Medium":  "0",
-                                                                          "High":  "0",
-                                                                          "Ultra":  "0"
-                                                                      }
-                                                     },
-                                                     {
-                                                         "pattern":  "(\"m_eRTDebrisQuality\":\\s*\"?)-?\\d+",
-                                                         "replacement":  "${1}{VALUE}",
-                                                         "valueMap":  {
-                                                                          "Off":  "0",
-                                                                          "Low":  "0",
-                                                                          "Medium":  "0",
-                                                                          "High":  "0",
-                                                                          "Ultra":  "0"
-                                                                      }
-                                                     },
-                                                     {
-                                                         "pattern":  "(\"m_DLSSRR\":\\s*\"?)(?:true|false)",
-                                                         "replacement":  "${1}{VALUE}",
-                                                         "valueMap":  {
-                                                                          "Off":  "false",
-                                                                          "Low":  "true",
-                                                                          "Medium":  "true",
-                                                                          "High":  "true",
-                                                                          "Ultra":  "true"
-                                                                      }
-                                                     },
-                                                     {
-                                                         "pattern":  "(\"m_eHighQualityPost\":\\s*\"?)-?\\d+",
-                                                         "replacement":  "${1}{VALUE}",
-                                                         "valueMap":  {
-                                                                          "Off":  "0",
-                                                                          "Low":  "1",
-                                                                          "Medium":  "1",
-                                                                          "High":  "1",
-                                                                          "Ultra":  "1"
-                                                                      }
-                                                     }
-                                                 ]
-                                   }
-                     },
-                     {
-                         "key":  "pathTracing",
-                         "label":  "Path Traced Indirect Lighting",
-                         "options":  [
-                                         "Off",
-                                         "Low",
-                                         "Medium",
-                                         "High",
-                                         "Ultra"
-                                     ],
-                         "default":  "",
-                         "apply":  {
-                                       "method":  "config-file",
-                                       "configFilePath":  "%LOCALAPPDATA%\\Remedy\\AlanWake2\\renderer.ini",
-                                       "valueMap":  {
-                                                        "Off":  "0",
-                                                        "Low":  "1",
-                                                        "Medium":  "2",
-                                                        "High":  "3",
-                                                        "Ultra":  "4"
-                                                    },
-                                       "edits":  [
-                                                     {
-                                                         "pattern":  "(\"m_ePTQuality\":\\s*\"?)-?\\d+",
-                                                         "replacement":  "${1}{VALUE}"
-                                                     }
-                                                 ]
-                                   }
-                     },
-                     {
-                         "key":  "rayReconstruction",
-                         "label":  "DLSS Ray Reconstruction",
-                         "options":  [
-                                         "Off",
-                                         "On"
-                                     ],
-                         "default":  "",
-                         "apply":  {
-                                       "method":  "config-file",
-                                       "configFilePath":  "%LOCALAPPDATA%\\Remedy\\AlanWake2\\renderer.ini",
-                                       "valueMap":  {
-                                                        "Off":  "false",
-                                                        "On":  "true"
-                                                    },
-                                       "edits":  [
-                                                     {
-                                                         "pattern":  "(\"m_DLSSRR\":\\s*\"?)(?:true|false)",
-                                                         "replacement":  "${1}{VALUE}"
-                                                     }
-                                                 ]
-                                   }
-                     },
-                     {
-                         "key":  "frameGen",
-                         "label":  "Frame Generation",
-                         "options":  [
-                                         "Off",
-                                         "MFG"
-                                     ],
-                         "default":  "",
-                         "apply":  {
-                                       "method":  "config-file",
-                                       "configFilePath":  "%LOCALAPPDATA%\\Remedy\\AlanWake2\\renderer.ini",
-                                       "valueMap":  {
-                                                        "Off":  "0",
-                                                        "MFG":  "3"
-                                                    },
-                                       "edits":  [
-                                                     {
-                                                         "pattern":  "(\"m_eDLSSFGMode\":\\s*\")\\d+",
-                                                         "replacement":  "${1}{VALUE}"
-                                                     }
-                                                 ]
-                                   }
-                     }
-                 ],
-    "variants":  [
-                     {
-                         "id":  "as-set",
-                         "name":  "As configured in-game",
-                         "enabled":  true,
-                         "settings":  {
-
-                                      }
-                     },
-                     {
-                         "id":  "dlss-q",
-                         "name":  "DLSS Quality, RT off, FG off",
-                         "enabled":  false,
-                         "settings":  {
-                                          "upscaler":  "DLSS",
-                                          "upscalerQuality":  "Quality",
-                                          "frameGen":  "Off",
-                                          "rt":  "Off"
-                                      }
-                     },
-                     {
-                         "id":  "dlss-p",
-                         "name":  "DLSS Performance, RT off, FG off",
-                         "enabled":  false,
-                         "settings":  {
-                                          "upscaler":  "DLSS",
-                                          "upscalerQuality":  "Performance",
-                                          "frameGen":  "Off",
-                                          "rt":  "Off"
-                                      }
-                     },
-                     {
-                         "id":  "dlss-p-mfg",
-                         "name":  "DLSS Performance + multi-FG, RT off",
-                         "enabled":  false,
-                         "settings":  {
-                                          "upscaler":  "DLSS",
-                                          "upscalerQuality":  "Performance",
-                                          "frameGen":  "MFG",
-                                          "rt":  "Off"
-                                      }
-                     },
-                     {
-                         "id":  "native-dlaa",
-                         "name":  "Native render (DLAA), RT off, FG off",
-                         "enabled":  false,
-                         "settings":  {
-                                          "upscaler":  "DLSS",
-                                          "upscalerQuality":  "DLAA",
-                                          "frameGen":  "Off",
-                                          "rt":  "Off"
-                                      }
-                     },
-                     {
-                         "id":  "pt-high",
-                         "name":  "RT Preset High (PT3 bundle), DLSS Perf, FG off",
-                         "enabled":  false,
-                         "settings":  {
-                                          "upscaler":  "DLSS",
-                                          "upscalerQuality":  "Performance",
-                                          "frameGen":  "Off",
-                                          "rt":  "High"
-                                      }
-                     },
-                     {
-                         "id":  "rt-ultra",
-                         "name":  "RT Preset Ultra (PT4 bundle), DLSS Perf, FG off",
-                         "enabled":  false,
-                         "settings":  {
-                                          "upscaler":  "DLSS",
-                                          "upscalerQuality":  "Performance",
-                                          "frameGen":  "Off",
-                                          "rt":  "Ultra"
-                                      }
-                     }
-                 ],
-    "captureProcessName":  "AlanWake2.exe",
-    "frameProvider":  "presentmon",
-    "startupGraceSeconds":  120,
-    "launch":  {
-                   "store":  "Epic",
-                   "gameId":  "dc9d2e595d0e4650b35d659f90d41059",
-                   "target":  "${LOCAL_CONFIGURATION_PATH}"
-               },
-    "resolutionApply":  {
-                            "method":  "none"
-                        },
-    "settingsVerify":  {
-                           "method":  "none"
-                       },
-    "scenes":  [
-                   {
-                       "id":  "scripted-scene",
-                       "name":  "Continue -\u003e open-yard wall-to-wall run",
-                       "kind":  "BotDriven",
-                       "captureSeconds":  360,
-                       "warmupSeconds":  0,
-                       "readinessTimeoutSeconds":  320,
-                       "botScript":  "alan_wake_2_scene_smart",
-                       "completion":  {
-                                          "method":  "duration"
-                                      }
-                   }
-               ]
+  "id": "alan-wake-2",
+  "settingsFingerprintKeys": [
+    {
+      "label": "renderW",
+      "configFilePath": "%LOCALAPPDATA%\\Remedy\\AlanWake2\\renderer.ini",
+      "pattern": "\"m_iRenderResolutionX\":\\s*(\\d+)"
+    },
+    {
+      "label": "renderH",
+      "configFilePath": "%LOCALAPPDATA%\\Remedy\\AlanWake2\\renderer.ini",
+      "pattern": "\"m_iRenderResolutionY\":\\s*(\\d+)"
+    },
+    {
+      "label": "outputW",
+      "configFilePath": "%LOCALAPPDATA%\\Remedy\\AlanWake2\\renderer.ini",
+      "pattern": "\"m_iOutputResolutionX\":\\s*(\\d+)"
+    },
+    {
+      "label": "outputH",
+      "configFilePath": "%LOCALAPPDATA%\\Remedy\\AlanWake2\\renderer.ini",
+      "pattern": "\"m_iOutputResolutionY\":\\s*(\\d+)"
+    },
+    {
+      "label": "frameGenMode",
+      "configFilePath": "%LOCALAPPDATA%\\Remedy\\AlanWake2\\renderer.ini",
+      "pattern": "\"m_eDLSSFGMode\":\\s*\"?(\\d+)\"?",
+      "isFrameGen": true,
+      "frameGenOffValues": [
+        "0"
+      ]
+    },
+    {
+      "label": "ptQuality",
+      "configFilePath": "%LOCALAPPDATA%\\Remedy\\AlanWake2\\renderer.ini",
+      "pattern": "\"m_ePTQuality\":\\s*\"?(-?\\d+)\"?"
+    },
+    {
+      "label": "rayReconstruction",
+      "configFilePath": "%LOCALAPPDATA%\\Remedy\\AlanWake2\\renderer.ini",
+      "pattern": "\"m_DLSSRR\":\\s*\"?(true|false)"
+    }
+  ],
+  "name": "Alan Wake II",
+  "engine": "Northlight Engine (Remedy)",
+  "enabled": true,
+  "repeats": 3,
+  "supportedResolutions": [
+    "4K"
+  ],
+  "graphicsPreset": "High",
+  "settings": [
+    {
+      "key": "upscaler",
+      "label": "Upscaling Method",
+      "options": [
+        "DLSS"
+      ],
+      "default": "",
+      "apply": {
+        "method": "config-file",
+        "configFilePath": "%LOCALAPPDATA%\\Remedy\\AlanWake2\\renderer.ini",
+        "valueMap": {
+          "DLSS": "2"
+        },
+        "edits": [
+          {
+            "pattern": "(\"m_eSSAAMethod\":\\s*\")\\d+",
+            "replacement": "${1}{VALUE}"
+          }
+        ]
+      }
+    },
+    {
+      "key": "upscalerQuality",
+      "label": "Upscaler Quality (render scale)",
+      "options": [
+        "Quality",
+        "Balanced",
+        "Performance",
+        "DLAA"
+      ],
+      "default": "",
+      "apply": {
+        "method": "config-file",
+        "configFilePath": "%LOCALAPPDATA%\\Remedy\\AlanWake2\\renderer.ini",
+        "valueMap": {
+          "Quality": "0.6667",
+          "Balanced": "0.58",
+          "Performance": "0.5",
+          "DLAA": "1.0"
+        },
+        "edits": [
+          {
+            "pattern": "(\"m_iOutputResolutionX\":\\s*)\\d+",
+            "replacement": "${1}{RESW}"
+          },
+          {
+            "pattern": "(\"m_iOutputResolutionY\":\\s*)\\d+",
+            "replacement": "${1}{RESH}"
+          },
+          {
+            "pattern": "(\"m_iRenderResolutionX\":\\s*)\\d+",
+            "replacement": "${1}{VALUExRESW}"
+          },
+          {
+            "pattern": "(\"m_iRenderResolutionY\":\\s*)\\d+",
+            "replacement": "${1}{VALUExRESH}"
+          }
+        ]
+      }
+    },
+    {
+      "key": "rt",
+      "label": "Ray Tracing Preset",
+      "options": [
+        "Off",
+        "Low",
+        "Medium",
+        "High",
+        "Ultra"
+      ],
+      "default": "",
+      "apply": {
+        "method": "config-file",
+        "configFilePath": "%LOCALAPPDATA%\\Remedy\\AlanWake2\\renderer.ini",
+        "edits": [
+          {
+            "pattern": "(\"m_ePTQuality\":\\s*\"?)-?\\d+",
+            "replacement": "${1}{VALUE}",
+            "valueMap": {
+              "Off": "0",
+              "Low": "0",
+              "Medium": "2",
+              "High": "3",
+              "Ultra": "4"
+            }
+          },
+          {
+            "pattern": "(\"m_ePTDenoisingQuality\":\\s*\"?)-?\\d+",
+            "replacement": "${1}{VALUE}",
+            "valueMap": {
+              "Off": "0",
+              "Low": "0",
+              "Medium": "1",
+              "High": "2",
+              "Ultra": "2"
+            }
+          },
+          {
+            "pattern": "(\"m_eRTReSTIRQuality\":\\s*\"?)-?\\d+",
+            "replacement": "${1}{VALUE}",
+            "valueMap": {
+              "Off": "0",
+              "Low": "1",
+              "Medium": "1",
+              "High": "1",
+              "Ultra": "1"
+            }
+          },
+          {
+            "pattern": "(\"m_eRTDirectLightDenoisingQuality\":\\s*\"?)-?\\d+",
+            "replacement": "${1}{VALUE}",
+            "valueMap": {
+              "Off": "0",
+              "Low": "0",
+              "Medium": "1",
+              "High": "1",
+              "Ultra": "1"
+            }
+          },
+          {
+            "pattern": "(\"m_eRTTransparentQuality\":\\s*\"?)-?\\d+",
+            "replacement": "${1}{VALUE}",
+            "valueMap": {
+              "Off": "0",
+              "Low": "1",
+              "Medium": "2",
+              "High": "2",
+              "Ultra": "3"
+            }
+          },
+          {
+            "pattern": "(\"m_eRTReflectionQuality\":\\s*\"?)-?\\d+",
+            "replacement": "${1}{VALUE}",
+            "valueMap": {
+              "Off": "0",
+              "Low": "0",
+              "Medium": "0",
+              "High": "0",
+              "Ultra": "0"
+            }
+          },
+          {
+            "pattern": "(\"m_eRTIndirectDiffuseQuality\":\\s*\"?)-?\\d+",
+            "replacement": "${1}{VALUE}",
+            "valueMap": {
+              "Off": "0",
+              "Low": "0",
+              "Medium": "0",
+              "High": "0",
+              "Ultra": "0"
+            }
+          },
+          {
+            "pattern": "(\"m_eRTDebrisQuality\":\\s*\"?)-?\\d+",
+            "replacement": "${1}{VALUE}",
+            "valueMap": {
+              "Off": "0",
+              "Low": "0",
+              "Medium": "0",
+              "High": "0",
+              "Ultra": "0"
+            }
+          },
+          {
+            "pattern": "(\"m_DLSSRR\":\\s*\"?)(?:true|false)",
+            "replacement": "${1}{VALUE}",
+            "valueMap": {
+              "Off": "false",
+              "Low": "true",
+              "Medium": "true",
+              "High": "true",
+              "Ultra": "true"
+            }
+          },
+          {
+            "pattern": "(\"m_eHighQualityPost\":\\s*\"?)-?\\d+",
+            "replacement": "${1}{VALUE}",
+            "valueMap": {
+              "Off": "0",
+              "Low": "1",
+              "Medium": "1",
+              "High": "1",
+              "Ultra": "1"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "key": "pathTracing",
+      "label": "Path Traced Indirect Lighting",
+      "options": [
+        "Off",
+        "Low",
+        "Medium",
+        "High",
+        "Ultra"
+      ],
+      "default": "",
+      "apply": {
+        "method": "config-file",
+        "configFilePath": "%LOCALAPPDATA%\\Remedy\\AlanWake2\\renderer.ini",
+        "valueMap": {
+          "Off": "0",
+          "Low": "1",
+          "Medium": "2",
+          "High": "3",
+          "Ultra": "4"
+        },
+        "edits": [
+          {
+            "pattern": "(\"m_ePTQuality\":\\s*\"?)-?\\d+",
+            "replacement": "${1}{VALUE}"
+          }
+        ]
+      }
+    },
+    {
+      "key": "rayReconstruction",
+      "label": "DLSS Ray Reconstruction",
+      "options": [
+        "Off",
+        "On"
+      ],
+      "default": "",
+      "apply": {
+        "method": "config-file",
+        "configFilePath": "%LOCALAPPDATA%\\Remedy\\AlanWake2\\renderer.ini",
+        "valueMap": {
+          "Off": "false",
+          "On": "true"
+        },
+        "edits": [
+          {
+            "pattern": "(\"m_DLSSRR\":\\s*\"?)(?:true|false)",
+            "replacement": "${1}{VALUE}"
+          }
+        ]
+      }
+    },
+    {
+      "key": "frameGen",
+      "label": "Frame Generation",
+      "options": [
+        "Off",
+        "MFG"
+      ],
+      "default": "",
+      "apply": {
+        "method": "config-file",
+        "configFilePath": "%LOCALAPPDATA%\\Remedy\\AlanWake2\\renderer.ini",
+        "valueMap": {
+          "Off": "0",
+          "MFG": "3"
+        },
+        "edits": [
+          {
+            "pattern": "(\"m_eDLSSFGMode\":\\s*\")\\d+",
+            "replacement": "${1}{VALUE}"
+          }
+        ]
+      }
+    }
+  ],
+  "variants": [
+    {
+      "id": "as-set",
+      "name": "As configured in-game",
+      "enabled": true,
+      "settings": {}
+    },
+    {
+      "id": "dlss-q",
+      "name": "DLSS Quality, RT off, FG off",
+      "enabled": false,
+      "settings": {
+        "upscaler": "DLSS",
+        "upscalerQuality": "Quality",
+        "frameGen": "Off",
+        "rt": "Off"
+      }
+    },
+    {
+      "id": "dlss-p",
+      "name": "DLSS Performance, RT off, FG off",
+      "enabled": false,
+      "settings": {
+        "upscaler": "DLSS",
+        "upscalerQuality": "Performance",
+        "frameGen": "Off",
+        "rt": "Off"
+      }
+    },
+    {
+      "id": "dlss-p-mfg",
+      "name": "DLSS Performance + multi-FG, RT off",
+      "enabled": false,
+      "settings": {
+        "upscaler": "DLSS",
+        "upscalerQuality": "Performance",
+        "frameGen": "MFG",
+        "rt": "Off"
+      }
+    },
+    {
+      "id": "native-dlaa",
+      "name": "Native render (DLAA), RT off, FG off",
+      "enabled": false,
+      "settings": {
+        "upscaler": "DLSS",
+        "upscalerQuality": "DLAA",
+        "frameGen": "Off",
+        "rt": "Off"
+      }
+    },
+    {
+      "id": "pt-high",
+      "name": "RT Preset High (PT3 bundle), DLSS Perf, FG off",
+      "enabled": false,
+      "settings": {
+        "upscaler": "DLSS",
+        "upscalerQuality": "Performance",
+        "frameGen": "Off",
+        "rt": "High"
+      }
+    },
+    {
+      "id": "rt-ultra",
+      "name": "RT Preset Ultra (PT4 bundle), DLSS Perf, FG off",
+      "enabled": false,
+      "settings": {
+        "upscaler": "DLSS",
+        "upscalerQuality": "Performance",
+        "frameGen": "Off",
+        "rt": "Ultra"
+      }
+    }
+  ],
+  "captureProcessName": "AlanWake2.exe",
+  "frameProvider": "presentmon",
+  "startupGraceSeconds": 120,
+  "launch": {
+    "store": "Epic",
+    "gameId": "dc9d2e595d0e4650b35d659f90d41059",
+    "target": "${LOCAL_CONFIGURATION_PATH}"
+  },
+  "resolutionApply": {
+    "method": "none"
+  },
+  "settingsVerify": {
+    "method": "none"
+  },
+  "scenes": [
+    {
+      "id": "scripted-scene",
+      "name": "Continue -> open-yard wall-to-wall run",
+      "kind": "BotDriven",
+      "captureSeconds": 360,
+      "warmupSeconds": 0,
+      "readinessTimeoutSeconds": 320,
+      "botScript": "alan_wake_2_scene_smart",
+      "completion": {
+        "method": "duration"
+      }
+    }
+  ]
 }

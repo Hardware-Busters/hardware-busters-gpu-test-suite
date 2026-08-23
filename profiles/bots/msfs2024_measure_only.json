@@ -1,28 +1,28 @@
 {
-    "id":  "msfs2024_measure_only",
-    "inputDevice":  "Gamepad",
-    "loop":  false,
-    "actions":  [
-                    {
-                        "type":  "WaitForText",
-                        "text":  "Ready",
-                        "durationMs":  180000,
-                        "pollMs":  3000,
-                        "required":  true
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  5000
-                    },
-                    {
-                        "type":  "MarkStart"
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  35000
-                    },
-                    {
-                        "type":  "MarkEnd"
-                    }
-                ]
+  "id": "msfs2024_measure_only",
+  "inputDevice": "Gamepad",
+  "loop": false,
+  "actions": [
+    {
+      "type": "WaitForText",
+      "text": "Ready",
+      "durationMs": 180000,
+      "pollMs": 3000,
+      "required": true
+    },
+    {
+      "type": "Wait",
+      "durationMs": 5000
+    },
+    {
+      "type": "MarkStart"
+    },
+    {
+      "type": "Wait",
+      "durationMs": 35000
+    },
+    {
+      "type": "MarkEnd"
+    }
+  ]
 }

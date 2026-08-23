@@ -247,13 +247,14 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0" Margin="0,0,12,0">
-                                <TextBlock Text="FFMPEG PATH (empty = PATH)" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBlock Text="FFMPEG PATH — VISION INPUT (empty = PATH)" Style="{StaticResource LabelTextStyle}"/>
                                 <TextBox Text="{Binding Config.FfmpegPath, UpdateSourceTrigger=LostFocus, TargetNullValue=''}"/>
+                                <TextBlock Text="Required to enumerate and read the capture-card vision/OCR stream. It is not an FPS / frametime tool." Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" Margin="0,4,0,0"/>
                             </StackPanel>
                             <StackPanel Grid.Column="1">
                                 <TextBlock Text="CAPTURE CARD DEVICE (FULL AUTOMATION)" Style="{StaticResource LabelTextStyle}"/>
                                 <TextBox Text="{Binding Config.CaptureCardDevice, UpdateSourceTrigger=LostFocus, TargetNullValue=''}"/>
-                                <TextBlock Text="Must be exactly Elgato 4K Pro for the supported automated game-benchmark workflow. Other cards may still be used for diagnostics." Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                                <TextBlock Text="Must be exactly Elgato 4K Pro for the supported automated game-benchmark workflow. Full pre-flight checks the model and runs a bounded stream probe; no image is retained. Other cards may still be used for diagnostics; they are not qualified for full automation." Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" Margin="0,4,0,0"/>
                             </StackPanel>
                         </Grid>
                     </StackPanel>

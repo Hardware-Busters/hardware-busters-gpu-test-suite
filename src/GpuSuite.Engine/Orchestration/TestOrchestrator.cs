@@ -57,7 +57,7 @@ public sealed class TestOrchestrator
         // game. An all-PresentMon plan (the Ratchet-safe RTSS-free group) then never starts RTSS — not for
         // frames and not for the OSD — even when the operator forgets --no-osd. Same per-game rule as
         // gameForcesRtss below.
-        bool planUsesRtss = games.Any(g => string.Equals(g.FrameProvider, "rtss", StringComparison.OrdinalIgnoreCase));
+        bool planUsesRtss = games.Any(GameUsesRtss);
         var probe = _factory.ProbeAll(planUsesRtss);
         foreach (var line in probe) _log.Info("Probe", line);
 
@@ -159,9 +159,8 @@ public sealed class TestOrchestrator
             // forbidRtss and silently reintroduce that hook during the measured window.
             bool effectiveLateRtss = game.LateRtss && !game.ForbidRtss;
             bool backendReady = _factory.PrepareFrameBackend(game.FrameProvider, game.ForbidRtss, effectiveLateRtss, out string backendDetail);
+            var gameFramePlan = FrameCapturePreflightPlan.Build([game], _cfg.FrameProvider);
             _log.Info("Frames", $"{game.Id}: effective backend {(effectiveLateRtss ? "late RTSS" : gameUsesRtss ? "RTSS" : "PresentMon")} — {backendDetail}");
-            if (!backendReady)
-                _log.Warn("Frames", $"{game.Id}: requested frame backend is not ready; hardware validation will fail closed.");
 
             // Hardware validation gate (Milestone 2): verify the bench is in a known-good state before this
             // game. A failed FATAL check aborts ONLY this benchmark — classified + skipped — and the roster
@@ -169,6 +168,17 @@ public sealed class TestOrchestrator
             bool anyCellPending = stateMgr is null || game.Scenes
                 .SelectMany(s => variants.SelectMany(v => gameRes.Select(rr => RunStateManager.Cell(game.Id, s.Id, v?.Id, rr.Name))))
                 .Any(k => !stateMgr.IsCellDone(k));
+
+            // This is an unconditional fail-closed gate. Do not let the generic validator (which can
+            // legitimately accept a different available backend) turn a missing late/forced RTSS request
+            // into a PresentMon run. Nothing below this point may launch or create providers for the game.
+            if (anyCellPending && TryCreateBackendPrecheckFailure(game, backendReady, backendDetail, out var backendFailure))
+            {
+                outcomes.Add(backendFailure);
+                stateMgr?.RecordGameOutcome(backendFailure);
+                _log.Error("Game", $"=== {game.Id} ABORTED — {backendFailure.Reason}; continuing to the next game. ===");
+                continue;
+            }
 
             // Long campaigns can run for one or two days. Refresh launcher/account/update readiness immediately
             // before every pending game so a logout or update queued after the initial UI pre-flight is caught at
@@ -201,7 +211,7 @@ public sealed class TestOrchestrator
             }
             if (_cfg.HardwareValidation.Enabled && !_cfg.AttachToRunning && anyCellPending)
             {
-                var hw = hwValidator.Validate(_factory);
+                var hw = hwValidator.Validate(_factory, gameFramePlan, backendReady);
                 hwValidator.LogResult(game.Id, hw);
                 if (!hw.Ok)
                 {
@@ -968,7 +978,32 @@ public sealed class TestOrchestrator
     }
 
     private bool GameUsesRtss(GameProfile game)
-        => FrameProviderPolicy.Resolve(_cfg.FrameProvider, game.FrameProvider, _factory.PresentMonLive, game.ForbidRtss) == "rtss";
+        => !game.ForbidRtss && (game.LateRtss ||
+            FrameProviderPolicy.Resolve(_cfg.FrameProvider, game.FrameProvider, _factory.PresentMonLive, game.ForbidRtss) == "rtss");
+
+    /// <summary>Creates the non-negotiable requested-frame-backend failure used before any game launch.</summary>
+    internal static bool TryCreateBackendPrecheckFailure(
+        GameProfile game,
+        bool backendReady,
+        string backendDetail,
+        out GameOutcome failure)
+    {
+        if (backendReady)
+        {
+            failure = null!;
+            return false;
+        }
+
+        failure = new GameOutcome
+        {
+            GameId = game.Id,
+            Name = game.Name,
+            Status = GameStatus.Failed,
+            FailureClass = FailureClass.HardwarePrecheck,
+            Reason = "requested FPS / frametime backend unavailable before launch — " + backendDetail
+        };
+        return true;
+    }
 
     private static bool SceneUsesGamepad(SceneProfile scene) =>
         new[] { scene.BotScript, scene.StartBotScript, scene.ReRunBotScript, scene.Warmup?.Script }

@@ -1,294 +1,294 @@
 {
-    "id":  "cyberpunk-2077",
-    "settingsFingerprintKeys":  [
-                                    {
-                                        "label":  "upscaler",
-                                        "configFilePath":  "%LOCALAPPDATA%\\CD Projekt Red\\Cyberpunk 2077\\UserSettings.json",
-                                        "pattern":  "\"name\":\\s*\"ResolutionScaling\"[\\s\\S]{0,400}?\"value\":\\s*\"?([^\",\\r\\n]+)\"?"
-                                    },
-                                    {
-                                        "label":  "dlssQuality",
-                                        "configFilePath":  "%LOCALAPPDATA%\\CD Projekt Red\\Cyberpunk 2077\\UserSettings.json",
-                                        "pattern":  "\"name\":\\s*\"DLSS\"[\\s\\S]{0,400}?\"value\":\\s*\"?([^\",\\r\\n]+)\"?"
-                                    },
-                                    {
-                                        "label":  "rayTracing",
-                                        "configFilePath":  "%LOCALAPPDATA%\\CD Projekt Red\\Cyberpunk 2077\\UserSettings.json",
-                                        "pattern":  "\"name\":\\s*\"RayTracing\"[\\s\\S]{0,400}?\"value\":\\s*(\\w+)"
-                                    },
-                                    {
-                                        "label":  "drs",
-                                        "configFilePath":  "%LOCALAPPDATA%\\CD Projekt Red\\Cyberpunk 2077\\UserSettings.json",
-                                        "pattern":  "\"name\":\\s*\"DynamicResolutionScaling\"[\\s\\S]{0,400}?\"value\":\\s*(\\w+)"
-                                    },
-                                    {
-                                        "label":  "frameGen",
-                                        "configFilePath":  "%LOCALAPPDATA%\\CD Projekt Red\\Cyberpunk 2077\\UserSettings.json",
-                                        "pattern":  "\"name\":\\s*\"FrameGeneration\"[\\s\\S]{0,400}?\"value\":\\s*\"?([^\",\\r\\n]+)\"?",
-                                        "isFrameGen":  true,
-                                        "frameGenOffValues":  [
-                                                                  "Off",
-                                                                  "false"
-                                                              ]
-                                    },
-                                    {
-                                        "label":  "frameGenMulti",
-                                        "configFilePath":  "%LOCALAPPDATA%\\CD Projekt Red\\Cyberpunk 2077\\UserSettings.json",
-                                        "pattern":  "\"name\":\\s*\"DLSS_MultiFrameGeneration\"[\\s\\S]{0,400}?\"value\":\\s*\"(x[0-9])\""
-                                    }
-                                ],
-    "name":  "Cyberpunk 2077",
-    "engine":  "REDengine 4",
-    "enabled":  true,
-    "repeats":  3,
-    "supportedResolutions":  [
-                                 "1080p",
-                                 "1440p",
-                                 "4K"
-                             ],
-    "graphicsPreset":  "RT-Ultra",
-    "settings":  [
-                     {
-                         "key":  "rt",
-                         "label":  "Ray Tracing",
-                         "options":  [
-                                         "On",
-                                         "Off"
-                                     ],
-                         "default":  "On",
-                         "apply":  {
-                                       "method":  "config-file",
-                                       "configFilePath":  "%LOCALAPPDATA%\\CD Projekt Red\\Cyberpunk 2077\\UserSettings.json",
-                                       "valueMap":  {
-                                                        "On":  "true",
-                                                        "Off":  "false"
-                                                    },
-                                       "edits":  [
-                                                     {
-                                                         "pattern":  "(\"RayTracing\"[^}]*?\"value\"\\s*:\\s*)(?:true|false)",
-                                                         "replacement":  "${1}{VALUE}"
-                                                     }
-                                                 ]
-                                   }
-                     },
-                     {
-                         "key":  "upscaler",
-                         "label":  "Upscaling Mode",
-                         "options":  [
-                                         "Off",
-                                         "DLSS",
-                                         "FSR3",
-                                         "XeSS"
-                                     ],
-                         "default":  "DLSS",
-                         "apply":  {
-                                       "method":  "config-file",
-                                       "configFilePath":  "%LOCALAPPDATA%\\CD Projekt Red\\Cyberpunk 2077\\UserSettings.json",
-                                       "valueMap":  {
-                                                        "XeSS":  "XESS"
-                                                    },
-                                       "edits":  [
-                                                     {
-                                                         "pattern":  "(\"ResolutionScaling\"[^}]*?\"value\"\\s*:\\s*\")[A-Za-z0-9]+",
-                                                         "replacement":  "${1}{VALUE}"
-                                                     }
-                                                 ]
-                                   }
-                     },
-                     {
-                         "key":  "upscalerQuality",
-                         "label":  "Upscaler Quality",
-                         "options":  [
-                                         "Quality",
-                                         "Balanced",
-                                         "Performance",
-                                         "UltraPerformance",
-                                         "DLAA",
-                                         "Auto"
-                                     ],
-                         "default":  "Quality",
-                         "apply":  {
-                                       "method":  "config-file",
-                                       "configFilePath":  "%LOCALAPPDATA%\\CD Projekt Red\\Cyberpunk 2077\\UserSettings.json",
-                                       "edits":  [
-                                                     {
-                                                         "pattern":  "(\"DLSS\"[^}]*?\"value\"\\s*:\\s*\")[A-Za-z]+",
-                                                         "replacement":  "${1}{VALUE}"
-                                                     }
-                                                 ]
-                                   }
-                     },
-                     {
-                         "key":  "frameGen",
-                         "label":  "Frame Generation",
-                         "options":  [
-                                         "On",
-                                         "Off"
-                                     ],
-                         "default":  "Off",
-                         "apply":  {
-                                       "method":  "config-file",
-                                       "configFilePath":  "%LOCALAPPDATA%\\CD Projekt Red\\Cyberpunk 2077\\UserSettings.json",
-                                       "edits":  [
-                                                     {
-                                                         "pattern":  "(\"FrameGeneration\"[^}]*?\"value\"\\s*:\\s*\")[A-Za-z]+",
-                                                         "replacement":  "${1}{VALUE}",
-                                                         "valueMap":  {
-                                                                          "On":  "DLSS",
-                                                                          "Off":  "Off"
-                                                                      }
-                                                     },
-                                                     {
-                                                         "pattern":  "(\"DLSSFrameGen\"[^}]*?\"value\"\\s*:\\s*)(?:true|false)",
-                                                         "replacement":  "${1}{VALUE}",
-                                                         "valueMap":  {
-                                                                          "On":  "true",
-                                                                          "Off":  "false"
-                                                                      }
-                                                     }
-                                                 ]
-                                   }
-                     },
-                     {
-                         "key":  "frameGenMulti",
-                         "label":  "DLSS Multi-Frame Generation",
-                         "options":  [
-                                         "x2",
-                                         "x3",
-                                         "x4"
-                                     ],
-                         "default":  "",
-                         "apply":  {
-                                       "method":  "config-file",
-                                       "configFilePath":  "%LOCALAPPDATA%\\CD Projekt Red\\Cyberpunk 2077\\UserSettings.json",
-                                       "edits":  [
-                                                     {
-                                                         "pattern":  "(\"DLSS_MultiFrameGeneration\"[^}]*?\"value\"\\s*:\\s*\")x[0-9]",
-                                                         "replacement":  "${1}{VALUE}"
-                                                     }
-                                                 ]
-                                   }
-                     },
-                     {
-                         "key":  "textureQuality",
-                         "label":  "Texture Quality",
-                         "options":  [
-                                         "Low",
-                                         "Medium",
-                                         "High"
-                                     ],
-                         "default":  "High",
-                         "apply":  {
-                                       "method":  "config-file",
-                                       "configFilePath":  "%LOCALAPPDATA%\\CD Projekt Red\\Cyberpunk 2077\\UserSettings.json",
-                                       "edits":  [
-                                                     {
-                                                         "pattern":  "(\"TextureQuality\"[^}]*?\"value\"\\s*:\\s*\")[A-Za-z]+",
-                                                         "replacement":  "${1}{VALUE}"
-                                                     }
-                                                 ]
-                                   }
-                     }
-                 ],
-    "variants":  [
-                     {
-                         "id":  "rt-dlss-q",
-                         "name":  "RT Ultra + DLSS Quality",
-                         "enabled":  true,
-                         "settings":  {
-                                          "rt":  "On",
-                                          "upscaler":  "DLSS",
-                                          "upscalerQuality":  "Quality",
-                                          "frameGen":  "Off"
-                                      }
-                     },
-                     {
-                         "id":  "rt-dlss-fg",
-                         "name":  "RT Ultra + DLSS Quality + Frame Gen 2x",
-                         "enabled":  true,
-                         "settings":  {
-                                          "rt":  "On",
-                                          "upscaler":  "DLSS",
-                                          "upscalerQuality":  "Quality",
-                                          "frameGen":  "On",
-                                          "frameGenMulti":  "x2"
-                                      }
-                     },
-                     {
-                         "id":  "rt-native",
-                         "name":  "RT Ultra (native, no upscaling)",
-                         "enabled":  true,
-                         "settings":  {
-                                          "rt":  "On",
-                                          "upscaler":  "Off",
-                                          "frameGen":  "Off"
-                                      }
-                     },
-                     {
-                         "id":  "raster",
-                         "name":  "Raster (no RT, native)",
-                         "enabled":  false,
-                         "settings":  {
-                                          "rt":  "Off",
-                                          "upscaler":  "Off",
-                                          "frameGen":  "Off"
-                                      }
-                     }
-                 ],
-    "captureProcessName":  "Cyberpunk2077.exe",
-    "frameProvider":  "auto",
-    "startupGraceSeconds":  90,
-    "launch":  {
-                   "store":  "Standalone",
-                   "gameId":  "1423049311",
-                   "target":  "${LOCAL_CONFIGURATION_PATH}",
-                   "arguments":  "-benchmark"
-               },
-    "resolutionApply":  {
-                            "method":  "config-file",
-                            "configFilePath":  "%LOCALAPPDATA%\\CD Projekt Red\\Cyberpunk 2077\\UserSettings.json",
-                            "templateFilePath":  "profiles\\templates\\cyberpunk-2077.UserSettings.template.json",
-                            "edits":  [
-                                          {
-                                              "pattern":  "(\"WindowMode\"[^}]*?\"value\"\\s*:\\s*\")[A-Za-z]+",
-                                              "replacement":  "${1}Fullscreen"
-                                          },
-                                          {
-                                              "pattern":  "(\"Resolution\"[^}]*?\"value\"\\s*:\\s*\")[0-9]+x[0-9]+",
-                                              "replacement":  "${1}{WIDTH}x{HEIGHT}"
-                                          }
-                                      ]
-                        },
-    "settingsVerify":  {
-                           "method":  "config-file",
-                           "configFilePath":  "%LOCALAPPDATA%\\CD Projekt Red\\Cyberpunk 2077\\UserSettings.json",
-                           "expectedPattern":  "\"Resolution\"[^}]*?\"value\"\\s*:\\s*\"{WIDTH}x{HEIGHT}\""
-                       },
-    "scenes":  [
-                   {
-                       "id":  "builtin-benchmark",
-                       "name":  "Built-in Benchmark (scripted city flythrough)",
-                       "kind":  "BuiltInBenchmark",
-                       "captureSeconds":  210,
-                       "warmupSeconds":  0,
-                       "readinessTimeoutSeconds":  180,
-                       "benchmarkStart":  "arg",
-                       "measuredMotionFloor":  0,
-                       "completion":  {
-                                          "method":  "result-file",
-                                          "resultDirPath":  "%USERPROFILE%\\Documents\\CD Projekt Red\\Cyberpunk 2077\\benchmarkResults",
-                                          "resultFileGlob":  "summary.json",
-                                          "resultFpsPattern":  "\"averageFps\"\\s*:\\s*([0-9.]+)",
-                                          "resultWidthPattern":  "\"renderWidth\"\\s*:\\s*([0-9]+)",
-                                          "resultHeightPattern":  "\"renderHeight\"\\s*:\\s*([0-9]+)",
-                                          "minValidSeconds":  8,
-                                          "maxTimeoutSeconds":  700,
-                                          "fallbackToActivity":  true,
-                                          "activityIdleSeconds":  4,
-                                          "resultGraceSeconds":  180,
-                                          "gameplayBandCeilingFps":  300,
-                                          "measuredWarmupSeconds":  4
-                                      }
-                   }
-               ]
+  "id": "cyberpunk-2077",
+  "settingsFingerprintKeys": [
+    {
+      "label": "upscaler",
+      "configFilePath": "%LOCALAPPDATA%\\CD Projekt Red\\Cyberpunk 2077\\UserSettings.json",
+      "pattern": "\"name\":\\s*\"ResolutionScaling\"[\\s\\S]{0,400}?\"value\":\\s*\"?([^\",\\r\\n]+)\"?"
+    },
+    {
+      "label": "dlssQuality",
+      "configFilePath": "%LOCALAPPDATA%\\CD Projekt Red\\Cyberpunk 2077\\UserSettings.json",
+      "pattern": "\"name\":\\s*\"DLSS\"[\\s\\S]{0,400}?\"value\":\\s*\"?([^\",\\r\\n]+)\"?"
+    },
+    {
+      "label": "rayTracing",
+      "configFilePath": "%LOCALAPPDATA%\\CD Projekt Red\\Cyberpunk 2077\\UserSettings.json",
+      "pattern": "\"name\":\\s*\"RayTracing\"[\\s\\S]{0,400}?\"value\":\\s*(\\w+)"
+    },
+    {
+      "label": "drs",
+      "configFilePath": "%LOCALAPPDATA%\\CD Projekt Red\\Cyberpunk 2077\\UserSettings.json",
+      "pattern": "\"name\":\\s*\"DynamicResolutionScaling\"[\\s\\S]{0,400}?\"value\":\\s*(\\w+)"
+    },
+    {
+      "label": "frameGen",
+      "configFilePath": "%LOCALAPPDATA%\\CD Projekt Red\\Cyberpunk 2077\\UserSettings.json",
+      "pattern": "\"name\":\\s*\"FrameGeneration\"[\\s\\S]{0,400}?\"value\":\\s*\"?([^\",\\r\\n]+)\"?",
+      "isFrameGen": true,
+      "frameGenOffValues": [
+        "Off",
+        "false"
+      ]
+    },
+    {
+      "label": "frameGenMulti",
+      "configFilePath": "%LOCALAPPDATA%\\CD Projekt Red\\Cyberpunk 2077\\UserSettings.json",
+      "pattern": "\"name\":\\s*\"DLSS_MultiFrameGeneration\"[\\s\\S]{0,400}?\"value\":\\s*\"(x[0-9])\""
+    }
+  ],
+  "name": "Cyberpunk 2077",
+  "engine": "REDengine 4",
+  "enabled": true,
+  "repeats": 3,
+  "supportedResolutions": [
+    "1080p",
+    "1440p",
+    "4K"
+  ],
+  "graphicsPreset": "RT-Ultra",
+  "settings": [
+    {
+      "key": "rt",
+      "label": "Ray Tracing",
+      "options": [
+        "On",
+        "Off"
+      ],
+      "default": "On",
+      "apply": {
+        "method": "config-file",
+        "configFilePath": "%LOCALAPPDATA%\\CD Projekt Red\\Cyberpunk 2077\\UserSettings.json",
+        "valueMap": {
+          "On": "true",
+          "Off": "false"
+        },
+        "edits": [
+          {
+            "pattern": "(\"RayTracing\"[^}]*?\"value\"\\s*:\\s*)(?:true|false)",
+            "replacement": "${1}{VALUE}"
+          }
+        ]
+      }
+    },
+    {
+      "key": "upscaler",
+      "label": "Upscaling Mode",
+      "options": [
+        "Off",
+        "DLSS",
+        "FSR3",
+        "XeSS"
+      ],
+      "default": "DLSS",
+      "apply": {
+        "method": "config-file",
+        "configFilePath": "%LOCALAPPDATA%\\CD Projekt Red\\Cyberpunk 2077\\UserSettings.json",
+        "valueMap": {
+          "XeSS": "XESS"
+        },
+        "edits": [
+          {
+            "pattern": "(\"ResolutionScaling\"[^}]*?\"value\"\\s*:\\s*\")[A-Za-z0-9]+",
+            "replacement": "${1}{VALUE}"
+          }
+        ]
+      }
+    },
+    {
+      "key": "upscalerQuality",
+      "label": "Upscaler Quality",
+      "options": [
+        "Quality",
+        "Balanced",
+        "Performance",
+        "UltraPerformance",
+        "DLAA",
+        "Auto"
+      ],
+      "default": "Quality",
+      "apply": {
+        "method": "config-file",
+        "configFilePath": "%LOCALAPPDATA%\\CD Projekt Red\\Cyberpunk 2077\\UserSettings.json",
+        "edits": [
+          {
+            "pattern": "(\"DLSS\"[^}]*?\"value\"\\s*:\\s*\")[A-Za-z]+",
+            "replacement": "${1}{VALUE}"
+          }
+        ]
+      }
+    },
+    {
+      "key": "frameGen",
+      "label": "Frame Generation",
+      "options": [
+        "On",
+        "Off"
+      ],
+      "default": "Off",
+      "apply": {
+        "method": "config-file",
+        "configFilePath": "%LOCALAPPDATA%\\CD Projekt Red\\Cyberpunk 2077\\UserSettings.json",
+        "edits": [
+          {
+            "pattern": "(\"FrameGeneration\"[^}]*?\"value\"\\s*:\\s*\")[A-Za-z]+",
+            "replacement": "${1}{VALUE}",
+            "valueMap": {
+              "On": "DLSS",
+              "Off": "Off"
+            }
+          },
+          {
+            "pattern": "(\"DLSSFrameGen\"[^}]*?\"value\"\\s*:\\s*)(?:true|false)",
+            "replacement": "${1}{VALUE}",
+            "valueMap": {
+              "On": "true",
+              "Off": "false"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "key": "frameGenMulti",
+      "label": "DLSS Multi-Frame Generation",
+      "options": [
+        "x2",
+        "x3",
+        "x4"
+      ],
+      "default": "",
+      "apply": {
+        "method": "config-file",
+        "configFilePath": "%LOCALAPPDATA%\\CD Projekt Red\\Cyberpunk 2077\\UserSettings.json",
+        "edits": [
+          {
+            "pattern": "(\"DLSS_MultiFrameGeneration\"[^}]*?\"value\"\\s*:\\s*\")x[0-9]",
+            "replacement": "${1}{VALUE}"
+          }
+        ]
+      }
+    },
+    {
+      "key": "textureQuality",
+      "label": "Texture Quality",
+      "options": [
+        "Low",
+        "Medium",
+        "High"
+      ],
+      "default": "High",
+      "apply": {
+        "method": "config-file",
+        "configFilePath": "%LOCALAPPDATA%\\CD Projekt Red\\Cyberpunk 2077\\UserSettings.json",
+        "edits": [
+          {
+            "pattern": "(\"TextureQuality\"[^}]*?\"value\"\\s*:\\s*\")[A-Za-z]+",
+            "replacement": "${1}{VALUE}"
+          }
+        ]
+      }
+    }
+  ],
+  "variants": [
+    {
+      "id": "rt-dlss-q",
+      "name": "RT Ultra + DLSS Quality",
+      "enabled": true,
+      "settings": {
+        "rt": "On",
+        "upscaler": "DLSS",
+        "upscalerQuality": "Quality",
+        "frameGen": "Off"
+      }
+    },
+    {
+      "id": "rt-dlss-fg",
+      "name": "RT Ultra + DLSS Quality + Frame Gen 2x",
+      "enabled": true,
+      "settings": {
+        "rt": "On",
+        "upscaler": "DLSS",
+        "upscalerQuality": "Quality",
+        "frameGen": "On",
+        "frameGenMulti": "x2"
+      }
+    },
+    {
+      "id": "rt-native",
+      "name": "RT Ultra (native, no upscaling)",
+      "enabled": true,
+      "settings": {
+        "rt": "On",
+        "upscaler": "Off",
+        "frameGen": "Off"
+      }
+    },
+    {
+      "id": "raster",
+      "name": "Raster (no RT, native)",
+      "enabled": false,
+      "settings": {
+        "rt": "Off",
+        "upscaler": "Off",
+        "frameGen": "Off"
+      }
+    }
+  ],
+  "captureProcessName": "Cyberpunk2077.exe",
+  "frameProvider": "auto",
+  "startupGraceSeconds": 90,
+  "launch": {
+    "store": "Standalone",
+    "gameId": "1423049311",
+    "target": "${LOCAL_CONFIGURATION_PATH}",
+    "arguments": "-benchmark"
+  },
+  "resolutionApply": {
+    "method": "config-file",
+    "configFilePath": "%LOCALAPPDATA%\\CD Projekt Red\\Cyberpunk 2077\\UserSettings.json",
+    "templateFilePath": "profiles\\templates\\cyberpunk-2077.UserSettings.template.json",
+    "edits": [
+      {
+        "pattern": "(\"WindowMode\"[^}]*?\"value\"\\s*:\\s*\")[A-Za-z]+",
+        "replacement": "${1}Fullscreen"
+      },
+      {
+        "pattern": "(\"Resolution\"[^}]*?\"value\"\\s*:\\s*\")[0-9]+x[0-9]+",
+        "replacement": "${1}{WIDTH}x{HEIGHT}"
+      }
+    ]
+  },
+  "settingsVerify": {
+    "method": "config-file",
+    "configFilePath": "%LOCALAPPDATA%\\CD Projekt Red\\Cyberpunk 2077\\UserSettings.json",
+    "expectedPattern": "\"Resolution\"[^}]*?\"value\"\\s*:\\s*\"{WIDTH}x{HEIGHT}\""
+  },
+  "scenes": [
+    {
+      "id": "builtin-benchmark",
+      "name": "Built-in Benchmark (scripted city flythrough)",
+      "kind": "BuiltInBenchmark",
+      "captureSeconds": 210,
+      "warmupSeconds": 0,
+      "readinessTimeoutSeconds": 180,
+      "benchmarkStart": "arg",
+      "measuredMotionFloor": 0,
+      "completion": {
+        "method": "result-file",
+        "resultDirPath": "%USERPROFILE%\\Documents\\CD Projekt Red\\Cyberpunk 2077\\benchmarkResults",
+        "resultFileGlob": "summary.json",
+        "resultFpsPattern": "\"averageFps\"\\s*:\\s*([0-9.]+)",
+        "resultWidthPattern": "\"renderWidth\"\\s*:\\s*([0-9]+)",
+        "resultHeightPattern": "\"renderHeight\"\\s*:\\s*([0-9]+)",
+        "minValidSeconds": 8,
+        "maxTimeoutSeconds": 700,
+        "fallbackToActivity": true,
+        "activityIdleSeconds": 4,
+        "resultGraceSeconds": 180,
+        "gameplayBandCeilingFps": 300,
+        "measuredWarmupSeconds": 4
+      }
+    }
+  ]
 }

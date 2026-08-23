@@ -1,482 +1,482 @@
 {
-    "id":  "msfs2024_dynamic_flight",
-    "inputDevice":  "Gamepad",
-    "loop":  false,
-    "actions":  [
-                    {
-                        "type":  "Wait",
-                        "durationMs":  8000
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "Right",
-                        "durationMs":  180
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  700
-                    },
-                    {
-                        "type":  "PressUntilText",
-                        "key":  "A",
-                        "text":  "Free Flight",
-                        "abortIfText":  "Authentication in progress",
-                        "abortIfTexts":  [
-                                             "Which one do you want to use",
-                                             "We can\u0027t sync your data with the cloud right now"
-                                         ],
-                        "durationMs":  360000,
-                        "pollMs":  5000,
-                        "maxPresses":  48,
-                        "required":  true
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "DOWN",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  350
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "DOWN",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  350
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "DOWN",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  350
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "DOWN",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  350
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "DOWN",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  350
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "DOWN",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  500
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "LEFT",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  300
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "LEFT",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  300
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "LEFT",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  300
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "LEFT",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  500
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "UP",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  800
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "A",
-                        "durationMs":  150
-                    },
-                    {
-                        "type":  "WaitForText",
-                        "text":  "Activities",
-                        "durationMs":  6000,
-                        "pollMs":  1500
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "RIGHT",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  600
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "RIGHT",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  600
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "RIGHT",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  600
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "RIGHT",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  600
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "RIGHT",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  900
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "A",
-                        "durationMs":  150
-                    },
-                    {
-                        "type":  "WaitForText",
-                        "text":  "Precision Landing",
-                        "durationMs":  90000,
-                        "pollMs":  1500,
-                        "required":  true
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "A",
-                        "durationMs":  150
-                    },
-                    {
-                        "type":  "WaitForText",
-                        "text":  "Belayim",
-                        "durationMs":  90000,
-                        "pollMs":  1500,
-                        "required":  true
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "UP",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  350
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "UP",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  350
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "LEFT",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  300
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "LEFT",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  300
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "LEFT",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  300
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "LEFT",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  500
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "A",
-                        "durationMs":  150
-                    },
-                    {
-                        "type":  "WaitForText",
-                        "text":  "Course Leaderboard",
-                        "durationMs":  60000,
-                        "pollMs":  1200,
-                        "required":  true
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  5000
-                    },
-                    {
-                        "type":  "PressUntilText",
-                        "key":  "A",
-                        "text":  "Course Leaderboard",
-                        "waitForAbsent":  true,
-                        "minConsecutive":  2,
-                        "durationMs":  30000,
-                        "pollMs":  1500,
-                        "maxPresses":  4,
-                        "required":  true
-                    },
-                    {
-                        "type":  "WaitForText",
-                        "text":  "Ready",
-                        "durationMs":  180000,
-                        "pollMs":  3000,
-                        "required":  true
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "Down",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "Down",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "Down",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "Down",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "Down",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "Down",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "Right",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "Right",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "Right",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "Right",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "Right",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "Right",
-                        "durationMs":  120
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  500
-                    },
-                    {
-                        "type":  "PressUntilText",
-                        "key":  "A",
-                        "text":  "Ready",
-                        "durationMs":  45000,
-                        "pollMs":  1500,
-                        "waitForAbsent":  true,
-                        "maxPresses":  4,
-                        "required":  true,
-                        "minConsecutive":  3
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  1500
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "A",
-                        "durationMs":  140
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  320
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "A",
-                        "durationMs":  140
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  320
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "A",
-                        "durationMs":  140
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  320
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "A",
-                        "durationMs":  140
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  320
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "A",
-                        "durationMs":  140
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  320
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "A",
-                        "durationMs":  140
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  320
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "A",
-                        "durationMs":  140
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  320
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "A",
-                        "durationMs":  140
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  320
-                    },
-                    {
-                        "type":  "PadLeftStick",
-                        "x":  0,
-                        "y":  0.08,
-                        "durationMs":  12000
-                    },
-                    {
-                        "type":  "PadLeftStick",
-                        "x":  0,
-                        "y":  0,
-                        "durationMs":  800
-                    },
-                    {
-                        "type":  "MarkStart"
-                    },
-                    {
-                        "type":  "PadLeftStick",
-                        "x":  0,
-                        "y":  0.08,
-                        "durationMs":  35000
-                    },
-                    {
-                        "type":  "PadLeftStick",
-                        "x":  0,
-                        "y":  0,
-                        "durationMs":  200
-                    },
-                    {
-                        "type":  "MarkEnd"
-                    }
-                ]
+  "id": "msfs2024_dynamic_flight",
+  "inputDevice": "Gamepad",
+  "loop": false,
+  "actions": [
+    {
+      "type": "Wait",
+      "durationMs": 8000
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "Right",
+      "durationMs": 180
+    },
+    {
+      "type": "Wait",
+      "durationMs": 700
+    },
+    {
+      "type": "PressUntilText",
+      "key": "A",
+      "text": "Free Flight",
+      "abortIfText": "Authentication in progress",
+      "abortIfTexts": [
+        "Which one do you want to use",
+        "We can't sync your data with the cloud right now"
+      ],
+      "durationMs": 360000,
+      "pollMs": 5000,
+      "maxPresses": 48,
+      "required": true
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "DOWN",
+      "durationMs": 120
+    },
+    {
+      "type": "Wait",
+      "durationMs": 350
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "DOWN",
+      "durationMs": 120
+    },
+    {
+      "type": "Wait",
+      "durationMs": 350
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "DOWN",
+      "durationMs": 120
+    },
+    {
+      "type": "Wait",
+      "durationMs": 350
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "DOWN",
+      "durationMs": 120
+    },
+    {
+      "type": "Wait",
+      "durationMs": 350
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "DOWN",
+      "durationMs": 120
+    },
+    {
+      "type": "Wait",
+      "durationMs": 350
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "DOWN",
+      "durationMs": 120
+    },
+    {
+      "type": "Wait",
+      "durationMs": 500
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "LEFT",
+      "durationMs": 120
+    },
+    {
+      "type": "Wait",
+      "durationMs": 300
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "LEFT",
+      "durationMs": 120
+    },
+    {
+      "type": "Wait",
+      "durationMs": 300
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "LEFT",
+      "durationMs": 120
+    },
+    {
+      "type": "Wait",
+      "durationMs": 300
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "LEFT",
+      "durationMs": 120
+    },
+    {
+      "type": "Wait",
+      "durationMs": 500
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "UP",
+      "durationMs": 120
+    },
+    {
+      "type": "Wait",
+      "durationMs": 800
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "A",
+      "durationMs": 150
+    },
+    {
+      "type": "WaitForText",
+      "text": "Activities",
+      "durationMs": 6000,
+      "pollMs": 1500
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "RIGHT",
+      "durationMs": 120
+    },
+    {
+      "type": "Wait",
+      "durationMs": 600
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "RIGHT",
+      "durationMs": 120
+    },
+    {
+      "type": "Wait",
+      "durationMs": 600
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "RIGHT",
+      "durationMs": 120
+    },
+    {
+      "type": "Wait",
+      "durationMs": 600
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "RIGHT",
+      "durationMs": 120
+    },
+    {
+      "type": "Wait",
+      "durationMs": 600
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "RIGHT",
+      "durationMs": 120
+    },
+    {
+      "type": "Wait",
+      "durationMs": 900
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "A",
+      "durationMs": 150
+    },
+    {
+      "type": "WaitForText",
+      "text": "Precision Landing",
+      "durationMs": 90000,
+      "pollMs": 1500,
+      "required": true
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "A",
+      "durationMs": 150
+    },
+    {
+      "type": "WaitForText",
+      "text": "Belayim",
+      "durationMs": 90000,
+      "pollMs": 1500,
+      "required": true
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "UP",
+      "durationMs": 120
+    },
+    {
+      "type": "Wait",
+      "durationMs": 350
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "UP",
+      "durationMs": 120
+    },
+    {
+      "type": "Wait",
+      "durationMs": 350
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "LEFT",
+      "durationMs": 120
+    },
+    {
+      "type": "Wait",
+      "durationMs": 300
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "LEFT",
+      "durationMs": 120
+    },
+    {
+      "type": "Wait",
+      "durationMs": 300
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "LEFT",
+      "durationMs": 120
+    },
+    {
+      "type": "Wait",
+      "durationMs": 300
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "LEFT",
+      "durationMs": 120
+    },
+    {
+      "type": "Wait",
+      "durationMs": 500
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "A",
+      "durationMs": 150
+    },
+    {
+      "type": "WaitForText",
+      "text": "Course Leaderboard",
+      "durationMs": 60000,
+      "pollMs": 1200,
+      "required": true
+    },
+    {
+      "type": "Wait",
+      "durationMs": 5000
+    },
+    {
+      "type": "PressUntilText",
+      "key": "A",
+      "text": "Course Leaderboard",
+      "waitForAbsent": true,
+      "minConsecutive": 2,
+      "durationMs": 30000,
+      "pollMs": 1500,
+      "maxPresses": 4,
+      "required": true
+    },
+    {
+      "type": "WaitForText",
+      "text": "Ready",
+      "durationMs": 180000,
+      "pollMs": 3000,
+      "required": true
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "Down",
+      "durationMs": 120
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "Down",
+      "durationMs": 120
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "Down",
+      "durationMs": 120
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "Down",
+      "durationMs": 120
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "Down",
+      "durationMs": 120
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "Down",
+      "durationMs": 120
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "Right",
+      "durationMs": 120
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "Right",
+      "durationMs": 120
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "Right",
+      "durationMs": 120
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "Right",
+      "durationMs": 120
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "Right",
+      "durationMs": 120
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "Right",
+      "durationMs": 120
+    },
+    {
+      "type": "Wait",
+      "durationMs": 500
+    },
+    {
+      "type": "PressUntilText",
+      "key": "A",
+      "text": "Ready",
+      "durationMs": 45000,
+      "pollMs": 1500,
+      "waitForAbsent": true,
+      "maxPresses": 4,
+      "required": true,
+      "minConsecutive": 3
+    },
+    {
+      "type": "Wait",
+      "durationMs": 1500
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "A",
+      "durationMs": 140
+    },
+    {
+      "type": "Wait",
+      "durationMs": 320
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "A",
+      "durationMs": 140
+    },
+    {
+      "type": "Wait",
+      "durationMs": 320
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "A",
+      "durationMs": 140
+    },
+    {
+      "type": "Wait",
+      "durationMs": 320
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "A",
+      "durationMs": 140
+    },
+    {
+      "type": "Wait",
+      "durationMs": 320
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "A",
+      "durationMs": 140
+    },
+    {
+      "type": "Wait",
+      "durationMs": 320
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "A",
+      "durationMs": 140
+    },
+    {
+      "type": "Wait",
+      "durationMs": 320
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "A",
+      "durationMs": 140
+    },
+    {
+      "type": "Wait",
+      "durationMs": 320
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "A",
+      "durationMs": 140
+    },
+    {
+      "type": "Wait",
+      "durationMs": 320
+    },
+    {
+      "type": "PadLeftStick",
+      "x": 0,
+      "y": 0.08,
+      "durationMs": 12000
+    },
+    {
+      "type": "PadLeftStick",
+      "x": 0,
+      "y": 0,
+      "durationMs": 800
+    },
+    {
+      "type": "MarkStart"
+    },
+    {
+      "type": "PadLeftStick",
+      "x": 0,
+      "y": 0.08,
+      "durationMs": 35000
+    },
+    {
+      "type": "PadLeftStick",
+      "x": 0,
+      "y": 0,
+      "durationMs": 200
+    },
+    {
+      "type": "MarkEnd"
+    }
+  ]
 }
