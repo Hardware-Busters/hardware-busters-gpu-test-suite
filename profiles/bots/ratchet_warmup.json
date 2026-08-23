@@ -1,111 +1,109 @@
 {
-    "id":  "ratchet_warmup",
-    "inputDevice":  "Gamepad",
-    "loop":  false,
-    "graph":  {
-                  "timeoutSeconds":  360,
-                  "pollMs":  3000,
-                  "lostMs":  6000,
-                  "recoverKey":  "A",
-                  "maxRecoveries":  30,
-                  "screens":  [
-                                  {
-                                      "id":  "MAIN_MENU",
-                                      "anyOf":  [
-                                                    "RESUME",
-                                                    "CONTINUE GAME"
-                                                ],
-                                      "do":  [
-
-                                             ],
-                                      "goal":  true
-                                  },
-                                  {
-                                      "id":  "SELECT_PROFILE",
-                                      "anyOf":  [
-                                                    "SELECT PROFILE"
-                                                ],
-                                      "noneOf":  [
-                                                     "RESUME"
-                                                 ],
-                                      "do":  [
-                                                 {
-                                                     "key":  "A",
-                                                     "holdMs":  150,
-                                                     "gapMs":  3500
-                                                 }
-                                             ]
-                                  },
-                                  {
-                                      "id":  "LAUNCHER",
-                                      "anyOf":  [
-                                                    "PLAY",
-                                                    "SHOW LAUNCHER"
-                                                ],
-                                      "noneOf":  [
-                                                     "RESUME",
-                                                     "CONTINUE GAME",
-                                                     "SELECT PROFILE"
-                                                 ],
-                                      "do":  [
-                                                 {
-                                                     "key":  "A",
-                                                     "holdMs":  150,
-                                                     "gapMs":  3500
-                                                 }
-                                             ]
-                                  }
-                              ]
-              },
-    "visionGoal":  "Reach the Ratchet \u0026 Clank: Rift Apart MAIN MENU, which shows the option RESUME (alongside CONTINUE GAME and NEW GAME). Choose ONE action: answer DONE only when RESUME or CONTINUE GAME is visible as a menu option; answer CONFIRM to advance an Insomniac or Nixxes studio logo, or to pick the first profile on a \u0027SELECT PROFILE\u0027 screen; answer WAIT only on a loading screen, or while logos are mid-animation with no prompt. Do NOT answer DONE for a studio logo or the profile-select screen - DONE requires the RESUME / CONTINUE GAME menu options to be visible.",
-    "actions":  [
-                    {
-                        "type":  "Wait",
-                        "durationMs":  2500
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "A",
-                        "durationMs":  150
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  3000
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "A",
-                        "durationMs":  150
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  3000
-                    },
-                    {
-                        "type":  "PadButtonTap",
-                        "key":  "A",
-                        "durationMs":  150
-                    },
-                    {
-                        "type":  "WaitForText",
-                        "text":  "RESUME",
-                        "durationMs":  40000,
-                        "pollMs":  2000,
-                        "waitForAbsent":  true,
-                        "required":  true,
-                        "minConsecutive":  3
-                    },
-                    {
-                        "type":  "Wait",
-                        "durationMs":  25000
-                    },
-                    {
-                        "type":  "SmartTraverse",
-                        "durationMs":  90000,
-                        "stuckThreshold":  0.01,
-                        "stuckTriggerCount":  3,
-                        "maxRecoveryTurns":  10,
-                        "minHealthyMotionRatio":  0.5
-                    }
-                ]
+  "id": "ratchet_warmup",
+  "inputDevice": "Gamepad",
+  "loop": false,
+  "graph": {
+    "timeoutSeconds": 360,
+    "pollMs": 3000,
+    "lostMs": 6000,
+    "recoverKey": "A",
+    "maxRecoveries": 30,
+    "screens": [
+      {
+        "id": "MAIN_MENU",
+        "anyOf": [
+          "RESUME",
+          "CONTINUE GAME"
+        ],
+        "do": [],
+        "goal": true
+      },
+      {
+        "id": "SELECT_PROFILE",
+        "anyOf": [
+          "SELECT PROFILE"
+        ],
+        "noneOf": [
+          "RESUME"
+        ],
+        "do": [
+          {
+            "key": "A",
+            "holdMs": 150,
+            "gapMs": 3500
+          }
+        ]
+      },
+      {
+        "id": "LAUNCHER",
+        "anyOf": [
+          "PLAY",
+          "SHOW LAUNCHER"
+        ],
+        "noneOf": [
+          "RESUME",
+          "CONTINUE GAME",
+          "SELECT PROFILE"
+        ],
+        "do": [
+          {
+            "key": "A",
+            "holdMs": 150,
+            "gapMs": 3500
+          }
+        ]
+      }
+    ]
+  },
+  "visionGoal": "Reach the Ratchet & Clank: Rift Apart MAIN MENU, which shows the option RESUME (alongside CONTINUE GAME and NEW GAME). Choose ONE action: answer DONE only when RESUME or CONTINUE GAME is visible as a menu option; answer CONFIRM to advance an Insomniac or Nixxes studio logo, or to pick the first profile on a 'SELECT PROFILE' screen; answer WAIT only on a loading screen, or while logos are mid-animation with no prompt. Do NOT answer DONE for a studio logo or the profile-select screen - DONE requires the RESUME / CONTINUE GAME menu options to be visible.",
+  "actions": [
+    {
+      "type": "Wait",
+      "durationMs": 2500
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "A",
+      "durationMs": 150
+    },
+    {
+      "type": "Wait",
+      "durationMs": 3000
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "A",
+      "durationMs": 150
+    },
+    {
+      "type": "Wait",
+      "durationMs": 3000
+    },
+    {
+      "type": "PadButtonTap",
+      "key": "A",
+      "durationMs": 150
+    },
+    {
+      "type": "WaitForText",
+      "text": "RESUME",
+      "durationMs": 40000,
+      "pollMs": 2000,
+      "waitForAbsent": true,
+      "required": true,
+      "minConsecutive": 3
+    },
+    {
+      "type": "Wait",
+      "durationMs": 25000
+    },
+    {
+      "type": "SmartTraverse",
+      "durationMs": 90000,
+      "stuckThreshold": 0.01,
+      "stuckTriggerCount": 3,
+      "maxRecoveryTurns": 10,
+      "minHealthyMotionRatio": 0.5
+    }
+  ]
 }

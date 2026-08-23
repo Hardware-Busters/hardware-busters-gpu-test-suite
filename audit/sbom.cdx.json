@@ -1,16 +1,14 @@
 {
-    "serialNumber":  "urn:uuid:8750bc72-46cf-466e-b38a-d9ebe4efb44e",
-    "version":  1,
-    "bomFormat":  "CycloneDX",
-    "metadata":  {
-                     "component":  {
-                                       "name":  "hardware-busters-gpu-test-suite",
-                                       "version":  "public-export",
-                                       "type":  "application"
-                                   }
-                 },
-    "specVersion":  "1.5",
-    "components":  [
-
-                   ]
+  "bomFormat": "CycloneDX",
+  "version": 1,
+  "components": [],
+  "specVersion": "1.5",
+  "serialNumber": "urn:uuid:8312180a-03bc-490f-888a-d971b8e059e3",
+  "metadata": {
+    "component": {
+      "type": "application",
+      "name": "hardware-busters-gpu-test-suite",
+      "version": "public-export"
+    }
+  }
 }

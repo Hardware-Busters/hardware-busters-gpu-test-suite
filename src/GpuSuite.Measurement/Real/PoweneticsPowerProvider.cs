@@ -35,8 +35,9 @@ public sealed class PoweneticsPowerProvider : IPowerProvider
     };
 
     /// <summary>
-    /// Detect a Powenetics device. Tries the configured port first, then every COM port,
-    /// looking for a valid PMD frame stream. Sets <see cref="IsLive"/> on success.
+    /// Detect a Powenetics device. Tries the configured port first, then — only when
+    /// <c>poweneticsAutoDetect</c> is on — every remaining COM port, looking for a valid PMD frame
+    /// stream. Sets <see cref="IsLive"/> on success.
     /// </summary>
     public bool Probe(out string detail)
     {
@@ -45,9 +46,16 @@ public sealed class PoweneticsPowerProvider : IPowerProvider
 
         // Safety: only probe a configured port, or every port when auto-detect is explicitly on.
         // Never poke unknown bench equipment by default.
+        //
+        // The configured port is a HINT, not a limit. The PMD's COM number drifts across reconnects, so with
+        // auto-detect on we try the hint first (fast path) and then every remaining port. Until 2026-08-14
+        // this was an `else if`: a configured port suppressed the scan entirely, so a STALE poweneticsComPort
+        // silently defeated auto-detect and power fell back to LHM board power — a provenance downgrade
+        // (DIRECT · POWENETICS → APPROXIMATE) caused purely by a renumbered port. The doc comment above has
+        // promised the fallback since this file was written; only now does the code do it.
         var order = new List<string>();
         if (!string.IsNullOrEmpty(_preferredPort)) order.Add(_preferredPort);
-        else if (_autoDetect) order.AddRange(ports);
+        if (_autoDetect) order.AddRange(ports.Where(p => !order.Contains(p, StringComparer.OrdinalIgnoreCase)));
 
         if (order.Count == 0)
         {

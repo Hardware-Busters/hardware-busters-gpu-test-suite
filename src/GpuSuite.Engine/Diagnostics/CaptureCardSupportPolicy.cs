@@ -12,8 +12,15 @@ public static class CaptureCardSupportPolicy
     public const string PolicyStatement =
         "Elgato Game Capture 4K Pro is required for the full supported automated game-benchmark workflow and is the only capture-card model currently qualified by this project.";
 
+    /// <summary>
+    /// Exact, case-sensitive match on the qualified DirectShow name — surrounding whitespace excepted.
+    /// Trimming is deliberate and does not weaken the policy: whitespace does not name a different device,
+    /// and <c>CaptureCardGrabber</c> already trims before handing the name to ffmpeg. Comparing untrimmed
+    /// here meant a pasted "Elgato 4K Pro " hard-blocked pre-flight while the grabber itself worked — and
+    /// the blocker text echoed the name <em>trimmed</em>, so it read as "X is not X".
+    /// </summary>
     public static bool IsQualifiedDeviceName(string? deviceName) =>
-        string.Equals(deviceName, QualifiedDeviceName, StringComparison.Ordinal);
+        string.Equals(deviceName?.Trim(), QualifiedDeviceName, StringComparison.Ordinal);
 
     public static CaptureCardQualification Evaluate(string? configuredDevice, IEnumerable<string>? enumeratedDevices)
     {

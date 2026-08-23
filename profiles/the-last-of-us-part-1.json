@@ -1,189 +1,187 @@
 {
-    "id":  "the-last-of-us-part-1",
-    "settingsFingerprintKeys":  [
-                                    {
-                                        "label":  "scalingMode",
-                                        "configFilePath":  "%USERPROFILE%\\Saved Games\\The Last of Us Part I\\users\\91337615\\screeninfo.cfg",
-                                        "pattern":  "(?m)^ScalingMode=(\\d+)",
-                                        "valueMap":  {
-                                                         "0":  "Default",
-                                                         "1":  "FSR",
-                                                         "2":  "DLSS"
-                                                     }
-                                    },
-                                    {
-                                        "label":  "scalingQuality",
-                                        "configFilePath":  "%USERPROFILE%\\Saved Games\\The Last of Us Part I\\users\\91337615\\screeninfo.cfg",
-                                        "pattern":  "(?m)^ScalingQuality=(\\d+)",
-                                        "valueMap":  {
-                                                         "2":  "Performance"
-                                                     }
-                                    },
-                                    {
-                                        "label":  "renderScale",
-                                        "configFilePath":  "%USERPROFILE%\\Saved Games\\The Last of Us Part I\\users\\91337615\\screeninfo.cfg",
-                                        "pattern":  "(?m)^RenderScale=([\\d.]+)"
-                                    },
-                                    {
-                                        "label":  "preset",
-                                        "configFilePath":  "%USERPROFILE%\\Saved Games\\The Last of Us Part I\\users\\91337615\\screeninfo.cfg",
-                                        "pattern":  "(?m)^GraphicsPreset=(\\d+)"
-                                    },
-                                    {
-                                        "label":  "frameGen",
-                                        "configFilePath":  "%USERPROFILE%\\Saved Games\\The Last of Us Part I\\users\\91337615\\screeninfo.cfg",
-                                        "pattern":  "(?m)^FrameGenerationMode=(\\d+)",
-                                        "isFrameGen":  true,
-                                        "frameGenOffValues":  [
-                                                                  "0"
-                                                              ]
-                                    },
-                                    {
-                                        "label":  "displayW",
-                                        "configFilePath":  "%USERPROFILE%\\Saved Games\\The Last of Us Part I\\users\\91337615\\screeninfo.cfg",
-                                        "pattern":  "(?m)^WindowWidth=(\\d+)"
-                                    },
-                                    {
-                                        "label":  "displayH",
-                                        "configFilePath":  "%USERPROFILE%\\Saved Games\\The Last of Us Part I\\users\\91337615\\screeninfo.cfg",
-                                        "pattern":  "(?m)^WindowHeight=(\\d+)"
-                                    }
-                                ],
-    "name":  "The Last of Us Part I",
-    "engine":  "Naughty Dog (Nixxes PC port)",
-    "enabled":  true,
-    "repeats":  3,
-    "supportedResolutions":  [
-                                 "1080p",
-                                 "1440p",
-                                 "4K"
-                             ],
-    "graphicsPreset":  "Ultra",
-    "settings":  [
-                     {
-                         "key":  "upscaler",
-                         "label":  "Upscaling Method",
-                         "options":  [
-                                         "Default",
-                                         "FSR",
-                                         "DLSS"
-                                     ],
-                         "default":  "",
-                         "apply":  {
-                                       "method":  "config-file",
-                                       "configFilePath":  "%USERPROFILE%\\Saved Games\\The Last of Us Part I\\users\\91337615\\screeninfo.cfg",
-                                       "valueMap":  {
-                                                        "Default":  "0",
-                                                        "FSR":  "1",
-                                                        "DLSS":  "2"
-                                                    },
-                                       "edits":  [
-                                                     {
-                                                         "pattern":  "(?m)^(ScalingMode\\s*=\\s*)[0-9]+",
-                                                         "replacement":  "${1}{VALUE}"
-                                                     }
-                                                 ]
-                                   }
-                     },
-                     {
-                         "key":  "upscalerQuality",
-                         "label":  "Upscaler Quality",
-                         "options":  [
-                                         "Quality",
-                                         "Performance"
-                                     ],
-                         "default":  "",
-                         "apply":  {
-                                       "method":  "config-file",
-                                       "configFilePath":  "%USERPROFILE%\\Saved Games\\The Last of Us Part I\\users\\91337615\\screeninfo.cfg",
-                                       "valueMap":  {
-                                                        "Quality":  "0",
-                                                        "Performance":  "2"
-                                                    },
-                                       "edits":  [
-                                                     {
-                                                         "pattern":  "(?m)^(ScalingQuality\\s*=\\s*)[0-9]+",
-                                                         "replacement":  "${1}{VALUE}"
-                                                     }
-                                                 ]
-                                   }
-                     }
-                 ],
-    "variants":  [
-                     {
-                         "id":  "as-set",
-                         "name":  "As configured in-game",
-                         "enabled":  true,
-                         "settings":  {
-
-                                      }
-                     },
-                     {
-                         "id":  "dlss-q",
-                         "name":  "DLSS Quality",
-                         "enabled":  false,
-                         "settings":  {
-                                          "upscaler":  "DLSS",
-                                          "upscalerQuality":  "Quality"
-                                      }
-                     },
-                     {
-                         "id":  "dlss-p",
-                         "name":  "DLSS Performance (pinned as-set)",
-                         "enabled":  false,
-                         "settings":  {
-                                          "upscaler":  "DLSS",
-                                          "upscalerQuality":  "Performance"
-                                      }
-                     },
-                     {
-                         "id":  "native-default",
-                         "name":  "Native (Default scaling, no DLSS)",
-                         "enabled":  false,
-                         "settings":  {
-                                          "upscaler":  "Default"
-                                      }
-                     }
-                 ],
-    "captureProcessName":  "tlou-i.exe",
-    "frameProvider":  "presentmon",
-    "startupGraceSeconds":  180,
-    "launch":  {
-                   "store":  "Steam",
-                   "gameId":  "1888930"
-               },
-    "resolutionApply":  {
-                            "method":  "config-file",
-                            "configFilePath":  "%USERPROFILE%\\Saved Games\\The Last of Us Part I\\users\\91337615\\screeninfo.cfg",
-                            "switchDesktopMode":  true,
-                            "fingerprintWidthLabel":  "displayW",
-                            "fingerprintHeightLabel":  "displayH",
-                            "edits":  [
-                                          {
-                                              "pattern":  "(?m)^(WindowWidth=)\\d+",
-                                              "replacement":  "${1}{WIDTH}"
-                                          },
-                                          {
-                                              "pattern":  "(?m)^(WindowHeight=)\\d+",
-                                              "replacement":  "${1}{HEIGHT}"
-                                          }
-                                      ]
-                        },
-    "settingsVerify":  {
-                           "method":  "none"
-                       },
-    "scenes":  [
-                   {
-                       "id":  "scripted-prologue",
-                       "name":  "Scripted Prologue Scene",
-                       "kind":  "BotDriven",
-                       "captureSeconds":  510,
-                       "warmupSeconds":  0,
-                       "readinessTimeoutSeconds":  300,
-                       "botScript":  "tlou_continue_scene_smart",
-                       "completion":  {
-                                          "method":  "duration"
-                                      }
-                   }
-               ]
+  "id": "the-last-of-us-part-1",
+  "settingsFingerprintKeys": [
+    {
+      "label": "scalingMode",
+      "configFilePath": "%USERPROFILE%\\Saved Games\\The Last of Us Part I\\users\\91337615\\screeninfo.cfg",
+      "pattern": "(?m)^ScalingMode=(\\d+)",
+      "valueMap": {
+        "0": "Default",
+        "1": "FSR",
+        "2": "DLSS"
+      }
+    },
+    {
+      "label": "scalingQuality",
+      "configFilePath": "%USERPROFILE%\\Saved Games\\The Last of Us Part I\\users\\91337615\\screeninfo.cfg",
+      "pattern": "(?m)^ScalingQuality=(\\d+)",
+      "valueMap": {
+        "2": "Performance"
+      }
+    },
+    {
+      "label": "renderScale",
+      "configFilePath": "%USERPROFILE%\\Saved Games\\The Last of Us Part I\\users\\91337615\\screeninfo.cfg",
+      "pattern": "(?m)^RenderScale=([\\d.]+)"
+    },
+    {
+      "label": "preset",
+      "configFilePath": "%USERPROFILE%\\Saved Games\\The Last of Us Part I\\users\\91337615\\screeninfo.cfg",
+      "pattern": "(?m)^GraphicsPreset=(\\d+)"
+    },
+    {
+      "label": "frameGen",
+      "configFilePath": "%USERPROFILE%\\Saved Games\\The Last of Us Part I\\users\\91337615\\screeninfo.cfg",
+      "pattern": "(?m)^FrameGenerationMode=(\\d+)",
+      "isFrameGen": true,
+      "frameGenOffValues": [
+        "0"
+      ]
+    },
+    {
+      "label": "displayW",
+      "configFilePath": "%USERPROFILE%\\Saved Games\\The Last of Us Part I\\users\\91337615\\screeninfo.cfg",
+      "pattern": "(?m)^WindowWidth=(\\d+)"
+    },
+    {
+      "label": "displayH",
+      "configFilePath": "%USERPROFILE%\\Saved Games\\The Last of Us Part I\\users\\91337615\\screeninfo.cfg",
+      "pattern": "(?m)^WindowHeight=(\\d+)"
+    }
+  ],
+  "name": "The Last of Us Part I",
+  "engine": "Naughty Dog (Nixxes PC port)",
+  "enabled": true,
+  "repeats": 3,
+  "supportedResolutions": [
+    "1080p",
+    "1440p",
+    "4K"
+  ],
+  "graphicsPreset": "Ultra",
+  "settings": [
+    {
+      "key": "upscaler",
+      "label": "Upscaling Method",
+      "options": [
+        "Default",
+        "FSR",
+        "DLSS"
+      ],
+      "default": "",
+      "apply": {
+        "method": "config-file",
+        "configFilePath": "%USERPROFILE%\\Saved Games\\The Last of Us Part I\\users\\91337615\\screeninfo.cfg",
+        "valueMap": {
+          "Default": "0",
+          "FSR": "1",
+          "DLSS": "2"
+        },
+        "edits": [
+          {
+            "pattern": "(?m)^(ScalingMode\\s*=\\s*)[0-9]+",
+            "replacement": "${1}{VALUE}"
+          }
+        ]
+      }
+    },
+    {
+      "key": "upscalerQuality",
+      "label": "Upscaler Quality",
+      "options": [
+        "Quality",
+        "Performance"
+      ],
+      "default": "",
+      "apply": {
+        "method": "config-file",
+        "configFilePath": "%USERPROFILE%\\Saved Games\\The Last of Us Part I\\users\\91337615\\screeninfo.cfg",
+        "valueMap": {
+          "Quality": "0",
+          "Performance": "2"
+        },
+        "edits": [
+          {
+            "pattern": "(?m)^(ScalingQuality\\s*=\\s*)[0-9]+",
+            "replacement": "${1}{VALUE}"
+          }
+        ]
+      }
+    }
+  ],
+  "variants": [
+    {
+      "id": "as-set",
+      "name": "As configured in-game",
+      "enabled": true,
+      "settings": {}
+    },
+    {
+      "id": "dlss-q",
+      "name": "DLSS Quality",
+      "enabled": false,
+      "settings": {
+        "upscaler": "DLSS",
+        "upscalerQuality": "Quality"
+      }
+    },
+    {
+      "id": "dlss-p",
+      "name": "DLSS Performance (pinned as-set)",
+      "enabled": false,
+      "settings": {
+        "upscaler": "DLSS",
+        "upscalerQuality": "Performance"
+      }
+    },
+    {
+      "id": "native-default",
+      "name": "Native (Default scaling, no DLSS)",
+      "enabled": false,
+      "settings": {
+        "upscaler": "Default"
+      }
+    }
+  ],
+  "captureProcessName": "tlou-i.exe",
+  "frameProvider": "presentmon",
+  "startupGraceSeconds": 180,
+  "launch": {
+    "store": "Steam",
+    "gameId": "1888930"
+  },
+  "resolutionApply": {
+    "method": "config-file",
+    "configFilePath": "%USERPROFILE%\\Saved Games\\The Last of Us Part I\\users\\91337615\\screeninfo.cfg",
+    "switchDesktopMode": true,
+    "fingerprintWidthLabel": "displayW",
+    "fingerprintHeightLabel": "displayH",
+    "edits": [
+      {
+        "pattern": "(?m)^(WindowWidth=)\\d+",
+        "replacement": "${1}{WIDTH}"
+      },
+      {
+        "pattern": "(?m)^(WindowHeight=)\\d+",
+        "replacement": "${1}{HEIGHT}"
+      }
+    ]
+  },
+  "settingsVerify": {
+    "method": "none"
+  },
+  "scenes": [
+    {
+      "id": "scripted-prologue",
+      "name": "Scripted Prologue Scene",
+      "kind": "BotDriven",
+      "captureSeconds": 510,
+      "warmupSeconds": 0,
+      "readinessTimeoutSeconds": 300,
+      "botScript": "tlou_continue_scene_smart",
+      "completion": {
+        "method": "duration"
+      }
+    }
+  ]
 }
