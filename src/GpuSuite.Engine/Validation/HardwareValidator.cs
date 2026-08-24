@@ -23,7 +23,7 @@ public sealed class HardwareValidator
 
     public HardwareValidator(SuiteConfig cfg, RunLogger log) { _cfg = cfg; _log = log; }
 
-    public HardwareValidationResult Validate(
+    public async Task<HardwareValidationResult> ValidateAsync(
         MeasurementFactory factory,
         FrameCapturePreflightPlan? framePlan = null,
         bool? rtssReadyForLazyStart = null)
@@ -168,7 +168,7 @@ public sealed class HardwareValidator
                 else
                 {
                     using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(5) };
-                    var resp = http.GetAsync(backend.Endpoint.TrimEnd('/') + "/api/version").GetAwaiter().GetResult();
+                    using var resp = await http.GetAsync(backend.Endpoint.TrimEnd('/') + "/api/version").ConfigureAwait(false);
                     up = resp.IsSuccessStatusCode;
                     detail = up
                         ? $"alive on {backend.Source} ({backend.Endpoint})"

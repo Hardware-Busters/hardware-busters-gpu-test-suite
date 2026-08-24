@@ -211,7 +211,7 @@ public sealed class TestOrchestrator
             }
             if (_cfg.HardwareValidation.Enabled && !_cfg.AttachToRunning && anyCellPending)
             {
-                var hw = hwValidator.Validate(_factory, gameFramePlan, backendReady);
+                var hw = await hwValidator.ValidateAsync(_factory, gameFramePlan, backendReady).ConfigureAwait(false);
                 hwValidator.LogResult(game.Id, hw);
                 if (!hw.Ok)
                 {
@@ -541,65 +541,15 @@ public sealed class TestOrchestrator
 
             var hint = BuildHint(game, scene, res, attempt);
 
-            // (4) Apply resolution/preset BEFORE launch — config-file edits (e.g. Cyberpunk's
-            // UserSettings.json) must be in place before the game reads them at startup, since a
-            // game launched with its benchmark flag (-benchmark) starts the scripted scene at once.
-            // For bot/launch-arg/none methods ApplyResolution is just a log, so reordering is safe.
-            // If the apply FAILS (empty/changed settings file), do NOT launch: launching would
-            // benchmark the wrong resolution and, for games that truncate their own settings on
-            // launch, leave the file destroyed. Record one Invalid run and stop — the error is
-            // deterministic, so auto-repeating would just waste launches.
-            var applied = launcher.ApplyResolution(game, res);
-            if (!applied.Ok)
-            {
-                runs.Add(InvalidPreLaunch(game, scene, variant, res, attempt, gpuName, paths,
-                    "Resolution apply failed (game NOT launched): " + applied.Detail));
-                _log.Error("Run", $"Run {attempt} INVALID — resolution apply failed; not launching. {applied.Detail}");
-                break;
-            }
-
-            // (4b) Apply the graphics variant's settings (config-file knobs) BEFORE launch, same as
-            // resolution — and with the same strictness: if a knob can't be applied AND verified, do NOT
-            // launch (a wrong/silently-collapsed model would mislabel the data). Deterministic, so no retry.
-            var vapply = launcher.ApplyVariant(game, variant, res);
-            if (!vapply.Ok)
-            {
-                runs.Add(InvalidPreLaunch(game, scene, variant, res, attempt, gpuName, paths,
-                    "Variant settings apply failed (game NOT launched): " + string.Join("; ", vapply.Issues)));
-                _log.Error("Run", $"Run {attempt} INVALID — variant '{variant?.Id ?? "default"}' apply failed; not launching.");
-                break;
-            }
-            // Menu-method knobs are realized in-game by the capture-card vision-nav engine, which is not
-            // yet calibrated. Until it is, a variant that depends on menu settings CANNOT be applied
-            // autonomously — so rather than launch and silently benchmark the wrong (unchanged) settings
-            // — which would mislabel the data and let two models collapse to identical numbers — record a
-            // deterministic Invalid run. (When the vision-nav applier lands it will set + verify these and
-            // clear the pending list, so this guard passes.)
-            // Menu-method knobs are realized in-game by the capture-card vision-nav applier AFTER launch.
-            // That needs a calibrated MenuMap for this game. If one exists, defer to the post-launch apply
-            // (step 4c below); if NOT, fall back to the fail-safe — record a deterministic Invalid run and
-            // do NOT launch, so two models can never silently collapse to identical (unchanged) settings.
-            if (vapply.PendingMenu.Count > 0 && game.MenuMap is null)
-            {
-                runs.Add(InvalidPreLaunch(game, scene, variant, res, attempt, gpuName, paths,
-                    "Variant requires in-game menu settings but no menuMap is calibrated for this game (not launched, no mislabeled data): " + string.Join(", ", vapply.PendingMenu)));
-                _log.Warn("Run", $"Run {attempt} INVALID — variant '{variant?.Id ?? "default"}' needs menu-driven settings ({string.Join(", ", vapply.PendingMenu)}); no menuMap calibrated. Not launching.");
-                break;
-            }
-            if (vapply.PendingMenu.Count > 0)
-                _log.Info("Run", $"Variant '{variant?.Id ?? "default"}' has {vapply.PendingMenu.Count} menu knob(s); will set + verify them in-game via vision-nav after launch ({string.Join(", ", vapply.PendingMenu)}).");
-
-            // (3) Launch game (or simulate).
-            var launch = await LaunchWithTransientRetryAsync(launcher, game, ct).ConfigureAwait(false);
-            GpuSuite.Core.RunHeartbeat.Ping();   // launch milestone — resets the crash/hang clock so the window has time to appear before the bot's foreground OCR takes over the beacon
-            bool launchedOrSim = launch.Launched || launch.Simulated;
-            if (!launchedOrSim)
-            {
-                string issue = $"Game did not launch and was not simulated: {launch.Detail}.";
-                runs.Add(InvalidPreLaunch(game, scene, variant, res, attempt, gpuName, paths, issue));
-                _log.Error("Run", $"Run {attempt} INVALID — {issue} Skipping the cell immediately; no synthetic capture or bot deadline will run.");
-                break;
-            }
+            // (4)+(4b)+(3) Apply resolution + variant, then launch — the shared pre-launch sequence
+            // (see ApplySettingsAndLaunchAsync for the fail-closed rules). Any failed apply records a
+            // deterministic Invalid run and stops this cell WITHOUT launching; a launch failure does
+            // the same. The helper performs each failure's log line, so the caller only records.
+            var setup = await ApplySettingsAndLaunchAsync(game, scene, variant, res, attempt, gpuName, paths,
+                launcher, ct, realizeMenuKnobsInGame: true).ConfigureAwait(false);
+            if (!setup.Ok) { runs.Add(setup.Failure!); break; }
+            var launch = setup.Launch!;
+            var vapply = setup.VariantApply!;
 
             // (4c) Realize the variant's menu-method knobs IN-GAME via the capture-card vision-nav applier
             // (only when really launched + a MenuMap is calibrated). It opens the settings page, sets each
@@ -680,38 +630,7 @@ public sealed class TestOrchestrator
                 ProcessName = game.PresentMonByPid ? "" : game.CaptureProcessName, Pid = launch.Pid, Hint = hint
             };
 
-            // In "auto" frame mode, if the previous attempt hit a capture discontinuity (a PresentMon
-            // trace gap — the classic short-window failure), retry with RTSS, which reads its shared-memory
-            // ring buffer continuously and doesn't lose the start of a brief scene.
-            bool fpAuto = FrameProviderPolicy.AllowsRtssFallback(_cfg.FrameProvider, game.FrameProvider, game.ForbidRtss);
-            // Fall back to RTSS when ANY prior attempt's PresentMon capture FAILED — either a capture
-            // discontinuity (a trace gap, the classic short-window failure) OR too few/zero frames (PresentMon's
-            // ETW session intermittently attaches but records nothing on this bench; observed on Cyberpunk and
-            // idTech 8). RTSS reads its own shared-memory ring buffer continuously and doesn't depend on ETW,
-            // so it recovers these. STICKY PER CELL (2026-07-07): the original prev-attempt-only check un-stuck
-            // after every RTSS success, so a bench whose PresentMon 0-frames on EVERY attempt alternated
-            // PM-fail/RTSS-valid/PM-fail/… = a deterministic 2-valid-of-5 on every cell of two full campaigns
-            // (proven attempt-by-attempt on ACM as-set@1440p, suite_20260706_223450.log). Once PresentMon fails
-            // in a cell it stays failed for that cell — keep RTSS for the remaining attempts.
-            bool anyCaptureFailed = runs.Any(r =>
-                r.CaptureDiscontinuity || r.CapturedFrameCount < _cfg.Validation.MinFrameCount);
-            bool retryWithRtss = fpAuto && anyCaptureFailed;
-            if (retryWithRtss)
-                _log.Info("Frames", runs[^1].CapturedFrameCount < _cfg.Validation.MinFrameCount
-                    ? $"Previous attempt's PresentMon capture recorded only {runs[^1].CapturedFrameCount} frame(s) — RTSS backend for this and all remaining attempts of this cell (sticky)."
-                    : "A prior attempt hit a capture failure — RTSS backend for this and all remaining attempts of this cell (sticky).");
-            // A game profile may force the RTSS backend (AppContainer/Xbox titles whose render process
-            // PresentMon can't trace without elevation) — so one sweep can mix sandboxed (RTSS) and normal
-            // Win32 (PresentMon) games without per-game --frames flags.
-            bool gameForcesRtss = GameUsesRtss(game);
-            if (gameForcesRtss && attempt == 1)
-                _log.Info("Frames", string.Equals(_cfg.FrameProvider, "rtss", StringComparison.OrdinalIgnoreCase)
-                    ? $"{game.Id}: machine-wide RTSS backend selected."
-                    : $"{game.Id}: profile forces the RTSS backend (sandboxed title — PresentMon would need elevation; RTSS hooks without it).");
-            bool useRtss = retryWithRtss || gameForcesRtss;
-            bool effectiveLateRtss = game.LateRtss && !game.ForbidRtss;
-            var providers = _factory.CreateFor(target, useRtss, preferPresentMonOverride: !useRtss && !effectiveLateRtss,
-                lateRtssOverride: effectiveLateRtss);
+            var providers = SelectProvidersForAttempt(game, runs, attempt, target);
 
             // (5) Refresh-cap safety net: while the game runs, watch the live desktop refresh. If an
             // exclusive-fullscreen title switches the scanout above the 60 Hz cap (the Elgato then loses
@@ -725,7 +644,8 @@ public sealed class TestOrchestrator
             RunResult run;
             try
             {
-                run = await runner.RunAsync(game, scene, variant, res, idx, repeats, providers, hint, launchedOrSim,
+                run = await runner.RunAsync(game, scene, variant, res, idx, repeats, providers, hint,
+                    launch.Launched || launch.Simulated,
                     launch.Launched, launch.Pid, gpuName, paths, _log, ct, sharedPad: prelaunchPad).ConfigureAwait(false);
             }
             catch (OperationCanceledException) { throw; }
@@ -800,43 +720,20 @@ public sealed class TestOrchestrator
                 if (attempt > 1) await CooldownAsync(ct).ConfigureAwait(false);
 
                 var hint = BuildHint(game, scene, res, attempt);
-
                 // (Re)launch only when we don't have a live game. Apply resolution + variant just before that
                 // one launch (config-file edits must precede startup). A live game is reused as-is.
+                // realizeMenuKnobsInGame:false — a single-launch cell never realizes menu-method knobs
+                // in-game, so ANY pending menu knob fails closed here (a variant with a calibrated MenuMap
+                // must not silently launch on unapplied settings and mislabel the data).
                 bool justLaunched = false;
                 if (shared is null || !IsGameAlive(shared))
                 {
                     if (shared is not null) { _log.Warn("Run", "Single-launch game exited mid-sequence — relaunching."); launcher.Cleanup(game, shared); shared = null; }
-                    var applied = launcher.ApplyResolution(game, res);
-                    if (!applied.Ok)
-                    {
-                        runs.Add(InvalidPreLaunch(game, scene, variant, res, attempt, gpuName, paths, "Resolution apply failed (game NOT launched): " + applied.Detail));
-                        _log.Error("Run", $"Run {attempt} INVALID — resolution apply failed; not launching. {applied.Detail}");
-                        break;
-                    }
-                    var vapply = launcher.ApplyVariant(game, variant, res);
-                    if (!vapply.Ok)
-                    {
-                        runs.Add(InvalidPreLaunch(game, scene, variant, res, attempt, gpuName, paths, "Variant settings apply failed (game NOT launched): " + string.Join("; ", vapply.Issues)));
-                        _log.Error("Run", $"Run {attempt} INVALID — variant '{variant?.Id ?? "default"}' apply failed; not launching.");
-                        break;
-                    }
-                    if (vapply.PendingMenu.Count > 0 && game.MenuMap is null)
-                    {
-                        runs.Add(InvalidPreLaunch(game, scene, variant, res, attempt, gpuName, paths, "Variant has menu knobs but no MenuMap (single-launch is for as-set games): " + string.Join(", ", vapply.PendingMenu)));
-                        break;
-                    }
-                    shared = await LaunchWithTransientRetryAsync(launcher, game, ct).ConfigureAwait(false);
-                    GpuSuite.Core.RunHeartbeat.Ping();   // launch milestone (see RunSceneResolutionAsync) — resets the crash/hang clock for the window to appear
+                    var setup = await ApplySettingsAndLaunchAsync(game, scene, variant, res, attempt, gpuName, paths,
+                        launcher, ct, realizeMenuKnobsInGame: false).ConfigureAwait(false);
+                    if (!setup.Ok) { runs.Add(setup.Failure!); shared = null; break; }
+                    shared = setup.Launch!;
                     justLaunched = true;
-                    if (!shared.Launched && !shared.Simulated)
-                    {
-                        string issue = $"Game did not launch and was not simulated: {shared.Detail}.";
-                        runs.Add(InvalidPreLaunch(game, scene, variant, res, attempt, gpuName, paths, issue));
-                        _log.Error("Run", $"Run {attempt} INVALID — {issue} Skipping the single-launch cell immediately; no synthetic capture or bot deadline will run.");
-                        shared = null;
-                        break;
-                    }
                 }
 
                 var launch = shared!;
@@ -844,16 +741,7 @@ public sealed class TestOrchestrator
                 {
                     ProcessName = game.PresentMonByPid ? "" : game.CaptureProcessName, Pid = launch.Pid, Hint = hint
                 };
-                bool gameForcesRtss = GameUsesRtss(game);
-                bool fpAuto = FrameProviderPolicy.AllowsRtssFallback(_cfg.FrameProvider, game.FrameProvider, game.ForbidRtss);
-                // STICKY PER CELL (2026-07-07) — same fix as RunSceneResolutionAsync: once any attempt's
-                // capture failed, keep RTSS for the rest of the cell (the prev-only check alternated
-                // PM-fail/RTSS-valid on a bench whose PresentMon 0-frames every attempt ⇒ exact 2/5 cells).
-                bool anyCaptureFailed = runs.Any(r => r.CaptureDiscontinuity || r.CapturedFrameCount < _cfg.Validation.MinFrameCount);
-                bool useRtss = gameForcesRtss || (fpAuto && anyCaptureFailed);
-                bool effectiveLateRtss = game.LateRtss && !game.ForbidRtss;
-                var providers = _factory.CreateFor(target, useRtss, preferPresentMonOverride: !useRtss && !effectiveLateRtss,
-                    lateRtssOverride: effectiveLateRtss);
+                var providers = SelectProvidersForAttempt(game, runs, attempt, target);
 
                 using var refreshGuard = (_cfg.EnforceRefreshCap && launch.Launched && !_cfg.AttachToRunning && launch.Pid is int guardPid)
                     ? RefreshGuard.Start(_cfg.MaxRefreshHz, _cfg.RefreshGuardPollMs, hz => OnRefreshViolation(game, guardPid, hz), _log, ct, res.Width, res.Height)
@@ -907,6 +795,125 @@ public sealed class TestOrchestrator
 
         _validator.FlagOutliers(runs);
         return _aggregator.Aggregate(game.Id, scene.Id, variant?.Id ?? "", variant?.Name ?? "", res.Name, runs);
+    }
+
+    /// <summary>
+    /// The outcome of the shared pre-launch sequence: settings applied + game launched, or the deterministic
+    /// Invalid run that must be recorded instead (never launch on a failed apply).
+    /// </summary>
+    private sealed record PreLaunchSetup(bool Ok, LaunchResult? Launch, VariantApplyResult? VariantApply, RunResult? Failure);
+
+    /// <summary>
+    /// The shared PRE-LAUNCH sequence for one attempt, used by BOTH cell paths (multi-launch and
+    /// single-launch) so their setup rules cannot drift: apply resolution → apply variant → fail closed on
+    /// unrealizable menu knobs → launch (with the transient-failure retry) → heartbeat ping. Every failure
+    /// records its deterministic Invalid run AND logs it here; the caller just adds Failure and breaks/retries.
+    /// Fail-closed rules: a resolution or config-variant apply that cannot be applied AND verified never
+    /// launches (launching would benchmark the wrong state and mislabel the data), and a variant with pending
+    /// menu-method knobs launches only when this path realizes them in-game afterwards
+    /// (<paramref name="realizeMenuKnobsInGame"/>) AND a calibrated MenuMap exists.
+    /// </summary>
+    private async Task<PreLaunchSetup> ApplySettingsAndLaunchAsync(
+        GameProfile game, SceneProfile scene, GameVariant? variant, Resolution res, int attempt,
+        string gpuName, RunPaths paths, GameLauncher launcher, CancellationToken ct,
+        bool realizeMenuKnobsInGame, string cellLabel = "cell")
+    {
+        // (4) Apply resolution/preset BEFORE launch — config-file edits (e.g. Cyberpunk's UserSettings.json)
+        // must be in place before the game reads them at startup, since a game launched with its benchmark
+        // flag (-benchmark) starts the scripted scene at once. For bot/launch-arg/none methods
+        // ApplyResolution is just a log, so reordering is safe. If the apply FAILS (empty/changed settings
+        // file), do NOT launch: launching would benchmark the wrong resolution and, for games that truncate
+        // their own settings on launch, leave the file destroyed. Record one Invalid run and stop — the
+        // error is deterministic, so auto-repeating would just waste launches.
+        var applied = launcher.ApplyResolution(game, res);
+        if (!applied.Ok)
+        {
+            var failure = InvalidPreLaunch(game, scene, variant, res, attempt, gpuName, paths,
+                "Resolution apply failed (game NOT launched): " + applied.Detail);
+            _log.Error("Run", $"Run {attempt} INVALID — resolution apply failed; not launching. {applied.Detail}");
+            return new PreLaunchSetup(false, null, null, failure);
+        }
+
+        // (4b) Apply the graphics variant's settings (config-file knobs) BEFORE launch, same as resolution
+        // — and with the same strictness: if a knob can't be applied AND verified, do NOT launch (a
+        // wrong/silently-collapsed model would mislabel the data). Deterministic, so no retry.
+        var vapply = launcher.ApplyVariant(game, variant, res);
+        if (!vapply.Ok)
+        {
+            var failure = InvalidPreLaunch(game, scene, variant, res, attempt, gpuName, paths,
+                "Variant settings apply failed (game NOT launched): " + string.Join("; ", vapply.Issues));
+            _log.Error("Run", $"Run {attempt} INVALID — variant '{variant?.Id ?? "default"}' apply failed; not launching.");
+            return new PreLaunchSetup(false, null, vapply, failure);
+        }
+
+        // Menu-method knobs are realized IN-GAME by the capture-card vision-nav applier AFTER launch. That
+        // needs a calibrated MenuMap for this game AND a cell path that performs that post-launch apply.
+        // If either is missing, take the fail-safe — record a deterministic Invalid run and do NOT launch,
+        // so two models can never silently collapse to identical (unchanged) settings.
+        if (vapply.PendingMenu.Count > 0 && (!realizeMenuKnobsInGame || game.MenuMap is null))
+        {
+            string issue = (realizeMenuKnobsInGame, game.MenuMap is null) switch
+            {
+                (true, true) => "Variant requires in-game menu settings but no menuMap is calibrated for this game (not launched, no mislabeled data): ",
+                (false, true) => "Variant has menu knobs but no MenuMap (single-launch is for as-set games): ",
+                _ => "Variant has menu knobs but a single-launch cell cannot realize them in-game (not launched, no mislabeled data): "
+            };
+            issue += string.Join(", ", vapply.PendingMenu);
+            var failure = InvalidPreLaunch(game, scene, variant, res, attempt, gpuName, paths, issue);
+            _log.Warn("Run", $"Run {attempt} INVALID — variant '{variant?.Id ?? "default"}' needs menu-driven settings ({string.Join(", ", vapply.PendingMenu)}); not launching ({cellLabel}).");
+            return new PreLaunchSetup(false, null, vapply, failure);
+        }
+        if (vapply.PendingMenu.Count > 0)
+            _log.Info("Run", $"Variant '{variant?.Id ?? "default"}' has {vapply.PendingMenu.Count} menu knob(s); will set + verify them in-game via vision-nav after launch ({string.Join(", ", vapply.PendingMenu)}).");
+
+        // (3) Launch game (or simulate).
+        var launch = await LaunchWithTransientRetryAsync(launcher, game, ct).ConfigureAwait(false);
+        GpuSuite.Core.RunHeartbeat.Ping();   // launch milestone — resets the crash/hang clock so the window has time to appear before the bot's foreground OCR takes over the beacon
+        bool launchedOrSim = launch.Launched || launch.Simulated;
+        if (!launchedOrSim)
+        {
+            string issue = $"Game did not launch and was not simulated: {launch.Detail}.";
+            var failure = InvalidPreLaunch(game, scene, variant, res, attempt, gpuName, paths, issue);
+            _log.Error("Run", $"Run {attempt} INVALID — {issue} Skipping the {cellLabel} immediately; no synthetic capture or bot deadline will run.");
+            return new PreLaunchSetup(false, null, vapply, failure);
+        }
+        return new PreLaunchSetup(true, launch, vapply, null);
+    }
+
+    /// <summary>
+    /// Select the frame providers for ONE attempt of a cell — shared by BOTH cell paths so the backend
+    /// rules cannot drift. In "auto" frame mode, fall back to RTSS when ANY prior attempt's PresentMon
+    /// capture FAILED — either a capture discontinuity (a trace gap, the classic short-window failure) OR
+    /// too few/zero frames (PresentMon's ETW session intermittently attaches but records nothing on this
+    /// bench; observed on Cyberpunk and idTech 8). RTSS reads its own shared-memory ring buffer
+    /// continuously and doesn't depend on ETW, so it recovers these. STICKY PER CELL (2026-07-07): the
+    /// original prev-attempt-only check un-stuck after every RTSS success, so a bench whose PresentMon
+    /// 0-frames on EVERY attempt alternated PM-fail/RTSS-valid/PM-fail/… = a deterministic 2-valid-of-5 on
+    /// every cell of two full campaigns (proven attempt-by-attempt on ACM as-set@1440p,
+    /// suite_20260706_223450.log). Once PresentMon fails in a cell it stays failed for that cell — keep
+    /// RTSS for the remaining attempts. A game profile may force RTSS outright (AppContainer/Xbox titles
+    /// whose render process PresentMon can't trace without elevation) — so one sweep can mix sandboxed
+    /// (RTSS) and normal Win32 (PresentMon) games without per-game --frames flags.
+    /// </summary>
+    private ProviderSet SelectProvidersForAttempt(GameProfile game, List<RunResult> runs, int attempt, FrameCaptureTarget target)
+    {
+        bool fpAuto = FrameProviderPolicy.AllowsRtssFallback(_cfg.FrameProvider, game.FrameProvider, game.ForbidRtss);
+        bool anyCaptureFailed = runs.Any(r =>
+            r.CaptureDiscontinuity || r.CapturedFrameCount < _cfg.Validation.MinFrameCount);
+        bool retryWithRtss = fpAuto && anyCaptureFailed;
+        if (retryWithRtss)
+            _log.Info("Frames", runs[^1].CapturedFrameCount < _cfg.Validation.MinFrameCount
+                ? $"Previous attempt's PresentMon capture recorded only {runs[^1].CapturedFrameCount} frame(s) — RTSS backend for this and all remaining attempts of this cell (sticky)."
+                : "A prior attempt hit a capture failure — RTSS backend for this and all remaining attempts of this cell (sticky).");
+        bool gameForcesRtss = GameUsesRtss(game);
+        if (gameForcesRtss && attempt == 1)
+            _log.Info("Frames", string.Equals(_cfg.FrameProvider, "rtss", StringComparison.OrdinalIgnoreCase)
+                ? $"{game.Id}: machine-wide RTSS backend selected."
+                : $"{game.Id}: profile forces the RTSS backend (sandboxed title — PresentMon would need elevation; RTSS hooks without it).");
+        bool useRtss = retryWithRtss || gameForcesRtss;
+        bool effectiveLateRtss = game.LateRtss && !game.ForbidRtss;
+        return _factory.CreateFor(target, useRtss, preferPresentMonOverride: !useRtss && !effectiveLateRtss,
+            lateRtssOverride: effectiveLateRtss);
     }
 
     /// <summary>Authentication is an external launcher/session dependency, not a route that an unattended bot
@@ -1087,13 +1094,27 @@ public sealed class TestOrchestrator
         };
     }
 
-    private SystemInfo BuildSystemInfo() => new()
+    /// <summary>
+    /// System facts for the report header, derived from the SAME probe the providers were selected with
+    /// (never hardcoded): the availability flags must reflect what was actually live, and a configured-but-
+    /// silent Powenetics PMD is recorded so the report can warn that its power column fell down the
+    /// provenance chain instead of reading as a verified PMD measurement. Called after ProbeAll().
+    /// </summary>
+    private SystemInfo BuildSystemInfo()
     {
-        GpuName = _factory.DetectedGpuName,
-        CpuName = _factory.DetectedCpuName,
-        OsVersion = Environment.OSVersion.VersionString,
-        PresentMonAvailable = true,
-        LhmAvailable = true,
-        PoweneticsConnected = false
-    };
+        bool pmdExpected = !_cfg.ForceSyntheticPower &&
+            (!string.IsNullOrWhiteSpace(_cfg.PoweneticsComPort) || _cfg.PoweneticsAutoDetect);
+        return new SystemInfo
+        {
+            GpuName = _factory.DetectedGpuName,
+            CpuName = _factory.DetectedCpuName,
+            OsVersion = Environment.OSVersion.VersionString,
+            PresentMonAvailable = _factory.PresentMonLive,
+            LhmAvailable = _factory.LhmLive,
+            PoweneticsConnected = _factory.PoweneticsLive,
+            PoweneticsNote = pmdExpected && !_factory.PoweneticsLive
+                ? "A Powenetics PMD is configured (poweneticsComPort / auto-detect) but it streamed no protocol frames during the probe — power fell back down the provenance chain (LHM board power if usable, else synthetic). If its COM port is still present, the MCU is WEDGED: physically unplug + replug the PMD's USB cable (a host reboot does NOT reset it), then re-run `gpusuite probe-powenetics`."
+                : null
+        };
+    }
 }
