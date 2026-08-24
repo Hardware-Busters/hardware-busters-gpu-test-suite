@@ -75,6 +75,10 @@ public sealed class HtmlReportGenerator
         sb.Append(Badge("Frames / " + frameProviders, fLive));
         sb.Append(Badge("Power / " + powerProviders + " / " + PowerLabels(s), pLive));
         sb.Append(Badge("Telemetry / " + telemetryProviders, tLive));
+        // A configured-but-silent Powenetics PMD is the recurring bench failure (wedged MCU). Surface it
+        // in the header so a fallback-power report can never be skimmed as a verified PMD measurement.
+        if (!string.IsNullOrWhiteSpace(s.System.PoweneticsNote))
+            sb.Append($"<span class=\"badge warn\" title=\"{SvgCharts.Esc(s.System.PoweneticsNote)}\">PMD NOT STREAMING — power fell back</span>");
         sb.Append("</div></div></header>");
     }
 
@@ -323,6 +327,13 @@ public sealed class HtmlReportGenerator
         var (f, p, t) = SourceModes(s);
         if (!f || !p || !t)
             sb.Append($"<li class=\"warn-note\">Degraded mode: some sources were synthetic for this report (Frames {(f ? "live" : "synthetic")}, Power {(p ? "live" : "synthetic")}, Telemetry {(t ? "live" : "synthetic")}). Numbers from synthetic sources are for pipeline validation, not hardware conclusions.</li>");
+        if (!string.IsNullOrWhiteSpace(s.System.PoweneticsNote))
+            sb.Append($"<li class=\"warn-note\">{SvgCharts.Esc(s.System.PoweneticsNote)}</li>");
+        // CPU temperature/package power need the process elevated (LHM's SMU/Ring0). When no aggregate has
+        // one, say so explicitly instead of leaving silent zeros/dashes in the table above.
+        bool anyCpuTemp = s.Aggregates.Any(a => a.CpuTempAvgC is not null);
+        if (s.Aggregates.Count > 0 && !anyCpuTemp)
+            sb.Append("<li class=\"warn-note\">CPU temperature was not captured in any run — it requires the suite to run as Administrator (LibreHardwareMonitor's SMU/Ring0 access). The CPU rows above are absent, not zero.</li>");
         sb.Append("</ul></footer>");
     }
 
@@ -390,6 +401,7 @@ header h1{margin:0;font-size:20px;letter-spacing:.3px;color:var(--mut);font-weig
 .badge{font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line)}
 .badge.live{background:rgba(70,192,138,.12);color:#7be0b0;border-color:#2c5}
 .badge.synth{background:rgba(224,161,58,.12);color:#e9c07a;border-color:#a83}
+.badge.warn{background:rgba(224,102,58,.14);color:#f0a06a;border-color:#c62;cursor:help}
 .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:22px auto}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
 .ct{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.4px}

@@ -126,8 +126,8 @@ public sealed class RuntimeHealthMonitor
                 {
                     bool exited;
                     try { using var proc = Process.GetProcessById(pid); exited = proc.HasExited; }
-                    catch { Fire("process-exited", $"game process {pid} is gone (exited/killed) during the measured run", elapsed); return; }
-                    if (exited) { Fire("process-exited", $"game process {pid} exited during the measured run", elapsed); return; }
+                    catch { await FireAsync("process-exited", $"game process {pid} is gone (exited/killed) during the measured run", elapsed); return; }
+                    if (exited) { await FireAsync("process-exited", $"game process {pid} exited during the measured run", elapsed); return; }
                 }
 
                 int cf = SafeInt(_frameCount);
@@ -168,7 +168,7 @@ public sealed class RuntimeHealthMonitor
                             }
                         }
                         else
-                        { Fire("frames-frozen", $"no new frames for {_cfg.FrameStallGraceSeconds:0}s (frame count stuck at {cf}) — frozen render / 0 fps", elapsed); return; }
+                        { await FireAsync("frames-frozen", $"no new frames for {_cfg.FrameStallGraceSeconds:0}s (frame count stuck at {cf}) — frozen render / 0 fps", elapsed); return; }
                     }
                 }
                 else { frameStall = null; lastFrames = cf; }
@@ -178,7 +178,7 @@ public sealed class RuntimeHealthMonitor
                 {
                     idleSince ??= now;
                     if ((now - idleSince.Value).TotalSeconds >= _cfg.IdleGraceSeconds)
-                    { Fire("gpu-idle", $"GPU load ~{g:0}% (≤ {_cfg.IdleGpuLoadPct:0}%) for {_cfg.IdleGraceSeconds:0}s — GPU not rendering", elapsed); return; }
+                    { await FireAsync("gpu-idle", $"GPU load ~{g:0}% (≤ {_cfg.IdleGpuLoadPct:0}%) for {_cfg.IdleGraceSeconds:0}s — GPU not rendering", elapsed); return; }
                 }
                 else idleSince = null;
 
@@ -207,7 +207,7 @@ public sealed class RuntimeHealthMonitor
                             motionLow++;
                             staticSince ??= now;
                             if ((now - staticSince.Value).TotalSeconds >= _cfg.MotionStaticGraceSeconds)
-                            { Fire("scene-static", $"capture-card motion ~{m:0.000} (< {_motionFloor:0.000}) for {_cfg.MotionStaticGraceSeconds:0}s — the measured scene is STATIC (wedged/dead character, paused game, or a static screen still rendering)", elapsed); return; }
+                            { await FireAsync("scene-static", $"capture-card motion ~{m:0.000} (< {_motionFloor:0.000}) for {_cfg.MotionStaticGraceSeconds:0}s — the measured scene is STATIC (wedged/dead character, paused game, or a static screen still rendering)", elapsed); return; }
                         }
                         else staticSince = null;
                     }
@@ -220,7 +220,7 @@ public sealed class RuntimeHealthMonitor
                 {
                     telStall ??= now;
                     if ((now - telStall.Value).TotalSeconds >= telGrace)
-                    { Fire("telemetry-stopped", $"no new telemetry for {telGrace:0}s — sensor feed stopped", elapsed); return; }
+                    { await FireAsync("telemetry-stopped", $"no new telemetry for {telGrace:0}s — sensor feed stopped", elapsed); return; }
                 }
                 else { telStall = null; lastTel = ct; }
 
@@ -232,7 +232,7 @@ public sealed class RuntimeHealthMonitor
                     {
                         powerFlat ??= now;
                         if ((now - powerFlat.Value).TotalSeconds >= _cfg.PowerFlatlineGraceSeconds)
-                        { Fire("power-flatline", $"power stuck at {w:0.0} W for {_cfg.PowerFlatlineGraceSeconds:0}s — power sensor/PMD frozen", elapsed); return; }
+                        { await FireAsync("power-flatline", $"power stuck at {w:0.0} W for {_cfg.PowerFlatlineGraceSeconds:0}s — power sensor/PMD frozen", elapsed); return; }
                     }
                     else powerFlat = null;
                     lastPower = w;
@@ -240,7 +240,7 @@ public sealed class RuntimeHealthMonitor
 
                 // benchmark timeout — the measured window ran far past its expected length
                 if (_timeoutSeconds > 0 && elapsed > _timeoutSeconds)
-                { Fire("benchmark-timeout", $"measured window exceeded {_timeoutSeconds:0}s without completing", elapsed); return; }
+                { await FireAsync("benchmark-timeout", $"measured window exceeded {_timeoutSeconds:0}s without completing", elapsed); return; }
             }
         }
         catch (OperationCanceledException) { /* stopped normally */ }
@@ -262,17 +262,17 @@ public sealed class RuntimeHealthMonitor
         }
     }
 
-    private void Fire(string kind, string detail, double elapsed)
+    private async Task FireAsync(string kind, string detail, double elapsed)
     {
         if (Incident is not null) return;   // first incident wins
         Incident = new HealthIncident { Kind = kind, Detail = detail, AtSeconds = Math.Round(elapsed, 1), DetectedUtc = DateTime.UtcNow.ToString("o") };
         _log.Warn("Health", $"RUNTIME HEALTH incident: {kind} — {detail} (at {elapsed:0.0}s into the window).");
-        if (_cfg.CaptureScreenshotOnIncident) Incident.ScreenshotFile = TryScreenshot();
+        if (_cfg.CaptureScreenshotOnIncident) Incident.ScreenshotFile = await TryScreenshotAsync().ConfigureAwait(false);
         TryWriteLog();
     }
 
     /// <summary>Best-effort capture-card screenshot at the incident. Never throws; null when unavailable.</summary>
-    private string? TryScreenshot()
+    private async Task<string?> TryScreenshotAsync()
     {
         try
         {
@@ -281,7 +281,7 @@ public sealed class RuntimeHealthMonitor
             var path = Path.Combine(_runDir, file);
             var grabber = new CaptureCardGrabber(_suite.FfmpegPath, _suite.CaptureCardDevice, _log);
             using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(6));
-            bool ok = grabber.GrabAsync(path, warmupFrames: 4, cts.Token, scaleWidth: 1280).GetAwaiter().GetResult();
+            bool ok = await grabber.GrabAsync(path, warmupFrames: 4, cts.Token, scaleWidth: 1280).ConfigureAwait(false);
             return ok && File.Exists(path) ? file : null;
         }
         catch (Exception ex) { _log.Trace("Health", $"incident screenshot failed: {ex.Message}"); return null; }

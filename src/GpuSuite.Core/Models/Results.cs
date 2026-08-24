@@ -360,6 +360,14 @@ public sealed class SystemInfo
     public double? TotalRamGb { get; set; }
     public string SuiteVersion { get; set; } = "0.1.0-mvp";
     public bool PoweneticsConnected { get; set; }
+
+    /// <summary>
+    /// Set when a Powenetics PMD was CONFIGURED (port/auto-detect) but was not streaming at probe time.
+    /// The report surfaces this loudly so a fallback-power result can never be read as a verified PMD
+    /// measurement — the recurring bench failure is the wedged MCU that only a physical USB replug clears.
+    /// </summary>
+    public string? PoweneticsNote { get; set; }
+
     public bool PresentMonAvailable { get; set; }
     public bool LhmAvailable { get; set; }
 }

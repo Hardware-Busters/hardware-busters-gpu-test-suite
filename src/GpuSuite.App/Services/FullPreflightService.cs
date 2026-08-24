@@ -100,7 +100,7 @@ public sealed class FullPreflightService
         bool rtssReadyForLazyStart = doctor.Any(c =>
             c.Component.StartsWith("RTSS / RivaTuner", StringComparison.OrdinalIgnoreCase) &&
             c.Status == DoctorStatus.Ok);
-        var hardware = new HardwareValidator(cfg, log).Validate(factory, framePlan, rtssReadyForLazyStart);
+        var hardware = await new HardwareValidator(cfg, log).ValidateAsync(factory, framePlan, rtssReadyForLazyStart).ConfigureAwait(false);
         var bench = new PreflightGroup
         {
             Id = "bench",
