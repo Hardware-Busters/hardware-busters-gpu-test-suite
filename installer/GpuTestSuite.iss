@@ -2,7 +2,7 @@
 #include "version.iss"
 #define MyAppExeName "GpuSuite.App.exe"
 #define SourceDir AddBackslash(SourcePath) + "..\release-stage"
-#ifnexist "{#SourceDir}\REQUIREMENTS.txt"
+#ifnexist SourceDir + "\REQUIREMENTS.txt"
   #error The staged public release is missing REQUIREMENTS.txt
 #endif
 [Setup]

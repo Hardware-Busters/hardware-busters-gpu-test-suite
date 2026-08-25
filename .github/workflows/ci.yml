@@ -20,3 +20,14 @@ jobs:
         run: dotnet build GpuTestSuite.sln -c Release -p:Platform=x64 --nologo
       - name: Test
         run: dotnet test tests/GpuSuite.Tests/GpuSuite.Tests.csproj -c Release -p:Platform=x64 --no-build --nologo
+      - name: Install Inno Setup
+        run: choco install innosetup --no-progress -y
+      - name: Stage installer compiler fixture
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path release-stage -Force | Out-Null
+          Set-Content release-stage\GpuSuite.App.exe '' -NoNewline
+          Copy-Item REQUIREMENTS.txt release-stage -Force
+          "#define MyAppVersion `"ci`"" | Set-Content installer\version.iss -NoNewline
+      - name: Compile installer contract
+        run: iscc installer\GpuTestSuite.iss
