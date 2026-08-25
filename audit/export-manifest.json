@@ -127,8 +127,8 @@
     },
     {
       "path": "installer/GpuTestSuite.iss",
-      "sha256": "eb1d30e16ff5567c7a838b54552926ef42b4b31f36b2b5e949ddaa6a09b9346b",
-      "bytes": 940
+      "sha256": "bfe72f0f258f3a9f201195c4377f81ea0972e9cf49af543ff034398df9e62943",
+      "bytes": 967
     },
     {
       "path": "LICENSE",
@@ -342,7 +342,7 @@
     },
     {
       "path": "settings.example.json",
-      "sha256": "219dedb38977f0d8dc80a9d229fd7dd0b5f994c1d686bac3d646222c6c3bec7f",
+      "sha256": "f7ff9b61b47152280947e1f6e86b25282c699eb430aa94e22ff2e2a67c48db16",
       "bytes": 717
     },
     {
@@ -1517,7 +1517,7 @@
     }
   ],
   "sourceRevision": "retained privately",
-  "schema": 1,
-  "generatedUtc": "2026-08-25T01:12:01.8723012Z",
-  "publicRepository": "https://github.com/Hardware-Busters/hardware-busters-gpu-test-suite"
+  "generatedUtc": "2026-08-25T01:41:28.0891014Z",
+  "publicRepository": "https://github.com/Hardware-Busters/hardware-busters-gpu-test-suite",
+  "schema": 1
 }
