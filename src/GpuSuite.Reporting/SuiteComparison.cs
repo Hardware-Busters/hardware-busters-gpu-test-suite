@@ -4,6 +4,23 @@ using GpuSuite.Core.Models;
 
 namespace GpuSuite.Reporting;
 
+public enum SettingsComparisonStatus
+{
+    NotMatched,
+    VerifiedMatch,
+    Unverified,
+    Mismatch
+}
+
+public sealed record SettingsFingerprintComparison(
+    SettingsComparisonStatus Status,
+    string Summary,
+    string? BaselineFingerprint = null,
+    string? TargetFingerprint = null)
+{
+    public bool IsComparable => Status == SettingsComparisonStatus.VerifiedMatch;
+}
+
 /// <summary>One joined row of a two-suite comparison, keyed by (game, scene, variant, resolution).</summary>
 public sealed class ComparisonRow
 {
@@ -13,22 +30,26 @@ public sealed class ComparisonRow
     public required string ResolutionName { get; init; }
     public SceneResolutionAggregate? Baseline { get; init; }
     public SceneResolutionAggregate? Target { get; init; }
+    public required SettingsFingerprintComparison SettingsComparison { get; init; }
 
     public bool Matched => Baseline is not null && Target is not null;
+    public bool SettingsComparable => Matched && SettingsComparison.IsComparable;
 
     public double? BaselineFps => Baseline?.AvgFps;
     public double? TargetFps => Target?.AvgFps;
 
     /// <summary>Relative avg-FPS change from baseline to target (%). Null unless both sides have a
-    /// positive avg — an absent side must never read as ±100%.</summary>
-    public double? DeltaPct => Baseline is { AvgFps: > 0 } b && Target is { AvgFps: > 0 } t
+    /// positive avg AND their valid runs carry one stable, identical settings fingerprint. An absent,
+    /// changed, missing, or internally inconsistent settings state must never produce a performance delta.</summary>
+    public double? DeltaPct => SettingsComparable && Baseline is { AvgFps: > 0 } b && Target is { AvgFps: > 0 } t
         ? (t.AvgFps - b.AvgFps) / b.AvgFps * 100.0
         : null;
 
     /// <summary>Power may be compared only when BOTH sides carry the same full provenance contract
     /// (same kind, scope, eligibility). Otherwise the watts columns are suppressed — an LHM board-power
     /// number must never be differenced against a Powenetics rail measurement as if equivalent.</summary>
-    public bool PowerComparable => PowerProvenance.AreCompatible(Baseline?.PowerMeasurement, Target?.PowerMeasurement);
+    public bool PowerComparable => SettingsComparable &&
+        PowerProvenance.AreCompatible(Baseline?.PowerMeasurement, Target?.PowerMeasurement);
 
     public bool FrameGenInvolved =>
         Baseline?.Runs.Any(r => r.FrameGenActive == true) == true ||
@@ -48,18 +69,21 @@ public static class SuiteComparison
         SuiteResult TargetSuite)
     {
         public IEnumerable<ComparisonRow> Matched => Rows.Where(r => r.Matched);
+        public IEnumerable<ComparisonRow> Comparable => Rows.Where(r => r.SettingsComparable);
+        public IEnumerable<ComparisonRow> SettingsExcluded => Matched.Where(r => !r.SettingsComparable);
         public IEnumerable<ComparisonRow> OnlyInBaseline => Rows.Where(r => r.Baseline is not null && r.Target is null);
         public IEnumerable<ComparisonRow> OnlyInTarget => Rows.Where(r => r.Target is not null && r.Baseline is null);
 
-        /// <summary>Geo-mean index ratio (target/baseline − 1, %) over MATCHED rows with positive fps on
-        /// both sides — computed over identical work, unlike differencing each suite's own overall index
-        /// (whose cell sets may differ).</summary>
+        /// <summary>Geo-mean index ratio (target/baseline − 1, %) over identity-matched rows with positive
+        /// fps AND a stable, identical settings fingerprint on both sides. This is computed only over
+        /// verified identical work, unlike differencing each suite's own overall index (whose cell sets or
+        /// actual render settings may differ).</summary>
         public double? MatchedIndexDeltaPct
         {
             get
             {
                 double logSum = 0; int n = 0;
-                foreach (var row in Matched)
+                foreach (var row in Comparable)
                 {
                     var d = row.DeltaPct;
                     if (d is null || row.BaselineFps is not { } bf || bf <= 0) continue;
@@ -70,8 +94,72 @@ public static class SuiteComparison
             }
         }
 
-        public int ImprovedCount => Matched.Count(r => (r.DeltaPct ?? 0) > 1.0);
-        public int RegressedCount => Matched.Count(r => (r.DeltaPct ?? 0) < -1.0);
+        public int ImprovedCount => Comparable.Count(r => (r.DeltaPct ?? 0) > 1.0);
+        public int RegressedCount => Comparable.Count(r => (r.DeltaPct ?? 0) < -1.0);
+    }
+
+    private enum FingerprintState { Stable, Missing, Incomplete, Inconsistent }
+    private sealed record FingerprintSnapshot(FingerprintState State, string Detail, string? Canonical = null, string? Display = null);
+
+    private static FingerprintSnapshot ReadFingerprint(SceneResolutionAggregate aggregate, string side)
+    {
+        var validRuns = aggregate.Runs.Where(r => r.Verdict == RunVerdict.Valid).ToList();
+        if (validRuns.Count == 0)
+            return new(FingerprintState.Missing, $"{side}: no valid-run settings fingerprint");
+
+        var snapshots = new List<(string Canonical, string Display)>();
+        int missing = 0;
+        foreach (var run in validRuns)
+        {
+            if (run.SettingsFingerprint is null || run.SettingsFingerprint.Count == 0)
+            {
+                missing++;
+                continue;
+            }
+
+            var pairs = run.SettingsFingerprint
+                .Select(pair => (Key: pair.Key.Trim(), Value: pair.Value?.Trim() ?? ""))
+                .OrderBy(pair => pair.Key, StringComparer.OrdinalIgnoreCase)
+                .ThenBy(pair => pair.Value, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+            string canonical = string.Join("\u001f", pairs.Select(pair =>
+                $"{pair.Key.ToUpperInvariant().Length}:{pair.Key.ToUpperInvariant()}={pair.Value.ToUpperInvariant().Length}:{pair.Value.ToUpperInvariant()}"));
+            string display = string.Join("; ", pairs.Select(pair => $"{pair.Key}={pair.Value}"));
+            snapshots.Add((canonical, display));
+        }
+
+        if (snapshots.Count == 0)
+            return new(FingerprintState.Missing, $"{side}: settings fingerprint missing from every valid run");
+        if (missing > 0)
+            return new(FingerprintState.Incomplete,
+                $"{side}: settings fingerprint missing from {missing} of {validRuns.Count} valid runs");
+
+        var distinct = snapshots.GroupBy(snapshot => snapshot.Canonical, StringComparer.Ordinal).ToList();
+        if (distinct.Count != 1)
+            return new(FingerprintState.Inconsistent,
+                $"{side}: {distinct.Count} different settings fingerprints across {validRuns.Count} valid runs");
+
+        return new(FingerprintState.Stable, $"{side}: stable", snapshots[0].Canonical, snapshots[0].Display);
+    }
+
+    private static SettingsFingerprintComparison CompareSettings(
+        SceneResolutionAggregate? baseline,
+        SceneResolutionAggregate? target)
+    {
+        if (baseline is null || target is null)
+            return new(SettingsComparisonStatus.NotMatched, "Not measured on both sides");
+
+        var b = ReadFingerprint(baseline, "baseline");
+        var t = ReadFingerprint(target, "target");
+        if (b.State != FingerprintState.Stable || t.State != FingerprintState.Stable)
+            return new(SettingsComparisonStatus.Unverified,
+                $"Excluded: {b.Detail}; {t.Detail}", b.Display, t.Display);
+        if (!string.Equals(b.Canonical, t.Canonical, StringComparison.Ordinal))
+            return new(SettingsComparisonStatus.Mismatch,
+                "Excluded: actual settings fingerprints differ", b.Display, t.Display);
+
+        return new(SettingsComparisonStatus.VerifiedMatch,
+            "Verified identical settings", b.Display, t.Display);
     }
 
     public static Result Build(SuiteResult baselineSuite, SuiteResult targetSuite)
@@ -99,7 +187,8 @@ public static class SuiteComparison
                 VariantId = any.VariantId,
                 ResolutionName = any.ResolutionName,
                 Baseline = b,
-                Target = t
+                Target = t,
+                SettingsComparison = CompareSettings(b, t)
             });
         }
         return new Result(rows, baselineSuite, targetSuite);
@@ -141,7 +230,7 @@ public sealed class SuiteComparisonReportGenerator
         sb.Append($"<span>Baseline: generated {b.GeneratedUtc.ToLocalTime():yyyy-MM-dd HH:mm} · suite v{SvgCharts.Esc(b.System.SuiteVersion)}</span>");
         sb.Append($"<span>Target: generated {t.GeneratedUtc.ToLocalTime():yyyy-MM-dd HH:mm} · suite v{SvgCharts.Esc(t.System.SuiteVersion)}</span>");
         sb.Append("</div>");
-        sb.Append($"<p class=\"note\">Only aggregates for the SAME (game, scene, model, resolution) are compared. Positive % means the target card was faster. Watt deltas appear only where both sides share the same power provenance.</p>");
+        sb.Append("<p class=\"note\">A delta is calculated only when both sides are the SAME (game, scene, model, resolution) and every valid run carries one stable, identical settings fingerprint. Missing, inconsistent, or changed settings stay visible but are excluded. Positive % means the target card was faster. Watt deltas additionally require compatible, known power provenance.</p>");
         sb.Append("</div></header>");
 
         Overview(sb, cmp);
@@ -156,14 +245,14 @@ public sealed class SuiteComparisonReportGenerator
     private static void Overview(StringBuilder sb, SuiteComparison.Result cmp)
     {
         sb.Append("<section class=\"wrap cards\">");
-        sb.Append(Card("Matched cells", cmp.Matched.Count().ToString(),
-            $"{cmp.ImprovedCount} faster · {cmp.RegressedCount} slower · {cmp.Matched.Count() - cmp.ImprovedCount - cmp.RegressedCount} within ±1%"));
+        sb.Append(Card("Verified matched cells", cmp.Comparable.Count().ToString(),
+            $"{cmp.Matched.Count()} identity-matched · {cmp.SettingsExcluded.Count()} settings-excluded"));
         var idx = cmp.MatchedIndexDeltaPct;
         sb.Append(Card("Matched geo-mean Δ", idx is null ? "—" : $"{(idx >= 0 ? "+" : "")}{F(idx.Value)}%",
-            "target vs baseline over identical cells"));
+            "target vs baseline over fingerprint-verified cells"));
         sb.Append(Card("Baseline index", F(cmp.BaselineSuite.OverallPerformanceIndex), "geo-mean avg FPS"));
         sb.Append(Card("Target index", F(cmp.TargetSuite.OverallPerformanceIndex),
-            $"whole-suite geo-mean ({cmp.OnlyInBaseline.Count()}+{cmp.OnlyInTarget.Count()} unmatched cells excluded above)"));
+            $"whole-suite geo-mean ({cmp.SettingsExcluded.Count()} settings-excluded; {cmp.OnlyInBaseline.Count()}+{cmp.OnlyInTarget.Count()} unmatched)"));
         sb.Append("</section>");
     }
 
@@ -174,12 +263,15 @@ public sealed class SuiteComparisonReportGenerator
     {
         sb.Append("<section class=\"wrap\"><h2>Per-cell deltas</h2>");
         sb.Append("<table><thead><tr><th>Game</th><th>Scene</th><th>Model</th><th>Res</th>" +
+                  "<th>Settings proof</th>" +
                   "<th>Baseline FPS</th><th>Target FPS</th><th>Δ FPS</th><th>Δ %</th>" +
                   "<th>Baseline W</th><th>Target W</th><th>Δ W</th><th>FPS/W Δ%</th></tr></thead><tbody>");
         foreach (var r in cmp.Matched)
         {
             string fgFlag = r.FrameGenInvolved ? " <sup class=\"fg\" title=\"Frame generation active on at least one side: presented-fps numbers count generated presents.\">FG⚠</sup>" : "";
-            double? dFps = r.Baseline is { } bb && r.Target is { } tt ? tt.AvgFps - bb.AvgFps : null;
+            double? dFps = r.SettingsComparable && r.Baseline is { } bb && r.Target is { } tt
+                ? tt.AvgFps - bb.AvgFps
+                : null;
             double? dPct = r.DeltaPct;
             string pctCls = dPct is null ? "" : dPct > 1 ? "ok" : dPct < -1 ? "bad" : "";
             string pctCell = dPct is null
@@ -192,7 +284,8 @@ public sealed class SuiteComparisonReportGenerator
             double? dW = pw && bw is { } b2 && tw is { } t2 ? t2 - b2 : null;
 
             // FPS/W delta only when both sides are DIRECT eligible (the only publishable efficiency kind).
-            bool effEligible = PowerProvenance.IsDirectEfficiencyEligible(r.Baseline?.PowerMeasurement)
+            bool effEligible = r.SettingsComparable
+                            && PowerProvenance.IsDirectEfficiencyEligible(r.Baseline?.PowerMeasurement)
                             && PowerProvenance.IsDirectEfficiencyEligible(r.Target?.PowerMeasurement);
             double? bE = effEligible && bw is { } bwv && bwv > 0 ? r.Baseline!.AvgFps / bwv : null;
             double? tE = effEligible && tw is { } twv && twv > 0 ? r.Target!.AvgFps / twv : null;
@@ -203,6 +296,16 @@ public sealed class SuiteComparisonReportGenerator
             sb.Append($"<td>{SvgCharts.Esc(r.SceneId)}{fgFlag}</td>");
             sb.Append($"<td>{SvgCharts.Esc(string.IsNullOrWhiteSpace(r.VariantId) || r.VariantId == "default" ? "default" : r.VariantId)}</td>");
             sb.Append($"<td>{SvgCharts.Esc(r.ResolutionName)}</td>");
+            string settingsClass = r.SettingsComparison.Status == SettingsComparisonStatus.VerifiedMatch ? "ok" :
+                r.SettingsComparison.Status == SettingsComparisonStatus.Mismatch ? "bad" : "warn-c";
+            sb.Append($"<td class=\"{settingsClass}\">{SvgCharts.Esc(r.SettingsComparison.Summary)}");
+            if (!string.IsNullOrWhiteSpace(r.SettingsComparison.BaselineFingerprint) ||
+                !string.IsNullOrWhiteSpace(r.SettingsComparison.TargetFingerprint))
+            {
+                sb.Append($"<br/><small>Base: {SvgCharts.Esc(r.SettingsComparison.BaselineFingerprint ?? "missing")}" +
+                          $"<br/>Target: {SvgCharts.Esc(r.SettingsComparison.TargetFingerprint ?? "missing")}</small>");
+            }
+            sb.Append("</td>");
             sb.Append($"<td>{F(r.BaselineFps)}</td><td>{F(r.TargetFps)}</td>");
             sb.Append($"<td>{(dFps is null ? "—" : (dFps >= 0 ? "+" : "") + F(dFps))}</td>");
             sb.Append($"<td>{pctCell}</td>");

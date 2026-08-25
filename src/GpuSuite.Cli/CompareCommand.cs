@@ -18,7 +18,8 @@ internal static partial class Program
             Console.Error.WriteLine(
                 "Usage: gpusuite compare --base <suite_result.json> --target <suite_result.json> [--out FILE] [--open]\n" +
                 "  Joins two suite results on (game, scene, model, resolution) and writes a self-contained HTML\n" +
-                "  delta report. Watt columns appear only where both sides share the same power provenance;\n" +
+                "  delta report. Deltas require stable, identical settings fingerprints on both sides. Watt\n" +
+                "  columns additionally require compatible, known power provenance;\n" +
                 "  frame-gen-inflated rows are flagged; unmatched cells are listed, never dropped.");
             return 2;
         }
@@ -42,9 +43,12 @@ internal static partial class Program
         Console.WriteLine($"Target   : {t.GpuName}  ({t.Aggregates.Count} cells, generated {t.GeneratedUtc.ToLocalTime():yyyy-MM-dd HH:mm})");
         var idx = cmp.MatchedIndexDeltaPct;
         Console.WriteLine(idx is null
-            ? "No matched cells — nothing to compare. Do the two suites cover the same games/scenes/models/resolutions?"
-            : $"Matched geo-mean Δ: {(idx >= 0 ? "+" : "")}{idx:0.0}% over {cmp.Matched.Count()} matched cell(s) " +
-              $"({cmp.ImprovedCount} faster, {cmp.RegressedCount} slower, {cmp.OnlyInBaseline.Count()}+{cmp.OnlyInTarget.Count()} unmatched).");
+            ? $"No settings-verified matched cells — {cmp.Matched.Count()} identity match(es), " +
+              $"{cmp.SettingsExcluded.Count()} excluded for missing/inconsistent/changed fingerprints, " +
+              $"{cmp.OnlyInBaseline.Count()}+{cmp.OnlyInTarget.Count()} unmatched."
+            : $"Matched geo-mean Δ: {(idx >= 0 ? "+" : "")}{idx:0.0}% over {cmp.Comparable.Count()} settings-verified cell(s) " +
+              $"({cmp.ImprovedCount} faster, {cmp.RegressedCount} slower, {cmp.SettingsExcluded.Count()} settings-excluded, " +
+              $"{cmp.OnlyInBaseline.Count()}+{cmp.OnlyInTarget.Count()} unmatched).");
 
         string outPath = a.Get("--out") ?? Path.Combine("Results",
             $"comparison_{DateTime.Now:yyyyMMdd_HHmmss}.html");

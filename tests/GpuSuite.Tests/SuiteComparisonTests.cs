@@ -5,14 +5,15 @@ using Xunit;
 namespace GpuSuite.Tests;
 
 /// <summary>
-/// The comparison join/delta math behind `gpusuite compare`. Pins the honesty rules: only identical
-/// (game, scene, model, resolution) cells are matched, unmatched sides are kept visible, watt deltas are
-/// suppressed across incompatible power provenance, and the report escapes injected labels.
+/// The comparison join/delta math behind `gpusuite compare`. Pins the honesty rules: identity-matched
+/// cells contribute deltas only with stable, identical settings fingerprints; unmatched/settings-excluded
+/// sides stay visible; watt deltas require compatible known provenance; labels are escaped.
 /// </summary>
 public class SuiteComparisonTests
 {
     private static SceneResolutionAggregate Agg(string game, string scene, string variant, string res,
-        double avgFps, PowerMeasurementMetadata? power = null, double? watts = null)
+        double avgFps, PowerMeasurementMetadata? power = null, double? watts = null,
+        string? fingerprint = "preset=verified")
     {
         var agg = new SceneResolutionAggregate
         {
@@ -20,7 +21,16 @@ public class SuiteComparisonTests
             TotalRuns = 3, ValidRuns = 3, AvgFps = avgFps,
         };
         if (power is not null) agg.PowerMeasurement = power;
-        foreach (var r in Enumerable.Range(0, 3)) agg.Runs.Add(new RunResult { Verdict = RunVerdict.Valid });
+        foreach (var r in Enumerable.Range(0, 3))
+        {
+            var run = new RunResult { Verdict = RunVerdict.Valid };
+            if (fingerprint is not null)
+            {
+                var parts = fingerprint.Split('=', 2);
+                run.SettingsFingerprint = new Dictionary<string, string> { [parts[0]] = parts.Length == 2 ? parts[1] : "" };
+            }
+            agg.Runs.Add(run);
+        }
         if (watts is { } w) foreach (var r in agg.Runs) r.Power.AvgGpuPowerW = w;
         return agg;
     }
@@ -63,6 +73,7 @@ public class SuiteComparisonTests
         Assert.Single(cmp.OnlyInTarget);
 
         var row = cmp.Matched.First();
+        Assert.True(row.SettingsComparable);
         Assert.Equal(20.0, row.DeltaPct!.Value, 6);   // +20%
     }
 
@@ -116,6 +127,76 @@ public class SuiteComparisonTests
 
         var same = SuiteComparison.Build(Suite("A", powBase), Suite("B", powTarget)).Matched.Single();
         Assert.True(same.PowerComparable);
+    }
+
+    [Fact]
+    public void PowerComparable_RejectsUnknownProvenanceEvenWhenBothSidesAreUnknown()
+    {
+        var baseline = Agg("g", "s", "d", "4K", 100, new PowerMeasurementMetadata(), 200);
+        var target = Agg("g", "s", "d", "4K", 120, new PowerMeasurementMetadata(), 180);
+
+        var row = SuiteComparison.Build(Suite("A", baseline), Suite("B", target)).Matched.Single();
+
+        Assert.False(row.PowerComparable);
+        Assert.False(PowerProvenance.AreCompatible(baseline.PowerMeasurement, target.PowerMeasurement));
+    }
+
+    [Fact]
+    public void SettingsFingerprintMismatch_RemainsVisibleButIsExcludedFromEveryDelta()
+    {
+        var baseline = Agg("g", "s", "default", "4K", 100, Powenetics(), 200, "preset=Ultra");
+        var target = Agg("g", "s", "default", "4K", 150, Powenetics(), 180, "preset=Low");
+
+        var cmp = SuiteComparison.Build(Suite("A", baseline), Suite("B", target));
+        var row = cmp.Matched.Single();
+
+        Assert.Equal(SettingsComparisonStatus.Mismatch, row.SettingsComparison.Status);
+        Assert.False(row.SettingsComparable);
+        Assert.Null(row.DeltaPct);
+        Assert.False(row.PowerComparable);
+        Assert.Null(cmp.MatchedIndexDeltaPct);
+        Assert.Single(cmp.SettingsExcluded);
+
+        var html = new SuiteComparisonReportGenerator().Generate(cmp);
+        Assert.Contains("actual settings fingerprints differ", html);
+        Assert.Contains("preset=Ultra", html);
+        Assert.Contains("preset=Low", html);
+        Assert.DoesNotContain("+50.0%", html);
+    }
+
+    [Fact]
+    public void MissingOrInconsistentSettingsFingerprints_AreExcludedFailClosed()
+    {
+        var missing = Agg("g1", "s", "default", "4K", 100, fingerprint: null);
+        var missingTarget = Agg("g1", "s", "default", "4K", 110);
+        var inconsistent = Agg("g2", "s", "default", "4K", 100, fingerprint: "preset=Ultra");
+        inconsistent.Runs[2].SettingsFingerprint!["preset"] = "Low";
+        var stableTarget = Agg("g2", "s", "default", "4K", 110, fingerprint: "preset=Ultra");
+
+        var cmp = SuiteComparison.Build(
+            Suite("A", missing, inconsistent),
+            Suite("B", missingTarget, stableTarget));
+
+        Assert.Equal(2, cmp.Matched.Count());
+        Assert.Empty(cmp.Comparable);
+        Assert.All(cmp.Matched, row => Assert.Equal(SettingsComparisonStatus.Unverified, row.SettingsComparison.Status));
+        Assert.Null(cmp.MatchedIndexDeltaPct);
+    }
+
+    [Fact]
+    public void SettingsFingerprintComparison_IsOrderCaseAndWhitespaceInsensitive()
+    {
+        var baseline = Agg("g", "s", "default", "4K", 100);
+        var target = Agg("g", "s", "default", "4K", 110);
+        foreach (var run in baseline.Runs)
+            run.SettingsFingerprint = new Dictionary<string, string> { ["Preset"] = " Ultra ", ["Upscaler"] = "DLSS" };
+        foreach (var run in target.Runs)
+            run.SettingsFingerprint = new Dictionary<string, string> { ["upscaler"] = "dlss", ["preset"] = "ultra" };
+
+        var row = SuiteComparison.Build(Suite("A", baseline), Suite("B", target)).Matched.Single();
+
+        Assert.True(row.SettingsComparable);
+        Assert.Equal(10.0, row.DeltaPct!.Value, 6);
     }
 
     [Fact]

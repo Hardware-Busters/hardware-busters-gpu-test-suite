@@ -47,6 +47,8 @@ public static class PowerProvenance
     /// <summary>Power values can be compared only when their full provenance contract matches.</summary>
     public static bool AreCompatible(PowerMeasurementMetadata? left, PowerMeasurementMetadata? right) =>
         left is not null && right is not null
+        && left.Kind != PowerMeasurementKind.Unknown
+        && right.Kind != PowerMeasurementKind.Unknown
         && left.Kind == right.Kind
         && left.LegacyInferred == right.LegacyInferred
         && left.HasPerRailData == right.HasPerRailData
