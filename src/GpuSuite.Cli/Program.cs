@@ -760,9 +760,9 @@ Usage:
                                   what is on screen (real screenshot → structured/consensus/OCR-capped answer).
   gpusuite compare --base OLD\\suite_result.json --target NEW\\suite_result.json [--out FILE] [--open]
                                   Compare two saved suite results (typically two GPUs, or the same GPU
-                                  before/after a driver change): per-cell FPS/1%-low deltas, watts only
-                                  where power provenance matches on both sides, FG-flagged rows, and an
-                                  unmatched-cells section — nothing is silently dropped.
+                                  before/after a driver change): deltas only for stable, identical settings
+                                  fingerprints; watts additionally require compatible known provenance.
+                                  Settings-excluded, FG-flagged, and unmatched rows stay visible.
   gpusuite probe-powenetics [--port COMx]  Probe serial port(s) for a live Powenetics V2 device
   gpusuite help
 
