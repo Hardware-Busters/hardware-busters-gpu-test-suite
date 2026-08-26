@@ -1,7 +1,8 @@
 {
-  "schema": 1,
-  "generatedUtc": "2026-08-26T06:10:57.9750733Z",
   "sourceRevision": "retained privately",
+  "publicRepository": "https://github.com/Hardware-Busters/hardware-busters-gpu-test-suite",
+  "generatedUtc": "2026-08-26T06:28:23.9171545Z",
+  "schema": 1,
   "files": [
     {
       "path": ".gitattributes",
@@ -345,7 +346,7 @@
     },
     {
       "path": "settings.example.json",
-      "sha256": "e3c87a2ec8dc6984c4c469c8479a930d327679249d8796ee6a6d39fe3defbf2c",
+      "sha256": "cb39a374e121a7b4ab0603ed97164aa5779f6cf7195b0032555505cad49b3d65",
       "bytes": 717
     },
     {
@@ -565,8 +566,8 @@
     },
     {
       "path": "src/GpuSuite.App/ViewModels/SettingsViewModel.cs",
-      "sha256": "a3deebde22785d52c7c9852fc18670b387f421214d22c82dfc7119ed34f39adf",
-      "bytes": 13500
+      "sha256": "e20f2c661c6d6806257606a789d4fa23cbd2ff6fd9dfeadcc9e1ee95982c5a9b",
+      "bytes": 14686
     },
     {
       "path": "src/GpuSuite.App/Views/AuthorStudioView.xaml",
@@ -680,8 +681,8 @@
     },
     {
       "path": "src/GpuSuite.App/Views/SettingsView.xaml",
-      "sha256": "d2915490ddda5c12245931363701f4aa5badaca2ff482192fc456ccce11a0fcd",
-      "bytes": 25820
+      "sha256": "bfc06d868021e45be6899b72ca2f4d38dafa30e570151b5ea467d452d9e54c80",
+      "bytes": 26730
     },
     {
       "path": "src/GpuSuite.App/Views/SettingsView.xaml.cs",
@@ -1479,6 +1480,11 @@
       "bytes": 8691
     },
     {
+      "path": "tests/GpuSuite.Tests/SettingsVisionModelTests.cs",
+      "sha256": "ee096a596e6635493eff0bffb637f59e621df7ede56b74dcb92a7f1823c5d253",
+      "bytes": 1593
+    },
+    {
       "path": "tests/GpuSuite.Tests/SmokeFrameClassifierTests.cs",
       "sha256": "92cf918417c291e9b11c4d690003639c87df34029d2f6ec86080bf78ca1a35f4",
       "bytes": 1996
@@ -1518,6 +1524,5 @@
       "sha256": "254e6869a352111fb79f0742863b9aa94fa832c1cfabf5114a6e9ab25b1e0e40",
       "bytes": 2137
     }
-  ],
-  "publicRepository": "https://github.com/Hardware-Busters/hardware-busters-gpu-test-suite"
+  ]
 }

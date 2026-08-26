@@ -148,13 +148,19 @@
                         <Grid Margin="0,14,0,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0" Margin="0,0,12,0">
                                 <TextBlock Text="CUSTOM AI ENDPOINT (LOCAL OLLAMA)" Style="{StaticResource LabelTextStyle}"/>
                                 <TextBox Text="{Binding Config.Gx10Endpoint, UpdateSourceTrigger=LostFocus, TargetNullValue=''}"/>
                             </StackPanel>
-                            <Button Grid.Column="1" Content="Check Custom AI" VerticalAlignment="Bottom"
+                            <StackPanel Grid.Column="1" Margin="0,0,12,0">
+                                <TextBlock Text="CUSTOM AI VISION MODEL" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBox Text="{Binding Config.NavSupervisorVisionModel, UpdateSourceTrigger=LostFocus}"
+                                         ToolTip="The vision-capable model installed on the Custom AI endpoint above, for example gemma3:12b or qwen2.5vl:7b."/>
+                            </StackPanel>
+                            <Button Grid.Column="2" Content="Check Custom AI" VerticalAlignment="Bottom"
                                     Command="{Binding CheckGx10Command}"/>
                         </Grid>
 
@@ -202,14 +208,16 @@
                         <Grid Margin="0,12,0,0">
                             <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0" Margin="0,0,12,0">
-                                <TextBlock Text="CUSTOM LOCAL OLLAMA ENDPOINT" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBlock Text="SEPARATE CUSTOM LOCAL OLLAMA ENDPOINT" Style="{StaticResource LabelTextStyle}"/>
                                 <TextBox Text="{Binding Config.CustomVisionEndpoint, UpdateSourceTrigger=LostFocus}" ToolTip="For another local AI or any reachable Ollama server, e.g. http://localhost:11434"/>
                             </StackPanel>
                             <StackPanel Grid.Column="1">
-                                <TextBlock Text="CUSTOM LOCAL VISION MODEL" Style="{StaticResource LabelTextStyle}"/>
+                                <TextBlock Text="SEPARATE CUSTOM LOCAL VISION MODEL" Style="{StaticResource LabelTextStyle}"/>
                                 <TextBox Text="{Binding Config.CustomVisionModel, UpdateSourceTrigger=LostFocus}" ToolTip="The vision-capable model installed on that Ollama server."/>
                             </StackPanel>
                         </Grid>
+                        <TextBlock Text="These separate custom-local fields are used only by the Custom local Ollama option; they do not change the Custom AI endpoint or model checked above."
+                                   Style="{StaticResource CaptionTextStyle}" Margin="0,4,0,0" TextWrapping="Wrap"/>
                         <TextBlock Text="{Binding CloudKeyStatus}" Style="{StaticResource CaptionTextStyle}" Margin="0,8,0,0" TextWrapping="Wrap"/>
                         <TextBlock Text="Save cloud keys here to Windows Credential Manager, choose the model and effort, then select the provider. For another local AI/Ollama box, enter its endpoint + vision model and choose Custom local Ollama. Captured menu frames go only to the selected cloud provider while navigating; no key or cloud AI runs during the measured window."
                                    Style="{StaticResource CaptionTextStyle}" Foreground="{StaticResource StatusNotInstalledBrush}" Margin="0,4,0,0" TextWrapping="Wrap"/>
