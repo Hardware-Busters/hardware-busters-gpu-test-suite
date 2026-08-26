@@ -1,8 +1,7 @@
 {
   "schema": 1,
+  "generatedUtc": "2026-08-26T06:10:57.9750733Z",
   "sourceRevision": "retained privately",
-  "generatedUtc": "2026-08-25T01:58:45.7459930Z",
-  "publicRepository": "https://github.com/Hardware-Busters/hardware-busters-gpu-test-suite",
   "files": [
     {
       "path": ".gitattributes",
@@ -51,27 +50,27 @@
     },
     {
       "path": ".github/workflows/ci.yml",
-      "sha256": "9220853e374825d318afbef92257500d6496420ca6a3df97df5ce7d859c77530",
+      "sha256": "85927163d2b06a5d8ea18edf451df40b90ec8d4cc1ee7ec038eb07cd49f44cf9",
       "bytes": 1149
     },
     {
       "path": ".github/workflows/codeql.yml",
-      "sha256": "9e25504d150c2c93efd76c1c0e2cc78c15b96a444f350d389c26d40956174838",
+      "sha256": "52f74c90e8523b51fedce89a0ae123af504ed5690d6a74416dbc8accee832027",
       "bytes": 634
     },
     {
       "path": ".github/workflows/dco.yml",
-      "sha256": "65d834c688f9ef3b845de92551cdeed994cc8e7f9c44703e1775ac2d7f24647e",
+      "sha256": "f1968dd6acf15af0130d59fcd3152455974e1532225c47058be1889e408e912c",
       "bytes": 774
     },
     {
       "path": ".github/workflows/dependency-review.yml",
-      "sha256": "4b375d303f3d74abf0a2ba81d086d561ed332ae3e882fb657935584904677674",
+      "sha256": "a56fe3c72a549d47159574a05c6bec97e3bc041cb81220778fa3563d4cb31585",
       "bytes": 359
     },
     {
       "path": ".github/workflows/release.yml",
-      "sha256": "0970c781c0c0bb70ee8c4464474d77ff829a0e9d0cbdb586e02ebe49aa853025",
+      "sha256": "9cfc759dd08be272b4abddc70d8cb0f844d11398d343458c227db1a0bec9d873",
       "bytes": 4575
     },
     {
@@ -346,7 +345,7 @@
     },
     {
       "path": "settings.example.json",
-      "sha256": "f1a5d756f60281798d86632cd893da782406d44f4cd05cbe0ae7e868bcdb31cd",
+      "sha256": "e3c87a2ec8dc6984c4c469c8479a930d327679249d8796ee6a6d39fe3defbf2c",
       "bytes": 717
     },
     {
@@ -1519,5 +1518,6 @@
       "sha256": "254e6869a352111fb79f0742863b9aa94fa832c1cfabf5114a6e9ab25b1e0e40",
       "bytes": 2137
     }
-  ]
+  ],
+  "publicRepository": "https://github.com/Hardware-Busters/hardware-busters-gpu-test-suite"
 }
