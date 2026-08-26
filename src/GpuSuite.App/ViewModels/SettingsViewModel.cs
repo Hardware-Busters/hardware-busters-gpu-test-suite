@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GpuSuite.App.Services;
 using GpuSuite.Core.Config;
+using GpuSuite.Core.Remote;
 using GpuSuite.Core.Security;
 
 namespace GpuSuite.App.ViewModels;
@@ -19,6 +20,8 @@ public partial class SettingsViewModel : ObservableObject
 {
     private readonly Workspace _ws;
     private readonly Gx10ProbeService _gx10;
+    private CancellationTokenSource? _probeCts;
+    private int _probeGeneration;
 
     public SuiteConfig Config => _ws.Config;
     public ValidationThresholds Validation => _ws.Config.Validation;
@@ -171,10 +174,11 @@ public partial class SettingsViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void Save()
+    private async Task SaveAsync()
     {
         _ws.SaveConfig();
         SaveStatus = $"Saved · {DateTime.Now:HH:mm:ss}";
+        await CheckGx10Async();
     }
 
     [RelayCommand]
@@ -225,12 +229,19 @@ public partial class SettingsViewModel : ObservableObject
     [RelayCommand]
     private async Task CheckGx10Async()
     {
-        if (CheckingGx10) return;
+        int generation = Interlocked.Increment(ref _probeGeneration);
+        var cts = new CancellationTokenSource();
+        Interlocked.Exchange(ref _probeCts, cts)?.Cancel();
+
+        string endpoint = Config.Gx10Endpoint;
+        string configuredModel = (Config.NavSupervisorVisionModel ?? "").Trim();
         CheckingGx10 = true;
-        Gx10StatusText = $"Probing {Config.Gx10Endpoint} …";
+        Gx10StatusText = $"Probing {endpoint} for model '{configuredModel}' …";
         try
         {
-            var s = await _gx10.ProbeAsync();
+            var s = await _gx10.ProbeAsync(cts.Token);
+            if (generation != Volatile.Read(ref _probeGeneration)) return;
+
             Gx10Available = s.Reachable;
             _lastGx10Up = s.Reachable;
             // Auto-selection: when GX10 is active and the mode is "auto", select it (effective = GX10); else GPU.
@@ -238,32 +249,48 @@ public partial class SettingsViewModel : ObservableObject
                 OnPropertyChanged(nameof(IsComputeAuto));   // keep "Auto" mode but reflect the resolved target below
             if (s.Reachable)
             {
-                bool hasVision = s.HasModel(Config.NavSupervisorVisionModel);
-                string loaded = s.Loaded.Count == 0
-                    ? "none loaded"
-                    : "loaded: " + string.Join(", ", s.Loaded.Select(l => $"{l.Name} {l.VramGb:0.0} GB"));
-                Gx10StatusText =
-                    $"ONLINE · v{s.Version} · {s.LatencyMs:0} ms · {s.Models.Count} models " +
-                    $"({s.VisionModels.Count()} vision) · {loaded} · " +
-                    (hasVision ? $"'{Config.NavSupervisorVisionModel}' present ✓" : $"'{Config.NavSupervisorVisionModel}' NOT pulled");
+                Gx10StatusText = DescribeReachableStatus(s, configuredModel);
             }
             else
             {
                 Gx10StatusText = $"Offline ({s.Error}) — Custom AI unavailable; the local GPU will handle the vision model.";
             }
         }
+        catch (OperationCanceledException) when (cts.IsCancellationRequested)
+        {
+            // A newer Save, Reload, workspace change, or manual check owns the status now.
+        }
         catch (Exception ex)
         {
+            if (generation != Volatile.Read(ref _probeGeneration)) return;
             Gx10Available = false;
+            _lastGx10Up = false;
             Gx10StatusText = $"Probe error: {ex.Message}";
         }
         finally
         {
-            CheckingGx10 = false;
-            // The GX10 radio's enabled state changed — refresh anything bound to it, and recompute what the
-            // auto-selection now resolves to (GX10 when active, else the local GPU).
-            OnPropertyChanged(nameof(IsComputeGx10));
-            UpdateEffectiveCompute();
+            if (generation == Volatile.Read(ref _probeGeneration))
+            {
+                CheckingGx10 = false;
+                // The GX10 radio's enabled state changed — refresh anything bound to it, and recompute what the
+                // auto-selection now resolves to (GX10 when active, else the local GPU).
+                OnPropertyChanged(nameof(IsComputeGx10));
+                UpdateEffectiveCompute();
+                Interlocked.CompareExchange(ref _probeCts, null, cts);
+            }
+            cts.Dispose();
         }
+    }
+
+    internal static string DescribeReachableStatus(Gx10Status status, string configuredModel)
+    {
+        string model = (configuredModel ?? "").Trim();
+        bool hasVision = status.HasModel(model);
+        string loaded = status.Loaded.Count == 0
+            ? "none loaded"
+            : "loaded: " + string.Join(", ", status.Loaded.Select(l => $"{l.Name} {l.VramGb:0.0} GB"));
+        return $"ONLINE · v{status.Version} · {status.LatencyMs:0} ms · {status.Models.Count} models " +
+               $"({status.VisionModels.Count()} vision) · {loaded} · " +
+               (hasVision ? $"'{model}' present ✓" : $"'{model}' NOT pulled");
     }
 }
