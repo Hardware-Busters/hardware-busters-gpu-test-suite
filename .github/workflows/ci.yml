@@ -18,6 +18,13 @@ jobs:
         run: .github/scripts/Test-PublicRepositoryPolicy.ps1
       - name: Build
         run: dotnet build GpuTestSuite.sln -c Release -p:Platform=x64 --nologo
+      - name: Verify public build version contract
+        shell: pwsh
+        run: |
+          $app = Get-ChildItem src/GpuSuite.App/bin -Filter GpuSuite.App.exe -Recurse | Select-Object -First 1
+          if (-not $app) { throw 'Built GpuSuite.App.exe was not found.' }
+          $version = [Version]$app.VersionInfo.FileVersion
+          if ($version -lt [Version]'0.1.0.0') { throw "Public build has invalid file version $version." }
       - name: Test
         run: dotnet test tests/GpuSuite.Tests/GpuSuite.Tests.csproj -c Release -p:Platform=x64 --no-build --nologo
       - name: Install Inno Setup
