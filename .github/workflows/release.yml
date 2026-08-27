@@ -7,6 +7,8 @@ permissions:
 jobs:
   release:
     runs-on: windows-2022
+    env:
+      GPUSUITE_PUBLIC_VERSION: ${{ github.ref_name }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -27,6 +29,14 @@ jobs:
       - run: choco install innosetup --no-progress -y
       - name: Publish self-contained Windows application
         run: dotnet publish src/GpuSuite.App/GpuSuite.App.csproj -c Release -r win-x64 --self-contained true --nologo -o release-stage
+      - name: Require application version to match release tag
+        shell: pwsh
+        run: |
+          $expected = '${{ github.ref_name }}' -replace '^v', ''
+          if ($expected -notmatch '^\d+\.\d+\.\d+$') { throw "Release tag '${{ github.ref_name }}' must use vMAJOR.MINOR.PATCH." }
+          $info = (Get-Item release-stage/GpuSuite.App.exe).VersionInfo
+          if ($info.FileVersion -ne "$expected.0") { throw "GpuSuite.App.exe file version '$($info.FileVersion)' does not match tag '$expected'." }
+          if (-not $info.ProductVersion.StartsWith("$expected+", [StringComparison]::Ordinal)) { throw "GpuSuite.App.exe product version '$($info.ProductVersion)' does not match tag '$expected'." }
       - name: Generate and validate installer runtime attribution
         shell: pwsh
         run: |

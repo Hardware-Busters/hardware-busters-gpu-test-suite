@@ -1,8 +1,6 @@
 {
-  "sourceRevision": "retained privately",
-  "publicRepository": "https://github.com/Hardware-Busters/hardware-busters-gpu-test-suite",
-  "generatedUtc": "2026-08-26T06:28:23.9171545Z",
   "schema": 1,
+  "generatedUtc": "2026-08-27T06:56:14.3035621Z",
   "files": [
     {
       "path": ".gitattributes",
@@ -51,8 +49,8 @@
     },
     {
       "path": ".github/workflows/ci.yml",
-      "sha256": "85927163d2b06a5d8ea18edf451df40b90ec8d4cc1ee7ec038eb07cd49f44cf9",
-      "bytes": 1149
+      "sha256": "bb9db0233f8ce80b131978e803719c3dae3e72f8e8221cc443208a6ede23f8f1",
+      "bytes": 1587
     },
     {
       "path": ".github/workflows/codeql.yml",
@@ -71,8 +69,8 @@
     },
     {
       "path": ".github/workflows/release.yml",
-      "sha256": "9cfc759dd08be272b4abddc70d8cb0f844d11398d343458c227db1a0bec9d873",
-      "bytes": 4575
+      "sha256": "72485e325b727ab62f869f88c66c05a6deb50e4bf4845181baf55e59a233567a",
+      "bytes": 5350
     },
     {
       "path": ".gitignore",
@@ -81,8 +79,8 @@
     },
     {
       "path": "build/Update-BuildInfo.ps1",
-      "sha256": "ad8fe154c48ecf31d787288fd7735c103accbd65217c148e141f0ce1899bd4df",
-      "bytes": 729
+      "sha256": "37442a5ade1832e0ad746c2d166d9f630f4c55347c09080540091f2962f6ec43",
+      "bytes": 2582
     },
     {
       "path": "CODE_OF_CONDUCT.md",
@@ -346,7 +344,7 @@
     },
     {
       "path": "settings.example.json",
-      "sha256": "cb39a374e121a7b4ab0603ed97164aa5779f6cf7195b0032555505cad49b3d65",
+      "sha256": "9affeb2f109c82f3dd37c4321971097bd40a04ca1522fd673b2756b6c4926213",
       "bytes": 717
     },
     {
@@ -1524,5 +1522,7 @@
       "sha256": "254e6869a352111fb79f0742863b9aa94fa832c1cfabf5114a6e9ab25b1e0e40",
       "bytes": 2137
     }
-  ]
+  ],
+  "publicRepository": "https://github.com/Hardware-Busters/hardware-busters-gpu-test-suite",
+  "sourceRevision": "retained privately"
 }
