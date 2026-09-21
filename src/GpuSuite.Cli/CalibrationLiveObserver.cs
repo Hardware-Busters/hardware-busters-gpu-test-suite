@@ -102,8 +102,12 @@ internal sealed class BotDrivenObserver : IScreenObserver
             else
             {
                 _log.Info("Calibrate", $"driving to '{stepLabel}': {drive}");
-                var actions = Program.ParseKeySequence(drive, pad: false);
-                var engine = new EngineAuto.InputAutomationEngine(_log, inject: true) { TargetPid = _pid };
+                List<EngineAuto.BotAction> actions;
+                try { actions = Program.ParseKeySequence(drive, pad: false); }
+                catch (ArgumentException ex) { _log.Warn("Calibrate", $"Skipping invalid Drive sequence for '{stepLabel}': {ex.Message}"); actions = new(); }
+                if (actions.Count > 0)
+                {
+                    var engine = new EngineAuto.InputAutomationEngine(_log, inject: true) { TargetPid = _pid };
                 var script = new EngineAuto.BotScript
                 {
                     Id = $"calib-{stepLabel}", Loop = false,
@@ -111,6 +115,7 @@ internal sealed class BotDrivenObserver : IScreenObserver
                 };
                 await engine.RunAsync(script, TimeSpan.FromSeconds(60), ct).ConfigureAwait(false);
                 await Task.Delay(800, ct).ConfigureAwait(false);   // settle before the grab
+                }
             }
         }
         else

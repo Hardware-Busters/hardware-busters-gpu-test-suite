@@ -74,7 +74,7 @@ internal static partial class Program
         if (at.Length > 2) return false;
         var wh = at[0].ToLowerInvariant().Split('x');
         if (wh.Length != 2) return false;
-        return int.TryParse(wh[0].Trim(), out w) && int.TryParse(wh[1].Trim(), out h) && w > 0 && h > 0;
+        return int.TryParse(wh[0].Trim(), out w) && int.TryParse(wh[1].Trim(), out h) && w > 0 && h > 0 && hz > 0;
     }
 
     /// <summary>

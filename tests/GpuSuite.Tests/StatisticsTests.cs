@@ -162,9 +162,9 @@ public class StatisticsTests
     [Fact]
     public void CoefficientOfVariation_Basics()
     {
-        // fewer than two values → defined as 0 variance (never null)
-        Assert.Equal(0, Statistics.CoefficientOfVariationPct(new List<double>())!.Value);
-        Assert.Equal(0, Statistics.CoefficientOfVariationPct(new List<double> { 100.0 }));
+        // fewer than two values → stability unknown (null, never 0% stable)
+        Assert.Null(Statistics.CoefficientOfVariationPct(new List<double>()));
+        Assert.Null(Statistics.CoefficientOfVariationPct(new List<double> { 100.0 }));
         // population sd of {95,105} = 5 → CV = 5%
         Assert.Equal(5.0, Statistics.CoefficientOfVariationPct(new List<double> { 95.0, 105.0 })!.Value, 6);
     }

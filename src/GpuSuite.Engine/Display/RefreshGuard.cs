@@ -56,6 +56,8 @@ public sealed class RefreshGuard : IDisposable
     {
         var cts = CancellationTokenSource.CreateLinkedTokenSource(outerCt);
         int poll = Math.Max(250, pollMs);
+        if (maxHz > 60)
+            log.Warn("RefreshGuard", $"MaxRefreshHz is {maxHz}Hz — above the 60 Hz Elgato-validated bench cap. The guard enforces the configured cap, but the capture card may blank above 60 Hz; prefer 60 Hz for bench runs.");
         var loop = Task.Run(async () =>
         {
             bool armed = true;          // fire the kill at most once per breach episode; re-arm after refresh returns to safe
@@ -69,12 +71,14 @@ public sealed class RefreshGuard : IDisposable
                 catch (OperationCanceledException) { break; }
 
                 var cur = DisplayController.GetCurrent();
+                if (cts.IsCancellationRequested) break;
                 if (cur is not DisplayMode m) continue;   // driver couldn't report — skip this tick
 
                 // Resolution-downgrade guard (remote-desktop resize): pull the desktop back to the run's
                 // target before the refresh logic — a 1440p mode is "≤cap" and would otherwise look healthy.
                 if (guardRes && (long)m.Width * m.Height < expectedPixels)
                 {
+                    if (cts.IsCancellationRequested) break;
                     resDriftRecovers++;
                     if (resDriftRecovers <= 3 || resDriftRecovers % 20 == 0)
                         log.Warn("RefreshGuard", $"!! Desktop resolution dropped to {m.Width}x{m.Height} below the run target {expectedW}x{expectedH} (remote-desktop resize?) — forcing it back (recover #{resDriftRecovers}). A remote viewer fighting this will keep flipping; disconnect or disable the client's 'optimize resolution' during runs.");
@@ -88,6 +92,7 @@ public sealed class RefreshGuard : IDisposable
                     overCapStreak++;
                     if (overCapStreak < KillAfterConsecutiveOverCap)
                     {
+                        if (cts.IsCancellationRequested) break;
                         // RECOVER: pull the panel back to the cap at the current resolution. This rescues a
                         // borderless / flip-model game (e.g. Ratchet) that Windows momentarily granted a higher
                         // refresh — it keeps running at 60 Hz instead of being killed. Harmless no-op-ish for a
@@ -98,6 +103,7 @@ public sealed class RefreshGuard : IDisposable
                     }
                     else if (armed)
                     {
+                        if (cts.IsCancellationRequested) break;
                         // Still over the cap after the recovery attempts — a real exclusive-fullscreen mode the
                         // desktop can't override (DOOM-style). Protect the Elgato by killing the game.
                         armed = false;
@@ -120,7 +126,10 @@ public sealed class RefreshGuard : IDisposable
     public void Dispose()
     {
         try { _cts.Cancel(); } catch { }
-        try { _loop.Wait(TimeSpan.FromSeconds(2)); } catch { }
+        // Cancellation wakes the token-aware delay immediately. Join the loop before returning so a stale
+        // guard cannot recover the display or kill a process after the next run has already started.
+        try { _loop.GetAwaiter().GetResult(); }
+        catch (OperationCanceledException) { }
         _cts.Dispose();
     }
 }

@@ -126,13 +126,14 @@ public static class Statistics
         return meanWindowFt > 0 ? 1000.0 / meanWindowFt : 0;
     }
 
-    /// <summary>Linear-interpolation percentile over an ascending-sorted array. p in [0,100].</summary>
+    /// <summary>Linear-interpolation percentile over an ascending-sorted array. p is clamped to [0,100].</summary>
     public static double Percentile(double[] sortedAsc, double p)
     {
         int n = sortedAsc.Length;
         if (n == 0) return 0;
         if (n == 1) return sortedAsc[0];
-        double rank = (p / 100.0) * (n - 1);
+        double pc = Math.Clamp(p, 0, 100);
+        double rank = (pc / 100.0) * (n - 1);
         int lo = (int)Math.Floor(rank);
         int hi = (int)Math.Ceiling(rank);
         if (lo < 0) lo = 0;
@@ -263,11 +264,12 @@ public static class Statistics
         return Math.Sqrt(sumSq / list.Count);
     }
 
-    /// <summary>Coefficient of variation (stddev/mean) as a percentage — the run-to-run variance metric.</summary>
+    /// <summary>Coefficient of variation (stddev/mean) as a percentage — the run-to-run variance metric.
+    /// Null when fewer than 2 samples (stability unknown, never reported as 0% stable).</summary>
     public static double? CoefficientOfVariationPct(IEnumerable<double> values)
     {
         var list = values.Where(v => !double.IsNaN(v)).ToList();
-        if (list.Count < 2) return 0;
+        if (list.Count < 2) return null;
         double mean = list.Average();
         if (Math.Abs(mean) < 1e-9) return null;
         double sumSq = list.Sum(v => (v - mean) * (v - mean));

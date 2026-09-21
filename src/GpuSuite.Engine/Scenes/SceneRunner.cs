@@ -704,6 +704,8 @@ public sealed class SceneRunner
     private ScreenReader? BuildVision(bool realGame, RunLogger log)
     {
         if (!realGame || string.IsNullOrWhiteSpace(_cfg.CaptureCardDevice)) return null;
+        if (!Diagnostics.CaptureCardSupportPolicy.IsQualifiedDeviceName(_cfg.CaptureCardDevice))
+            log.Warn("Bot", $"captureCardDevice '{_cfg.CaptureCardDevice?.Trim()}' is not the qualified '{Diagnostics.CaptureCardSupportPolicy.QualifiedDeviceName}' — vision runs blind-degraded; preflight should have blocked this.");
         var grabber = new CaptureCardGrabber(_cfg.FfmpegPath, _cfg.CaptureCardDevice, log);
         if (!grabber.FfmpegResolved) return null;
         var reader = new ScreenReader(grabber, log);
@@ -1028,10 +1030,9 @@ public sealed class SceneRunner
         s.MinGpuPowerW = Statistics.Min(p.Select(x => x.GpuTotalW));
         s.AvgSystemPowerW = Statistics.Avg(p.Select(x => x.SystemTotalW));
         s.PeakSystemPowerW = Statistics.Max(p.Select(x => x.SystemTotalW));
-        if (PowerProvenance.IsDirectEfficiencyEligible(s.Measurement) && s.AvgGpuPowerW is double avg)
+        if (PowerProvenance.IsDirectEfficiencyEligible(s.Measurement) && s.AvgGpuPowerW is double avg && avg > 0 && s.DurationSec > 0)
         {
-            double dur = s.DurationSec > 0 ? s.DurationSec : p.Count * 0.01;
-            s.GpuEnergyJoules = avg * dur;
+            s.GpuEnergyJoules = avg * s.DurationSec;
             s.EnergyPerFrameJ = frameCount > 0 ? s.GpuEnergyJoules / frameCount : null;
         }
         return s;

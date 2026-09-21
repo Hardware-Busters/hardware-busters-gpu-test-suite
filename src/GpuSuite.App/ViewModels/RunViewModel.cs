@@ -577,14 +577,14 @@ public partial class RunViewModel : ObservableObject
                 int hangMs = Math.Max(0, _ws.Config.InputHangReleaseSeconds) * 1000;
                 int lastResortHangMs = hangMs > 0 ? hangMs * 3 : 0;
                 RunHeartbeat.Begin();
-                inputGuard = PhysicalInputGuard.Arm(
+                inputGuard = await Task.Run(() => PhysicalInputGuard.Arm(
                     onAbort: () => _cts?.Cancel(),
                     log: message => dispatcher.BeginInvoke(() =>
                     {
                         Log.Add($"{DateTime.Now:HH:mm:ss} [InputLock] {message}");
                         if (Log.Count > 5000) Log.RemoveAt(0);
                     }),
-                    isHung: lastResortHangMs > 0 ? () => RunHeartbeat.IsStale(lastResortHangMs) : null);
+                    isHung: lastResortHangMs > 0 ? () => RunHeartbeat.IsStale(lastResortHangMs) : null)).ConfigureAwait(true);
 
                 if (inputGuard.IsArmed)
                     Log.Add($"{DateTime.Now:HH:mm:ss} [InputLock] ARMED — physical input blocked; ESC aborts, ESC×3 force-unlocks.");

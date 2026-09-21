@@ -53,18 +53,27 @@ public static class CaptureSyncGuard
                 return false;
             }
             log.Info("CaptureSync", $"Capture card is showing its NO-SIGNAL slate{tag} — mode-nudging the output to renegotiate ({round + 1}/{maxNudges}): {via.w}x{via.h} → {preW}x{preH} at ≤{maxHz}Hz.");
-            DisplayController.TrySetResolutionAtCap(via.w, via.h, maxHz);
-            await Task.Delay(3000, ct).ConfigureAwait(false);
-            DisplayController.TrySetResolutionAtCap(preW, preH, maxHz);
-            // The card's renegotiation after a nudge is NOT instant: in the wedged/flapping state the first
-            // real frame arrived ~20s after the restore leg (live 2026-07-05 run 22 — nudge at :51, real
-            // frame at :15; the original fixed 5s settle declared failure while its own fix was still
-            // landing). Poll for the first real frame up to ~25s, then loop back to the 2-consecutive check.
-            var settleDeadline = DateTime.UtcNow.AddSeconds(25);
-            while (DateTime.UtcNow < settleDeadline)
+            try
             {
-                await Task.Delay(2500, ct).ConfigureAwait(false);
-                if (await ProbeAsync(reader, ct).ConfigureAwait(false)) break;
+                DisplayController.TrySetResolutionAtCap(via.w, via.h, maxHz);
+                await Task.Delay(3000, ct).ConfigureAwait(false);
+                DisplayController.TrySetResolutionAtCap(preW, preH, maxHz);
+                // The card's renegotiation after a nudge is NOT instant: in the wedged/flapping state the first
+                // real frame arrived ~20s after the restore leg (live 2026-07-05 run 22 — nudge at :51, real
+                // frame at :15; the original fixed 5s settle declared failure while its own fix was still
+                // landing). Poll for the first real frame up to ~25s, then loop back to the 2-consecutive check.
+                var settleDeadline = DateTime.UtcNow.AddSeconds(25);
+                while (DateTime.UtcNow < settleDeadline)
+                {
+                    await Task.Delay(2500, ct).ConfigureAwait(false);
+                    if (await ProbeAsync(reader, ct).ConfigureAwait(false)) break;
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Cancellation must not strand the desktop at the nudge mode — restore before propagating.
+                try { DisplayController.TrySetResolutionAtCap(preW, preH, maxHz); } catch { }
+                throw;
             }
             GpuSuite.Core.RunHeartbeat.Ping();   // legitimate recovery work — keep the hang-watchdog calm
         }

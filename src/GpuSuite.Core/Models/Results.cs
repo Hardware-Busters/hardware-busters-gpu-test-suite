@@ -44,11 +44,12 @@ public static class PowerProvenance
         && measurement.HasPerRailData
         && measurement.HardwareBustersVerifiedPowerEligible;
 
-    /// <summary>Power values can be compared only when their full provenance contract matches.</summary>
+    /// <summary>Power values can be compared only when their full provenance contract matches.
+    /// Synthetic and replay series are diagnostic only and are never comparable — not even to each other.</summary>
     public static bool AreCompatible(PowerMeasurementMetadata? left, PowerMeasurementMetadata? right) =>
         left is not null && right is not null
-        && left.Kind != PowerMeasurementKind.Unknown
-        && right.Kind != PowerMeasurementKind.Unknown
+        && left.Kind is PowerMeasurementKind.PoweneticsDirect or PowerMeasurementKind.GpuReportedTelemetry
+        && right.Kind is PowerMeasurementKind.PoweneticsDirect or PowerMeasurementKind.GpuReportedTelemetry
         && left.Kind == right.Kind
         && left.LegacyInferred == right.LegacyInferred
         && left.HasPerRailData == right.HasPerRailData
@@ -62,7 +63,7 @@ public static class PowerProvenance
         var first = iterator.Current;
         while (iterator.MoveNext())
             if (!AreCompatible(first, iterator.Current)) return false;
-        return first.Kind != PowerMeasurementKind.Unknown;
+        return first.Kind is PowerMeasurementKind.PoweneticsDirect or PowerMeasurementKind.GpuReportedTelemetry;
     }
 
     public static string Label(PowerMeasurementMetadata? measurement)

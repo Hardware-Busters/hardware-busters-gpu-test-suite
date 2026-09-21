@@ -12,11 +12,12 @@ public sealed class ResultComparisonRow
     public string Label { get; init; } = "";
     public double BaselineFps { get; init; }
     public double TargetFps { get; init; }
-    public double FpsDeltaPct { get; init; }
-    public double LowDeltaPct { get; init; }
+    public double? FpsDeltaPct { get; init; }
+    public double? LowDeltaPct { get; init; }
     public double? PowerDeltaPct { get; init; }
     public double? EfficiencyDeltaPct { get; init; }
     public string? PowerComparisonReason { get; init; }
+    public string? SettingsComparisonReason { get; init; }
 }
 
 /// <summary>
@@ -89,38 +90,42 @@ public partial class ResultsViewModel : ObservableObject
             return;
         }
 
-        static string Key(GpuSuite.Core.Models.SceneResolutionAggregate a) =>
-            string.Join("|", a.GameId, a.SceneId, a.VariantId ?? "", a.ResolutionName);
-        var baseline = ComparisonBaseline.Result.Aggregates.ToDictionary(Key, StringComparer.OrdinalIgnoreCase);
+        var cmp = GpuSuite.Reporting.SuiteComparison.Build(ComparisonBaseline.Result, ComparisonTarget.Result);
         int suppressedPower = 0;
-        foreach (var target in ComparisonTarget.Result.Aggregates)
+        int suppressedSettings = 0;
+        foreach (var row in cmp.Matched)
         {
-            if (!baseline.TryGetValue(Key(target), out var source)) continue;
-            bool compatiblePower = GpuSuite.Core.Models.PowerProvenance.AreCompatible(source.PowerMeasurement, target.PowerMeasurement);
+            var source = row.Baseline!;
+            var target = row.Target!;
+            bool compatiblePower = row.PowerComparable;
             bool directEfficiency = compatiblePower
                 && GpuSuite.Core.Models.PowerProvenance.IsDirectEfficiencyEligible(source.PowerMeasurement)
                 && GpuSuite.Core.Models.PowerProvenance.IsDirectEfficiencyEligible(target.PowerMeasurement);
             string? powerReason = compatiblePower ? null : "Power comparison suppressed: incompatible measurement provenance.";
             if (powerReason is not null) suppressedPower++;
+            string? settingsReason = row.SettingsComparable ? null : row.SettingsComparison.Summary;
+            if (settingsReason is not null) suppressedSettings++;
             ComparisonRows.Add(new ResultComparisonRow
             {
                 Label = $"{target.GameId} · {target.SceneId} · {target.ResolutionName} · {(string.IsNullOrWhiteSpace(target.VariantName) ? "default" : target.VariantName)}",
                 BaselineFps = source.AvgFps,
                 TargetFps = target.AvgFps,
-                FpsDeltaPct = Delta(source.AvgFps, target.AvgFps),
-                LowDeltaPct = Delta(source.P1LowFps, target.P1LowFps),
+                FpsDeltaPct = row.DeltaPct,
+                LowDeltaPct = row.SettingsComparable ? Delta(source.P1LowFps, target.P1LowFps) : null,
                 PowerDeltaPct = compatiblePower ? Delta(source.AvgGpuPowerW, target.AvgGpuPowerW) : null,
                 EfficiencyDeltaPct = directEfficiency ? Delta(source.FpsPerWatt, target.FpsPerWatt) : null,
-                PowerComparisonReason = powerReason
+                PowerComparisonReason = powerReason,
+                SettingsComparisonReason = settingsReason
             });
         }
         ComparisonSummary = ComparisonRows.Count == 0
             ? "The selected result sets have no matching game/scene/resolution/model cells."
-            : $"{ComparisonRows.Count} matching cell(s) · percentages show target versus baseline." +
+            : $"{ComparisonRows.Count} matching cell(s) · percentages show target versus baseline (FPS only where settings are verified identical)." +
+              (suppressedSettings > 0 ? $" FPS suppressed for {suppressedSettings} cell(s): settings unverified or mismatched." : "") +
               (suppressedPower > 0 ? $" Power comparison suppressed for {suppressedPower} cell(s): incompatible measurement provenance." : "");
     }
 
-    private static double Delta(double baseline, double target) => baseline == 0 ? 0 : (target / baseline - 1) * 100;
+    private static double? Delta(double baseline, double target) => baseline > 0 ? (target / baseline - 1) * 100 : null;
     private static double? Delta(double? baseline, double? target) =>
         baseline is > 0 && target.HasValue ? (target.Value / baseline.Value - 1) * 100 : null;
 

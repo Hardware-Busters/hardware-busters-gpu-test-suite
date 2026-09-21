@@ -76,6 +76,10 @@ public sealed class LateRtssFrameProvider : IFrameCaptureProvider
             {
                 try
                 {
+                    // EncoderServer is a generic-sounding name — only kill it when it lives under
+                    // an RTSS/RivaTuner install path, never a same-named unrelated process.
+                    if (name.Equals("EncoderServer", StringComparison.OrdinalIgnoreCase) && !IsRtssOwned(process))
+                        continue;
                     if (name == "RTSS") process.CloseMainWindow();
                     if (!process.WaitForExit(800)) process.Kill(entireProcessTree: true);
                 }
@@ -83,6 +87,18 @@ public sealed class LateRtssFrameProvider : IFrameCaptureProvider
                 finally { process.Dispose(); }
             }
         }
+    }
+
+    private static bool IsRtssOwned(Process process)
+    {
+        try
+        {
+            string? path = process.MainModule?.FileName;
+            return path is not null &&
+                (path.Contains("RTSS", StringComparison.OrdinalIgnoreCase) ||
+                 path.Contains("RivaTuner", StringComparison.OrdinalIgnoreCase));
+        }
+        catch { return false; }
     }
 
     private sealed class Session : ISampleSession<FrameSample>

@@ -143,7 +143,7 @@ public sealed class PresentMonFrameProvider : IFrameCaptureProvider
         private readonly object _lock = new();
         private readonly Task _reader;
         private readonly Task _errReader;
-        private int _iTime = -1, _iFrameTime = -1, _iBetween = -1, _iDisplayed = -1, _iGpu = -1;
+        private int _iTime = -1, _iFrameTime = -1, _iDisplayed = -1, _iGpu = -1;
         private bool _haveHeader;
         private bool _timeIsMs;   // PresentMon 2.x reports the timestamp column in MILLISECONDS (TimeInMs)
         private int _stopped;
@@ -217,7 +217,7 @@ public sealed class PresentMonFrameProvider : IFrameCaptureProvider
                 var c = line.Split(',');
                 double t = Get(c, _iTime);
                 if (_timeIsMs && !double.IsNaN(t)) t /= 1000.0;   // TimeInMs -> seconds
-                double ft = _iFrameTime >= 0 ? Get(c, _iFrameTime) : Get(c, _iBetween);
+                double ft = Get(c, _iFrameTime);
                 if (ft <= 0 || double.IsNaN(ft)) continue;
                 var f = new FrameSample(t, ft)
                 {
@@ -257,7 +257,6 @@ public sealed class PresentMonFrameProvider : IFrameCaptureProvider
                          h.Equals("msBetweenDisplayChange", StringComparison.OrdinalIgnoreCase) || h.Equals("MsBetweenDisplayChange", StringComparison.OrdinalIgnoreCase)) { if (_iDisplayed < 0) _iDisplayed = i; }
                 else if (h.Equals("GPUBusy", StringComparison.OrdinalIgnoreCase) || h.Equals("msGPUActive", StringComparison.OrdinalIgnoreCase) || h.Equals("MsGPUBusy", StringComparison.OrdinalIgnoreCase)) { if (_iGpu < 0) _iGpu = i; }
             }
-            if (_iFrameTime < 0 && _iBetween >= 0) _iFrameTime = _iBetween;
         }
 
         private static double Get(string[] c, int i) =>
@@ -290,8 +289,18 @@ public sealed class PresentMonFrameProvider : IFrameCaptureProvider
             catch (OperationCanceledException) { }
             catch { }
             try { if (!_proc.HasExited) _proc.Kill(true); } catch { }
-            try { await _reader.ConfigureAwait(false); } catch { }
-            try { await _errReader.ConfigureAwait(false); } catch { }
+            try
+            {
+                using var readerCts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+                await _reader.WaitAsync(readerCts.Token).ConfigureAwait(false);
+            }
+            catch { }
+            try
+            {
+                using var errCts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+                await _errReader.WaitAsync(errCts.Token).ConfigureAwait(false);
+            }
+            catch { }
             StopEtwSession(_sessionName);
             lock (_lock) return _frames.ToList();
         }

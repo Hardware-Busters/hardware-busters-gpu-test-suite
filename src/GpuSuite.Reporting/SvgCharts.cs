@@ -157,7 +157,7 @@ public static class SvgCharts
     }
 
     public static string Esc(string s) => s
-        .Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;");
+        .Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&#39;");
 
     // A small categorical palette used across charts.
     public static readonly string[] Palette = { "#5b8def", "#46c08a", "#e0a13a", "#d36b6b", "#9a6bd3", "#3aa0c0" };

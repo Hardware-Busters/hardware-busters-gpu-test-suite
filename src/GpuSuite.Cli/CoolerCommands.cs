@@ -156,9 +156,37 @@ internal static partial class Program
         double toW = a.GetDouble("--to") ?? 250;
         double stepW = a.GetDouble("--step") ?? 25;
         double refPower = a.GetDouble("--ref-power") ?? toW;
+        if (fromW <= 0 || toW <= 0 || stepW <= 0 || refPower <= 0)
+        {
+            Console.Error.WriteLine("cooler: --from/--to/--step/--ref-power must all be positive watts.");
+            return 2;
+        }
+        if (fromW > 1000 || toW > 1000 || refPower > 1000)
+        {
+            Console.Error.WriteLine("cooler: --from/--to/--ref-power look implausible (>1000 W) — refusing a likely typo.");
+            return 2;
+        }
         int? lockClock = a.GetInt("--lock-clock");
         bool manualFan = a.Has("--manual-fan");
         string? pref = a.Get("--gpu") ?? (string.IsNullOrWhiteSpace(cfg.PreferredGpu) ? null : cfg.PreferredGpu);
+
+        // Validate every option before constructing or starting anything that can alter GPU clocks,
+        // fan state, or load. Early returns after load.Start() can otherwise leave a clock lock active.
+        double soakMin = a.GetDouble("--soak-min") ?? 30;
+        double soakMax = a.GetDouble("--soak-max") ?? 180;
+        double settleWindow = a.GetDouble("--settle-window") ?? 45;
+        double settleSlope = a.GetDouble("--settle-slope") ?? 0.3;
+        double ambient = a.GetDouble("--ambient") ?? 0;
+        if (soakMin < 0 || soakMax <= 0 || settleWindow <= 0 || settleSlope < 0 || ambient < -50 || ambient > 60)
+        {
+            Console.Error.WriteLine("cooler: invalid soak/settle/ambient values — soak-min ≥ 0, soak-max/settle-window > 0, settle-slope ≥ 0, ambient in [-50, 60] °C.");
+            return 2;
+        }
+        if (soakMax < soakMin)
+        {
+            Console.Error.WriteLine("cooler: --soak-max must be ≥ --soak-min.");
+            return 2;
+        }
 
         using var factory = new MeasurementFactory(cfg);
         Console.WriteLine("Probing power / telemetry...");
@@ -224,12 +252,12 @@ internal static partial class Program
             StepW = stepW,
             ReferencePowerW = refPower,
             NoiseLevels = levels,
-            MinSoak = TimeSpan.FromSeconds(a.GetDouble("--soak-min") ?? 30),
-            MaxSoak = TimeSpan.FromSeconds(a.GetDouble("--soak-max") ?? 180),
-            SettleWindow = TimeSpan.FromSeconds(a.GetDouble("--settle-window") ?? 45),
-            SettleSlopeCPerMin = a.GetDouble("--settle-slope") ?? 0.3,
+            MinSoak = TimeSpan.FromSeconds(soakMin),
+            MaxSoak = TimeSpan.FromSeconds(soakMax),
+            SettleWindow = TimeSpan.FromSeconds(settleWindow),
+            SettleSlopeCPerMin = settleSlope,
             FanNote = a.Get("--fan-note") ?? "",
-            AmbientC = a.GetDouble("--ambient") ?? 0,
+            AmbientC = ambient,
         };
 
         Console.WriteLine(
@@ -305,7 +333,9 @@ internal static partial class Program
             return 2;
         }
 
-        var result = Json.Load<CoolerSweepResult>(inPath);
+        CoolerSweepResult? result;
+        try { result = Json.Load<CoolerSweepResult>(inPath); }
+        catch (Exception ex) { Console.Error.WriteLine($"cooler-report: could not parse {inPath}: {ex.Message}"); return 1; }
         if (result is null) { Console.Error.WriteLine($"cooler-report: could not parse {inPath}."); return 1; }
 
         string outPath = a.Get("--out") ?? Path.ChangeExtension(inPath, ".html");

@@ -122,15 +122,23 @@ public sealed class LhmTelemetryProvider : ITelemetryProvider, IDisposable
                 if (gpu is null) return false;
                 gpu.Update();
                 double? wPower = null;
+                int wPriority = int.MaxValue;
                 foreach (var sensor in gpu.Sensors)
                 {
                     if (sensor.Value is null || sensor.SensorType != SensorType.Power) continue;
                     var n = sensor.Name ?? ""; float v = sensor.Value.Value;
                     if (v <= 0) continue;
-                    if (n.Contains("Board", StringComparison.OrdinalIgnoreCase) || n.Contains("Total", StringComparison.OrdinalIgnoreCase) ||
-                        n.Contains("Package", StringComparison.OrdinalIgnoreCase) || n.Contains("Pkg", StringComparison.OrdinalIgnoreCase) ||
-                        n.Contains("TGP", StringComparison.OrdinalIgnoreCase) || n.Contains("TBP", StringComparison.OrdinalIgnoreCase))
-                        wPower ??= v;
+                    int pri = n.Contains("Total", StringComparison.OrdinalIgnoreCase) ? 0
+                        : n.Contains("Board", StringComparison.OrdinalIgnoreCase) ? 1
+                        : n.Contains("Package", StringComparison.OrdinalIgnoreCase) || n.Contains("Pkg", StringComparison.OrdinalIgnoreCase) ? 2
+                        : n.Contains("TGP", StringComparison.OrdinalIgnoreCase) || n.Contains("TBP", StringComparison.OrdinalIgnoreCase) ? 3
+                        : int.MaxValue;
+                    if (pri == int.MaxValue) continue;
+                    if (pri < wPriority || (pri == wPriority && (wPower is null || v > wPower)))
+                    {
+                        wPriority = pri;
+                        wPower = v;
+                    }
                 }
                 if (wPower is > 0) { watts = wPower.Value; return true; }
                 return false;
@@ -316,7 +324,13 @@ public sealed class LhmTelemetryProvider : ITelemetryProvider, IDisposable
                 case SensorType.SmallData:
                 case SensorType.Data:
                     if (n.Contains("Memory Used", StringComparison.OrdinalIgnoreCase) || n.Contains("VRAM Used", StringComparison.OrdinalIgnoreCase))
-                        s.VramUsedMb ??= v; // LHM reports GB for some; left as-is, documented
+                    {
+                        // LHM reports this sensor in GB on some GPUs and MB on others with no unit flag.
+                        // Values below 128 cannot plausibly be megabytes during a 3D workload (idle desktop
+                        // alone holds hundreds of MB), so interpret them as gigabytes and convert to MB.
+                        double mb = v < 128 ? v * 1024.0 : v;
+                        s.VramUsedMb ??= (float)mb;
+                    }
                     break;
             }
         }

@@ -54,7 +54,11 @@ public sealed class CoolerReportGenerator
         sb.Append($"<span>Generated {r.GeneratedUtc.ToLocalTime():yyyy-MM-dd HH:mm}</span>");
         sb.Append("</div>");
 
-        bool powerLive = !r.PowerSource.Contains("synthetic", StringComparison.OrdinalIgnoreCase);
+        // Fail-closed: only known hardware power sources render LIVE. Empty, unknown, or
+        // synthetic sources must never present as verified measurement.
+        bool powerLive = r.PowerSource.Equals("Powenetics V2", StringComparison.OrdinalIgnoreCase)
+            || r.PowerSource.Equals("LHM GPU board power", StringComparison.OrdinalIgnoreCase)
+            || r.PowerSource.Equals("LibreHardwareMonitor", StringComparison.OrdinalIgnoreCase);
         sb.Append("<div class=\"badges\">");
         sb.Append(Badge($"Power / {r.PowerSource}", powerLive));
         sb.Append(Badge(r.FanAutoControlled ? "Fan / auto-set" : "Fan / manual", r.FanAutoControlled));

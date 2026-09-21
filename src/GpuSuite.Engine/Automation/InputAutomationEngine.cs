@@ -1579,7 +1579,10 @@ public sealed class InputAutomationEngine : IDisposable
     // for the immediately-following SetForegroundWindow.
     [DllImport("user32.dll", SetLastError = true)]
     private static extern bool SystemParametersInfo(uint uiAction, uint uiParam, IntPtr pvParam, uint fWinIni);
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern bool SystemParametersInfo(uint uiAction, uint uiParam, ref uint pvParam, uint fWinIni);
     [DllImport("user32.dll")] private static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);
+    private const uint SPI_GETFOREGROUNDLOCKTIMEOUT = 0x2000;
     private const uint SPI_SETFOREGROUNDLOCKTIMEOUT = 0x2001;
     private const uint SPIF_SENDCHANGE = 0x0002;
     private const byte VK_MENU = 0x12;          // ALT
@@ -1646,43 +1649,56 @@ public sealed class InputAutomationEngine : IDisposable
                 if (h == IntPtr.Zero)
                     throw new BotGateAbortException($"strict foreground: pid {pid}'s game window could not be resolved after 3s — refusing to inject into '{ForegroundHolderName()}'.");
             }
-            if (h == IntPtr.Zero) { _log.Trace("Bot", $"Foreground: pid {pid} has no main window yet; injecting to current foreground."); return; }
+            if (h == IntPtr.Zero) { _log.Warn("Bot", $"Foreground: pid {pid} has no main window yet; injecting to current foreground (legacy non-strict mode)."); return; }
             if (IsTargetForegroundHandle(h, pid) && !IsIconic(h)) return;   // already foreground and not minimized
 
             // Lift the Win32 foreground lock so SetForegroundWindow actually takes from this background process,
             // then drive focus and VERIFY it landed — retrying, because a single SetForegroundWindow loses an
             // intermittent race at (re)launch (observed live on ACM: the game window stayed behind the desktop
             // for the whole nav and EVERY OCR poll read the desktop -> required gate never matched -> abort).
+            // The system-wide timeout is saved and restored — leaving it at 0 would change OS behavior for
+            // the whole session.
+            uint savedTimeout = 0;
+            bool haveSavedTimeout = false;
+            try { haveSavedTimeout = SystemParametersInfo(SPI_GETFOREGROUNDLOCKTIMEOUT, 0, ref savedTimeout, 0); } catch { }
             try { SystemParametersInfo(SPI_SETFOREGROUNDLOCKTIMEOUT, 0, IntPtr.Zero, SPIF_SENDCHANGE); } catch { }
-            for (int round = 0; round < 2; round++)
+            try
             {
-                for (int attempt = 0; attempt < 5; attempt++)
+                for (int round = 0; round < 2; round++)
                 {
-                    keybd_event(VK_MENU, 0, 0, UIntPtr.Zero);                 // synthetic ALT = "user input" that lifts the lock
-                    keybd_event(VK_MENU, 0, KEYEVENTF_KEYUP_FLAG, UIntPtr.Zero);
-                    uint cur = GetCurrentThreadId();
-                    uint fgThread = GetWindowThreadProcessId(GetForegroundWindow(), out _);
-                    AttachThreadInput(cur, fgThread, true);
-                    try
+                    for (int attempt = 0; attempt < 5; attempt++)
                     {
-                        if (IsIconic(h)) ShowWindow(h, SW_RESTORE);
-                        BringWindowToTop(h);
-                        SetForegroundWindow(h);
-                        SwitchToThisWindow(h, true);                          // the Alt+Tab focus API — succeeds where SetForegroundWindow alone is refused
+                        keybd_event(VK_MENU, 0, 0, UIntPtr.Zero);                 // synthetic ALT = "user input" that lifts the lock
+                        keybd_event(VK_MENU, 0, KEYEVENTF_KEYUP_FLAG, UIntPtr.Zero);
+                        uint cur = GetCurrentThreadId();
+                        uint fgThread = GetWindowThreadProcessId(GetForegroundWindow(), out _);
+                        AttachThreadInput(cur, fgThread, true);
+                        try
+                        {
+                            if (IsIconic(h)) ShowWindow(h, SW_RESTORE);
+                            BringWindowToTop(h);
+                            SetForegroundWindow(h);
+                            SwitchToThisWindow(h, true);                          // the Alt+Tab focus API — succeeds where SetForegroundWindow alone is refused
+                        }
+                        finally { AttachThreadInput(cur, fgThread, false); }
+                        if (IsTargetForegroundHandle(h, pid)) { _log.Info("Bot", $"Foreground: focused the game window (pid {pid}) on try {round * 5 + attempt + 1}."); return; }
+                        System.Threading.Thread.Sleep(150);                       // let the switch land before re-checking / retrying
                     }
-                    finally { AttachThreadInput(cur, fgThread, false); }
-                    if (IsTargetForegroundHandle(h, pid)) { _log.Info("Bot", $"Foreground: focused the game window (pid {pid}) on try {round * 5 + attempt + 1}."); return; }
-                    System.Threading.Thread.Sleep(150);                       // let the switch land before re-checking / retrying
+                    // 5 refusals in a row = something is genuinely camped on the foreground. If it's a stateless
+                    // Windows SHELL OVERLAY (Search flyout / touch keyboard / Start), kill it and take one more
+                    // round — a game or user app is never touched here.
+                    if (round == 0 && TryKillShellOverlayForeground()) continue;
+                    break;
                 }
-                // 5 refusals in a row = something is genuinely camped on the foreground. If it's a stateless
-                // Windows SHELL OVERLAY (Search flyout / touch keyboard / Start), kill it and take one more
-                // round — a game or user app is never touched here.
-                if (round == 0 && TryKillShellOverlayForeground()) continue;
-                break;
+                if (StrictForeground)
+                    throw new BotGateAbortException($"strict foreground: could not focus the game (pid {pid}); {ForegroundHolderName()} holds the foreground — refusing to inject into it.");
+                _log.Warn("Bot", $"Foreground: could NOT focus pid {pid} ({ForegroundHolderName()} holds the foreground); OCR will keep skipping until it yields (legacy non-strict mode).");
             }
-            if (StrictForeground)
-                throw new BotGateAbortException($"strict foreground: could not focus the game (pid {pid}); {ForegroundHolderName()} holds the foreground — refusing to inject into it.");
-            _log.Trace("Bot", $"Foreground: could NOT focus pid {pid} ({ForegroundHolderName()} holds the foreground); OCR will keep skipping until it yields.");
+            finally
+            {
+                if (haveSavedTimeout)
+                    try { SystemParametersInfo(SPI_SETFOREGROUNDLOCKTIMEOUT, savedTimeout, IntPtr.Zero, SPIF_SENDCHANGE); } catch { }
+            }
         }
         catch (BotGateAbortException) { throw; }   // strict-mode refusal — must reach RunAsync's Aborted path, not the swallow below
         catch (Exception ex)

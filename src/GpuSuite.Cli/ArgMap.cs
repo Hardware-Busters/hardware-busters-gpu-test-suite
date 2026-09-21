@@ -11,7 +11,14 @@ internal sealed class ArgMap
     public string? Get(string name)
     {
         for (int i = 0; i < _a.Length - 1; i++)
-            if (string.Equals(_a[i], name, StringComparison.OrdinalIgnoreCase)) return _a[i + 1];
+            if (string.Equals(_a[i], name, StringComparison.OrdinalIgnoreCase))
+            {
+                string next = _a[i + 1];
+                // A following --flag is not a value — treat as missing so `--games --res`
+                // doesn't silently consume "--res" as the game id.
+                if (next.StartsWith("--", StringComparison.Ordinal)) return null;
+                return next;
+            }
         return null;
     }
 
