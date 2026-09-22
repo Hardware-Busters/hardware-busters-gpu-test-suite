@@ -51,7 +51,13 @@ public static class PoweneticsProtocol
         double gpuTotal = pcieSlotTotal + pcieConnTotal;
         double epsAll = eps1 + eps2 + eps3;
         double atxAll = atx12 + atx5 + atx33 + atxStb;
+        // CPU = 24-pin 12V + EPS rails minus the PCIe-slot 12V that flows through the 24-pin
+        // connector to the GPU (otherwise GPU slot power would be counted as CPU).
         double cpuPmd = (atxAll + epsAll) - slot12 - (atx5 + atx33) - atxStb;
+        // System total is informational only — the authoritative numbers are the GPU rails above.
+        // NOTE: if the slot 12V current passes through the 24-pin ATX shunt, total double-counts
+        // slot12 (once in atxAll, once in gpuTotal). Kept verbatim from the proven logger; validate
+        // against the bench PMD before using SystemTotalW for anything but plausibility.
         double total = atxAll + epsAll + gpuTotal;
 
         return new PowerSample
@@ -73,9 +79,10 @@ public static class PoweneticsProtocol
 
     private static double Round4(double v) => Math.Round(v, 4);
 
-    /// <summary>True if a decoded sample looks physically plausible (sanity gate from the proven logger).</summary>
+    /// <summary>True if a decoded sample looks physically plausible (sanity gate from the proven logger,
+    /// tightened to single-GPU bench range so unit/rail swaps fail loudly instead of passing).</summary>
     public static bool IsPlausible(PowerSample s) =>
-        s.GpuTotalW is >= 0 and < 5000 && s.SystemTotalW is >= 0 and < 6000;
+        s.GpuTotalW is >= 0 and < 2500 && s.SystemTotalW is >= 0 and < 3000;
 
     // ---- Test helper: build a raw frame from per-channel (V, A) pairs ----
     /// <summary>Encode a full 69-byte frame (sync + payload) for offline decoder self-tests.</summary>

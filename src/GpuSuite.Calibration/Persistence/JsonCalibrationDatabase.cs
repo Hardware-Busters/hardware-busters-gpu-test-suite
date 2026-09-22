@@ -38,7 +38,7 @@ public sealed class JsonCalibrationDatabase : ICalibrationDatabase
         return cleaned.Length > 0 ? cleaned : "unnamed";
     }
 
-    private static string Stamp() => DateTime.Now.ToString("yyyyMMdd-HHmmss");
+    private static string Stamp() => DateTime.Now.ToString("yyyyMMdd-HHmmss-fff");
 
     public string GameDirectory(string game) => Path.Combine(Root, Slug(game));
     public string HistoryDirectory(string game) => EnsureDir(Path.Combine(GameDirectory(game), "history"));
@@ -202,9 +202,16 @@ public sealed class JsonCalibrationDatabase : ICalibrationDatabase
     private static T? LoadLatest<T>(string dir, string pattern) where T : class
     {
         if (!Directory.Exists(dir)) return null;
-        var newest = new DirectoryInfo(dir).GetFiles(pattern)
-            .OrderByDescending(f => f.LastWriteTimeUtc)
-            .FirstOrDefault();
-        return newest is null ? null : Json.Load<T>(newest.FullName);
+        foreach (var file in new DirectoryInfo(dir).GetFiles(pattern)
+                     .OrderByDescending(f => f.LastWriteTimeUtc))
+        {
+            try
+            {
+                var value = Json.Load<T>(file.FullName);
+                if (value is not null) return value;
+            }
+            catch { /* corrupt file — try the next newest instead of crashing */ }
+        }
+        return null;
     }
 }

@@ -202,13 +202,15 @@ internal static partial class Program
         RouteRecord? route = null;
         if (a.Get("--route") is { } routePath)
         {
-            route = Json.Load<RouteRecord>(routePath);
+            try { route = Json.Load<RouteRecord>(routePath); }
+            catch (Exception ex) { Console.Error.WriteLine($"Could not parse route '{routePath}': {ex.Message}"); return 2; }
             if (route is null) { Console.Error.WriteLine($"Could not read route: {routePath}"); return 2; }
         }
         RunResult? runResult = null;
         if (a.Get("--run-result") is { } resultPath)
         {
-            runResult = Json.Load<RunResult>(resultPath);
+            try { runResult = Json.Load<RunResult>(resultPath); }
+            catch (Exception ex) { Console.Error.WriteLine($"Could not parse RunResult '{resultPath}': {ex.Message}"); return 2; }
             if (runResult is null) { Console.Error.WriteLine($"Could not read RunResult: {resultPath}"); return 2; }
         }
         if (mode == CalibrationMode.GameplayValidate && runResult is null)
@@ -219,13 +221,15 @@ internal static partial class Program
         GameplayEvidence? gameplayEvidence = null;
         if (a.Get("--evidence") is { } evidencePath)
         {
-            gameplayEvidence = Json.Load<GameplayEvidence>(evidencePath);
+            try { gameplayEvidence = Json.Load<GameplayEvidence>(evidencePath); }
+            catch (Exception ex) { Console.Error.WriteLine($"Could not parse GameplayEvidence '{evidencePath}': {ex.Message}"); return 2; }
             if (gameplayEvidence is null) { Console.Error.WriteLine($"Could not read GameplayEvidence: {evidencePath}"); return 2; }
         }
         NavRecording? recording = null;
         if (a.Get("--recording") is { } recordingPath)
         {
-            recording = Json.Load<NavRecording>(recordingPath);
+            try { recording = Json.Load<NavRecording>(recordingPath); }
+            catch (Exception ex) { Console.Error.WriteLine($"Could not parse NavRecording '{recordingPath}': {ex.Message}"); return 2; }
             if (recording is null) { Console.Error.WriteLine($"Could not read NavRecording: {recordingPath}"); return 2; }
         }
         SuiteResult? currentSuite = null;
@@ -237,10 +241,18 @@ internal static partial class Program
                     ? Directory.GetFiles(cfg.ResultsRoot, "suite_result.json", SearchOption.AllDirectories)
                         .OrderByDescending(File.GetLastWriteTimeUtc).FirstOrDefault()
                     : null);
-            if (string.IsNullOrWhiteSpace(currentPath) || (currentSuite = Json.Load<SuiteResult>(currentPath)) is null)
+            if (string.IsNullOrWhiteSpace(currentPath)) { Console.Error.WriteLine("phase5 mode requires --suite-result <suite_result.json> (or a saved result under resultsRoot)."); return 2; }
+            try { currentSuite = Json.Load<SuiteResult>(currentPath); }
+            catch (Exception ex) { Console.Error.WriteLine($"Could not parse SuiteResult '{currentPath}': {ex.Message}"); return 2; }
+            if (currentSuite is null)
             { Console.Error.WriteLine("phase5 mode requires --suite-result <suite_result.json> (or a saved result under resultsRoot)."); return 2; }
-            if (a.Get("--baseline") is { } baselinePath && (baselineSuite = Json.Load<SuiteResult>(baselinePath)) is null)
-            { Console.Error.WriteLine($"Could not read baseline SuiteResult: {baselinePath}"); return 2; }
+            if (a.Get("--baseline") is { } baselinePath)
+            {
+                try { baselineSuite = Json.Load<SuiteResult>(baselinePath); }
+                catch (Exception ex) { Console.Error.WriteLine($"Could not parse baseline SuiteResult '{baselinePath}': {ex.Message}"); return 2; }
+                if (baselineSuite is null)
+                { Console.Error.WriteLine($"Could not read baseline SuiteResult: {baselinePath}"); return 2; }
+            }
         }
 
         Console.WriteLine($"\nAI Calibration Engineer — {plugin.Name} [{mode}]");

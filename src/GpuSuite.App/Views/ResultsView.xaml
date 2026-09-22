@@ -133,8 +133,8 @@
                                             <TextBlock Text="{Binding Label}" TextTrimming="CharacterEllipsis" FontSize="11" Margin="0,0,8,0"/>
                                             <TextBlock Grid.Column="1" Text="{Binding BaselineFps, StringFormat='{}{0:0.0} fps'}" FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
                                             <TextBlock Grid.Column="2" Text="{Binding TargetFps, StringFormat='{}{0:0.0} fps'}" FontSize="11"/>
-                                            <TextBlock Grid.Column="3" Text="{Binding FpsDeltaPct, StringFormat='{}{0:+0.0;-0.0;0.0}% FPS'}" FontSize="11" Foreground="{StaticResource AccentBrush}"/>
-                                            <TextBlock Grid.Column="4" Text="{Binding LowDeltaPct, StringFormat='{}{0:+0.0;-0.0;0.0}% low'}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                            <TextBlock Grid.Column="3" Text="{Binding FpsDeltaPct, StringFormat='{}{0:+0.0;-0.0;0.0}% FPS'}" ToolTip="{Binding SettingsComparisonReason}" FontSize="11" Foreground="{StaticResource AccentBrush}"/>
+                                            <TextBlock Grid.Column="4" Text="{Binding LowDeltaPct, StringFormat='{}{0:+0.0;-0.0;0.0}% low'}" ToolTip="{Binding SettingsComparisonReason}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
                                             <TextBlock Grid.Column="5" Text="{Binding EfficiencyDeltaPct, StringFormat='{}{0:+0.0;-0.0;0.0}% eff'}" ToolTip="{Binding PowerComparisonReason}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
                                         </Grid>
                                     </DataTemplate>

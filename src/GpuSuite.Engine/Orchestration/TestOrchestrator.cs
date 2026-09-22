@@ -1057,9 +1057,17 @@ public sealed class TestOrchestrator
             _log.Warn("RefreshGuard", $"{game.Id} drove the panel to {hz}Hz (> {_cfg.MaxRefreshHz}Hz cap); KillGameOnRefreshViolation=false — logging only, panel stays blanked.");
             return;
         }
-        try { using var p = Process.GetProcessById(pid); if (!p.HasExited) p.Kill(true); }
-        catch { }
         var baseName = Path.GetFileNameWithoutExtension(game.CaptureProcessName);
+        try
+        {
+            using var p = Process.GetProcessById(pid);
+            // PID values recycle: verify this is still the game's process before killing by PID.
+            if (!p.HasExited && (string.IsNullOrEmpty(baseName) || string.Equals(p.ProcessName, baseName, StringComparison.OrdinalIgnoreCase)))
+                p.Kill(true);
+            else
+                _log.Warn("RefreshGuard", $"Skipped PID kill for pid {pid} — it no longer matches '{baseName}' (PID recycled); falling back to name sweep.");
+        }
+        catch { }
         if (!string.IsNullOrEmpty(baseName))
             foreach (var stray in Process.GetProcessesByName(baseName))
                 try { using (stray) stray.Kill(true); } catch { }

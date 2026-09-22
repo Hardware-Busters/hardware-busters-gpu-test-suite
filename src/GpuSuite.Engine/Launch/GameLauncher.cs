@@ -196,7 +196,13 @@ public sealed class GameLauncher
             _log.Info("Launch", $"Launched standalone '{spec.Target}' (pid={p?.Id.ToString() ?? "n/a"}).");
             // Some games relaunch into a child process; prefer the named capture process if it differs.
             var pid = WaitForGameProcess(game.CaptureProcessName, game.StartupGraceSeconds) ?? p?.Id;
-            return new LaunchResult { Launched = pid is not null, Simulated = pid is null, Pid = pid, Process = p, Detail = "standalone" };
+            if (pid is null)
+            {
+                _log.Warn("Launch", $"Standalone '{spec.Target}' produced no process (capture '{game.CaptureProcessName}' absent) — launch failed.");
+                try { p?.Dispose(); } catch { }
+                return LaunchFallback("standalone process did not appear");
+            }
+            return new LaunchResult { Launched = true, Simulated = false, Pid = pid, Process = p, Detail = "standalone" };
         }
         catch (Exception ex)
         {
@@ -262,6 +268,11 @@ public sealed class GameLauncher
             _log.Warn("Launch", $"Xbox pre-launch: cleared {killed} stale Gaming Services/helper process(es) before {game.Name}.");
         if (!poisoned) return;
 
+        if (!Measurement.MeasurementFactory.IsElevated())
+        {
+            _log.Warn("Launch", "Xbox pre-launch: stale crash UI was cleared, but Gaming Services restart needs elevation — skipping (run elevated to auto-restart services).");
+            return;
+        }
         try
         {
             var psi = new ProcessStartInfo("powershell.exe")
@@ -1057,8 +1068,10 @@ public sealed class GameLauncher
                 try { procs = Process.GetProcessesByName(baseName); } catch { continue; }
                 foreach (var p in procs)
                 {
+                    int pid;
+                    try { pid = p.Id; } catch { pid = -1; }
                     try { p.Kill(true); killed++; if (!killedNames.Contains(baseName)) killedNames.Add(baseName); }
-                    catch { }
+                    catch (Exception ex) { _log.Warn("Launch", $"Solo-game guard could not kill '{baseName}' (pid {pid}): {ex.GetType().Name} — it may be elevated; run elevated or close it by hand."); }
                     finally { p.Dispose(); }
                 }
             }
@@ -1107,7 +1120,13 @@ public sealed class GameLauncher
             int killed = 0;
             if (!string.IsNullOrEmpty(baseName))
                 foreach (var stray in Process.GetProcessesByName(baseName))
-                    try { stray.Kill(true); killed++; } catch { }
+                {
+                    int pid;
+                    try { pid = stray.Id; } catch { pid = -1; }
+                    try { stray.Kill(true); killed++; }
+                    catch (Exception ex) { _log.Warn("Launch", $"Pre-launch could not kill stale '{baseName}' (pid {pid}): {ex.GetType().Name} — it may be elevated; run elevated or close it by hand."); }
+                    finally { try { stray.Dispose(); } catch { } }
+                }
             if (killed > 0)
             {
                 // EA ONLY: clear the AntiCheat services that hold EA Desktop's "already running" lock the origin2

@@ -99,7 +99,19 @@ public sealed class PhysicalInputGuard : IDisposable
     {
         var g = new PhysicalInputGuard(onAbort, log, autoUnlockAfterAbortMs, isHung);
         g._thread.Start();
-        g._ready.Wait(3000);   // block until the pump thread has called SetWindowsHookEx
+        g._ready.Wait(3000);   // block until the pump thread has called SetWindowsHookEx (CLI/background threads)
+        return g;
+    }
+
+    /// <summary>Async variant of <see cref="Arm"/> for UI threads — awaits hook installation
+    /// without blocking the dispatcher.</summary>
+    public static async Task<PhysicalInputGuard> ArmAsync(Action onAbort, Action<string>? log = null, int autoUnlockAfterAbortMs = 8000, Func<bool>? isHung = null)
+    {
+        var g = new PhysicalInputGuard(onAbort, log, autoUnlockAfterAbortMs, isHung);
+        g._thread.Start();
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3));
+        try { await Task.Run(() => g._ready.Wait(cts.Token), cts.Token).ConfigureAwait(false); }
+        catch (OperationCanceledException) { }
         return g;
     }
 

@@ -81,6 +81,10 @@ public sealed class RunValidator
         }
 
         // ---- power ----
+        // Synthetic power does NOT invalidate the run: FPS can still be a valid hardware measurement
+        // while power is diagnostic-only. Synthetic/replay watts are withheld downstream — the aggregator
+        // refuses to average incompatible provenance and the report renders "—" for non-hardware kinds —
+        // so labels alone are not the only guard. See PowerProvenance.AreCompatible.
         if (power.Count < _t.MinPowerSamples)
             issues.Add($"Powenetics data missing/insufficient ({power.Count} < {_t.MinPowerSamples} samples).");
 

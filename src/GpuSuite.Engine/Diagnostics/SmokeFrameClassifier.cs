@@ -13,10 +13,10 @@ public static class SmokeFrameClassifier
 {
     private static readonly (Regex Pattern, string Detail)[] Blockers =
     [
-        (Rx(@"\b(update required|must update|install update|update now)\b"), "An update-required prompt is visible."),
-        (Rx(@"\b(sign[ -]?in required|please sign[ -]?in|log[ -]?in required|please log[ -]?in|session expired)\b"), "A login/session prompt is visible."),
-        (Rx(@"\b(license agreement|end user license|accept (the )?(terms|agreement)|privacy agreement)\b"), "A first-run agreement prompt is visible."),
-        (Rx(@"\b(game files? (are )?corrupt|repair required|missing executable|failed to launch|launch error)\b"), "A launch/installation error is visible.")
+        (Rx(@"\b(update required|must update|install update|update now|update failed|needs update|update available.*required)\b"), "An update-required prompt is visible."),
+        (Rx(@"\b(sign[ -]?in required|please sign[ -]?in|log[ -]?in required|please log[ -]?in|login failed|account required|session expired)\b"), "A login/session prompt is visible."),
+        (Rx(@"\b(license agreement|end user license|accept (the )?(terms|agreement)|privacy agreement|eula)\b"), "A first-run agreement prompt is visible."),
+        (Rx(@"\b(game files? (are )?corrupt|repair required|missing executable|failed to launch|launch error|verify (game )?files)\b"), "A launch/installation error is visible.")
     ];
 
     private static readonly (Regex Pattern, string Detail)[] Warnings =

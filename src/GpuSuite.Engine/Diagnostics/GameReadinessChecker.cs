@@ -573,8 +573,10 @@ public sealed class GameReadinessChecker
 
     private static void CheckCaptureProcess(GameProfile game, GameReadiness r)
     {
-        if (string.IsNullOrWhiteSpace(game.CaptureProcessName))
-            r.Checks.Add(new GameCheck("Capture target", CheckStatus.Warn,
+        bool explicitPipelineSimulation = game.Id.Equals("synthetic-benchmark", StringComparison.OrdinalIgnoreCase)
+            || game.Id.Equals("synthetic-load", StringComparison.OrdinalIgnoreCase);
+        if (string.IsNullOrWhiteSpace(game.CaptureProcessName) && !explicitPipelineSimulation)
+            r.Checks.Add(new GameCheck("Capture target", CheckStatus.Blocker,
                 "captureProcessName is empty — the frame capture has no process to attach to.",
                 "Set captureProcessName to the game exe (e.g. \"Cyberpunk2077.exe\")."));
     }
@@ -858,6 +860,10 @@ public sealed class GameReadinessChecker
         }
 
         // 2) Online, best-effort: ask the Store if a newer build exists (bounded; degrades honestly).
+        // NOTE: sync-over-async Wait(10s) is intentional here — this checker runs off the UI thread
+        // (FullPreflightService.RunAsync wraps Check in Task.Run; CLI Preflight is a console thread),
+        // so the bounded block never freezes the UI. Making the whole checker async would ripple
+        // through every caller for no UI benefit.
         string onlineNote;
         var onlineVerdict = CheckStatus.Ok;
         try

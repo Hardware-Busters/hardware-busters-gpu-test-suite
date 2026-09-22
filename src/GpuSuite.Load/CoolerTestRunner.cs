@@ -19,7 +19,8 @@ public static class CoolerLevels
             var kv = part.Split(':', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
             if (kv.Length == 2 &&
                 double.TryParse(kv[0], System.Globalization.NumberStyles.Float, inv, out var dba) &&
-                double.TryParse(kv[1], System.Globalization.NumberStyles.Float, inv, out var pct))
+                double.TryParse(kv[1], System.Globalization.NumberStyles.Float, inv, out var pct) &&
+                dba > 0 && dba < 100)
                 list.Add(new CoolerNoiseSetting(dba, Math.Clamp(pct, 0, 100)));
         }
         return list;
@@ -227,11 +228,13 @@ public sealed class CoolerTestRunner
             onTick?.Invoke(t);
 
             // Settle gate: past the minimum soak, power near target, and the temp slope is flat.
+            // Missing power telemetry must NOT count as ready — settling without knowing the
+            // achieved watts would label an unmeasured step as stabilized.
             if (!settled && t.ElapsedSec >= opt.MinSoak.TotalSeconds)
             {
                 var window = SamplesInWindow(samples, opt.SettleWindow.TotalSeconds);
                 double? recentW = MeanOf(window, s => s.W);
-                bool powerReady = recentW is null || Math.Abs(recentW.Value - targetW) <= opt.PowerSettleBandW;
+                bool powerReady = recentW is double w && Math.Abs(w - targetW) <= opt.PowerSettleBandW;
                 double? slope = CoolerMath.SlopePerMinute(
                     window.Where(s => s.Gpu is not null).Select(s => (s.T, s.Gpu!.Value)).ToList());
                 if (powerReady && slope is double sl && Math.Abs(sl) <= opt.SettleSlopeCPerMin
@@ -279,13 +282,14 @@ public sealed class CoolerTestRunner
         return n > 0 ? sum / n : null;
     }
 
-    /// <summary>Interpolate a step field at <paramref name="x"/> watts along the power axis (X = achieved or
-    /// target watts), skipping steps where the field is null. Delegates to <see cref="CoolerMath.InterpolateAt"/>.</summary>
+    /// <summary>Interpolate a step field at <paramref name="x"/> watts along the measured power axis
+    /// (X = achieved watts only). Steps without a measured achieved power are skipped — falling back
+    /// to the target would fabricate an X coordinate and present an unmeasured point as data.</summary>
     private static double? InterpolateStepField(List<CoolerStep> steps, double x, Func<CoolerStep, double?> sel)
     {
         var pts = steps
-            .Where(s => sel(s) is not null)
-            .Select(s => (s.AchievedW ?? s.TargetW, sel(s)!.Value))
+            .Where(s => sel(s) is not null && s.AchievedW is not null)
+            .Select(s => (s.AchievedW!.Value, sel(s)!.Value))
             .ToList();
         return CoolerMath.InterpolateAt(pts, x);
     }

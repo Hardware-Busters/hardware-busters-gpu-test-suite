@@ -267,6 +267,32 @@ public sealed class ProfilePackManager
             catch (Exception ex) { info.Errors.Add($"Profile '{Path.GetFileName(file)}' is invalid: {ex.Message}"); }
         }
         if (ProfileFiles(info).Count == 0) info.Errors.Add("Pack contains no game profiles.");
+        foreach (string bot in BotFiles(info))
+        {
+            try
+            {
+                var script = Json.Load<GpuSuite.Engine.Automation.BotScript>(bot);
+                if (script is null) continue;
+                foreach (var action in script.Actions)
+                {
+                    if (!IsPackRelativeReference(action.RoutePath))
+                        info.Errors.Add($"Bot '{Path.GetFileName(bot)}' has an escaping RoutePath '{action.RoutePath}' — route references must be pack-relative (no absolute paths or '..').");
+                    if (!IsPackRelativeReference(action.RecordRoutePath))
+                        info.Errors.Add($"Bot '{Path.GetFileName(bot)}' has an escaping RecordRoutePath '{action.RecordRoutePath}' — route references must be pack-relative (no absolute paths or '..').");
+                }
+            }
+            catch (Exception ex) { info.Errors.Add($"Bot '{Path.GetFileName(bot)}' is invalid: {ex.Message}"); }
+        }
+    }
+
+    private static bool IsPackRelativeReference(string? reference)
+    {
+        if (string.IsNullOrWhiteSpace(reference)) return true;
+        string expanded = Environment.ExpandEnvironmentVariables(reference);
+        if (Path.IsPathRooted(expanded)) return false;
+        foreach (var seg in expanded.Replace('/', Path.DirectorySeparatorChar).Split(Path.DirectorySeparatorChar))
+            if (seg.Equals("..", StringComparison.Ordinal)) return false;
+        return true;
     }
 
     private static void ValidateCrossPackCollisions(List<ProfilePackInfo> packs)

@@ -114,12 +114,13 @@ public sealed class OcrFrame
 
     /// <summary>True when this frame is the Elgato capture card's NO-SIGNAL slate — the card lost sync with
     /// the display output (a game's video-settings apply re-initing the swapchain does this; DOOM 2026-07-04/05).
-    /// The slate is a near-empty black card whose ONLY text is "NO SIGNAL" over the small elgato logo, so:
-    /// very few lines total AND the SIGNAL token AND a corroborating NO/elgato token. A real game frame that
+    /// The slate is a near-empty black card whose dominant text is "NO SIGNAL" over the small elgato logo, so:
+    /// few lines total AND the SIGNAL token AND a corroborating NO/elgato token. A real game frame that
     /// happens to mention "signal" carries many other lines and never matches; a black loading screen OCRs to
-    /// ZERO lines and deliberately does NOT match (blackness is not evidence the card lost sync).</summary>
+    /// ZERO lines and deliberately does NOT match (blackness is not evidence the card lost sync). The line
+    /// cap tolerates card OSD overlays (e.g. "HDMI1 4K60") that add a line or two to the slate.</summary>
     public bool IsNoSignalSlate =>
-        Lines.Count > 0 && Lines.Count <= 4 &&
+        Lines.Count > 0 && Lines.Count <= 8 &&
         FindWord("signal") is not null &&
         (FindWord("no") is not null || FindWord("elgato") is not null);
 

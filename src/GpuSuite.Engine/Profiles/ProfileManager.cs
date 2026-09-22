@@ -23,7 +23,9 @@ public sealed class ProfileManager
         var manager = new ProfilePackManager(_dir);
         foreach (var file in manager.GetActiveProfileFiles())
         {
-            var p = Json.Load<GameProfile>(file);
+            GameProfile? p;
+            try { p = Json.Load<GameProfile>(file); }
+            catch { continue; }
             if (p is not null && !string.IsNullOrWhiteSpace(p.Id))
             {
                 if (!string.IsNullOrWhiteSpace(p.ResolutionApply.TemplateFilePath))

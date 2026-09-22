@@ -20,6 +20,9 @@ public sealed class HtmlReportGenerator
     private static string F(double v, string fmt = "0.0") => v.ToString(fmt, Inv);
     private static string F(double? v, string fmt = "0.0", string dash = "—") => v is double d ? d.ToString(fmt, Inv) : dash;
 
+    private static bool IsHardwarePower(SceneResolutionAggregate a) =>
+        a.PowerMeasurement?.Kind is PowerMeasurementKind.PoweneticsDirect or PowerMeasurementKind.GpuReportedTelemetry;
+
     public void Save(string path, SuiteResult suite)
     {
         Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(path))!);
@@ -271,8 +274,8 @@ public sealed class HtmlReportGenerator
         Row(sb, "99th %ile frame time (ms)", aggs, a => F(a.P99FrameTimeMs, "0.00"));
         Row(sb, "Stutter (%)", aggs, a => F(a.StutterPct, "0.00"));
         Row(sb, "Power provenance", aggs, a => PowerProvenance.Label(a.PowerMeasurement));
-        Row(sb, "Avg GPU power (W)", aggs, a => F(a.AvgGpuPowerW, "0.0"));
-        Row(sb, "Peak GPU power (W)", aggs, a => F(a.PeakGpuPowerW, "0.0"));
+        Row(sb, "Avg GPU power (W)", aggs, a => F(IsHardwarePower(a) ? a.AvgGpuPowerW : null, "0.0"));
+        Row(sb, "Peak GPU power (W)", aggs, a => F(IsHardwarePower(a) ? a.PeakGpuPowerW : null, "0.0"));
         Row(sb, "Energy / frame (J)", aggs, a => F(PowerProvenance.IsDirectEfficiencyEligible(a.PowerMeasurement) ? a.EnergyPerFrameJ : null, "0.000"));
         Row(sb, "Performance / watt (FPS/W)", aggs, a => F(PowerProvenance.IsDirectEfficiencyEligible(a.PowerMeasurement) ? a.FpsPerWatt : null, "0.000"));
         Row(sb, "GPU temp avg (°C)", aggs, a => F(a.GpuTempAvgC));

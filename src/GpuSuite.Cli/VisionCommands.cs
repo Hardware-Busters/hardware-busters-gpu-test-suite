@@ -280,6 +280,8 @@ internal static partial class Program
         if (framePath is not null)
         {
             if (!File.Exists(framePath)) { Console.Error.WriteLine($"inworld-nav: --frame not found: {framePath}"); return 1; }
+            const long maxFrameBytes = 32L * 1024 * 1024;
+            if (new FileInfo(framePath).Length > maxFrameBytes) { Console.Error.WriteLine($"inworld-nav: --frame exceeds {maxFrameBytes / 1024 / 1024} MB — refusing a likely wrong file."); return 1; }
             frameB64 = Convert.ToBase64String(await File.ReadAllBytesAsync(framePath));
         }
 
@@ -398,7 +400,9 @@ internal static partial class Program
 
         bool pad = a.Has("--pad");
         bool vk = a.Has("--vk");   // route keyboard taps through VIRTUAL KEYS (wVk) instead of DirectInput scancodes
-        var actions = ParseKeySequence(keys, pad);
+        List<Engine.Automation.BotAction> actions;
+        try { actions = ParseKeySequence(keys, pad); }
+        catch (ArgumentException ex) { Console.Error.WriteLine("Invalid --keys: " + ex.Message); return 1; }
 
         string device = pad ? "gamepad" : (vk ? "keyboard/virtual-key" : "keyboard/scancode");
         Console.WriteLine($"Injecting {actions.Count} action(s) to {(pid is int p ? $"pid {p}" : "the foreground window")} (device={device})...");
@@ -426,7 +430,12 @@ internal static partial class Program
             else if (tok.StartsWith("moveabs:", StringComparison.OrdinalIgnoreCase))
             {
                 var pp = tok.Split(':');
-                actions.Add(Engine.Automation.BotAction.MoveAbs(double.Parse(pp[1]), double.Parse(pp[2]), 80));
+                if (pp.Length >= 3
+                    && double.TryParse(pp[1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var ax)
+                    && double.TryParse(pp[2], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var ay))
+                    actions.Add(Engine.Automation.BotAction.MoveAbs(ax, ay, 80));
+                else
+                    throw new ArgumentException($"Invalid moveabs token '{tok}' — expected moveabs:x:y with invariant-culture numbers.");
             }
             else if (tok.StartsWith("moverel:", StringComparison.OrdinalIgnoreCase))
             {
@@ -434,7 +443,10 @@ internal static partial class Program
                 // that ignore injected ABSOLUTE cursor jumps and only track relative deltas (live 2026-07-03:
                 // moveabs left Cyberpunk's software cursor parked; a relative delta moves it).
                 var pp = tok.Split(':');
-                actions.Add(Engine.Automation.BotAction.Move(int.Parse(pp[1]), int.Parse(pp[2]), 80));
+                if (pp.Length >= 3 && int.TryParse(pp[1], out var dx) && int.TryParse(pp[2], out var dy))
+                    actions.Add(Engine.Automation.BotAction.Move(dx, dy, 80));
+                else
+                    throw new ArgumentException($"Invalid moverel token '{tok}' — expected moverel:dx:dy with integer pixels.");
             }
             else if (tok.Equals("click", StringComparison.OrdinalIgnoreCase))
                 actions.Add(Engine.Automation.BotAction.Click("left", 40));

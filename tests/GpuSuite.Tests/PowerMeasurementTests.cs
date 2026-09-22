@@ -101,6 +101,21 @@ public sealed class PowerMeasurementTests : IDisposable
     }
 
     [Fact]
+    public void SyntheticPowerIsNeverComparableEvenToItself()
+    {
+        var a = new PowerMeasurementMetadata { Kind = PowerMeasurementKind.Synthetic, Scope = "test scope" };
+        var b = new PowerMeasurementMetadata { Kind = PowerMeasurementKind.Synthetic, Scope = "test scope" };
+        Assert.False(PowerProvenance.AreCompatible(a, b));
+        var r = new PowerMeasurementMetadata { Kind = PowerMeasurementKind.Replay, Scope = "test scope" };
+        Assert.False(PowerProvenance.AreCompatible(a, r));
+
+        var s1 = Run(PowerMeasurementKind.Synthetic, eligible: false);
+        var s2 = Run(PowerMeasurementKind.Synthetic, eligible: false);
+        var aggregate = new ResultAggregator().Aggregate("g", "s", "", "", "r", [s1, s2]);
+        Assert.Null(aggregate.AvgGpuPowerW);
+    }
+
+    [Fact]
     public void PowerMetadataIsCarriedInJsonAndUsesStableSidecarName()
     {
         var run = Run(PowerMeasurementKind.PoweneticsDirect, eligible: true);
