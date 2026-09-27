@@ -5,8 +5,8 @@ The public engine and functional source are licensed under Apache-2.0.
 
 Explicit public profile samples and their accompanying provenance material are licensed under CC-BY-4.0; retain the attribution in profiles/PROVENANCE.md.
 
-PresentMon is not bundled. Obtain it only from its upstream project and follow its upstream license and notices.
+The source repository does not commit PresentMon binaries. The release installer includes the official Intel PresentMon 2.6.0 standalone x64 executable downloaded from https://github.com/GameTechDev/PresentMon/releases/tag/v2.6.0 and verified against SHA-256 b2a706bc6ad475749e3b7e3409263aa1e6906d45bdcf993f6dbc0f660188f1af. PresentMon is licensed under MIT; the required Intel copyright and permission notice is shipped in LICENSES/PresentMon-MIT.txt. PresentMon remains a separate Intel project, not part of the Apache-2.0 licensed GPU Test Suite source.
 
 Cybenetics LTD has expressly authorized inclusion of the Powenetics protocol integration in this public release under Apache-2.0. This covers src/GpuSuite.Measurement/Real/Powenetics/ and src/GpuSuite.Measurement/Real/PoweneticsPowerProvider.cs only; it does not grant rights to Powenetics firmware, device binaries, product documentation, trademarks, or certification claims.
 
-The installer contains third-party NuGet runtime components. The release workflow generates audit/sbom.cdx.json and THIRD-PARTY-NOTICES.md from the restored dependency graph and stages THIRD-PARTY-NOTICES.md beside the installed application.
+The installer contains third-party NuGet runtime components and the verified PresentMon executable. The release workflow generates audit/sbom.cdx.json and THIRD-PARTY-NOTICES.md from the staged runtime, and places THIRD-PARTY-NOTICES.md beside the installed application.

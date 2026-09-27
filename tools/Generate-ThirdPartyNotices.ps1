@@ -37,7 +37,7 @@ function Get-PackageAttribution([string]$Package) {
 }
 $runtime = [pscustomobject]@{ Name='Microsoft .NET Runtime'; Version='9.0'; License='MIT'; LicenseUrl='https://github.com/dotnet/runtime/blob/main/LICENSE.TXT'; Copyright='Copyright (c) .NET Foundation and Contributors.'; LicenseFiles=@() }
 $licenseDir = Join-Path $OutputDirectory 'licenses'; New-Item -ItemType Directory -Force -Path $licenseDir | Out-Null
-$components = [Collections.Generic.List[object]]::new(); $notice = @('# Third-party runtime notices', '', 'This inventory covers every non-GpuSuite DLL shipped in the self-contained installer stage. Each line names the shipped assembly and its SHA-256.', '')
+$components = [Collections.Generic.List[object]]::new(); $notice = @('# Third-party runtime notices', '', 'This inventory covers every non-GpuSuite DLL and the verified PresentMon executable shipped in the installer. Each line names the shipped file and its SHA-256.', '')
 $files = @(Get-ChildItem $stage -Filter *.dll -File | Where-Object Name -notlike 'GpuSuite.*' | Sort-Object Name)
 if ($files.Count -eq 0) { throw 'Published stage has no non-GpuSuite dependency assemblies.' }
 foreach ($file in $files) {
@@ -55,6 +55,28 @@ foreach ($file in $files) {
     $components.Add($component)
     $notice += "- $($file.Name): $($attr.Name) $($attr.Version); SHA-256 $hash; license $($attr.License); $licenseRef"
 }
+$presentMon = Join-Path $stage 'tools/PresentMon/PresentMon.exe'
+$presentMonLicense = Join-Path $stage 'LICENSES/PresentMon-MIT.txt'
+if (-not (Test-Path -LiteralPath $presentMon -PathType Leaf)) { throw 'Verified PresentMon 2.6.0 was not staged.' }
+if (-not (Test-Path -LiteralPath $presentMonLicense -PathType Leaf)) { throw 'PresentMon MIT license was not staged.' }
+$presentMonLicenseText = Get-Content -LiteralPath $presentMonLicense -Raw
+if ($presentMonLicenseText -notmatch 'Copyright \(C\) 2017-2024 Intel Corporation' -or
+    $presentMonLicenseText -notmatch 'The above copyright notice and this permission notice shall be included') {
+    throw 'PresentMon MIT license notice is incomplete.'
+}
+$presentMonHash = (Get-FileHash -LiteralPath $presentMon -Algorithm SHA256).Hash.ToLowerInvariant()
+if ($presentMonHash -ne 'b2a706bc6ad475749e3b7e3409263aa1e6906d45bdcf993f6dbc0f660188f1af') {
+    throw 'Staged PresentMon 2.6.0 SHA-256 does not match the official release.'
+}
+$presentMonUrl = 'https://github.com/GameTechDev/PresentMon/releases/tag/v2.6.0'
+$components.Add([ordered]@{
+    type='application'; 'bom-ref'='pkg:generic/Intel.PresentMon@2.6.0'; name='Intel PresentMon'; version='2.6.0'
+    hashes=@(@{alg='SHA-256';content=$presentMonHash}); licenses=@(@{expression='MIT'})
+    copyright='Copyright (C) 2017-2024 Intel Corporation'
+    externalReferences=@(@{type='distribution';url=$presentMonUrl})
+    properties=@(@{name='hardwarebusters:assembly';value='tools/PresentMon/PresentMon.exe'})
+})
+$notice += "- tools/PresentMon/PresentMon.exe: Intel PresentMon 2.6.0; SHA-256 $presentMonHash; license MIT in LICENSES/PresentMon-MIT.txt; $presentMonUrl"
 [IO.File]::WriteAllText((Join-Path $OutputDirectory 'THIRD-PARTY-NOTICES.md'), ($notice -join "`n"), [Text.UTF8Encoding]::new($false))
 $sbom=[ordered]@{bomFormat='CycloneDX';specVersion='1.5';serialNumber="urn:uuid:$([guid]::NewGuid())";version=1;metadata=@{component=@{type='application';name='hardware-busters-gpu-test-suite';version='release'}};components=@($components)}
 [IO.File]::WriteAllText((Join-Path $OutputDirectory 'sbom.cdx.json'), ($sbom|ConvertTo-Json -Depth 12), [Text.UTF8Encoding]::new($false))

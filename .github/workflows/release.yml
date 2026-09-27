@@ -37,12 +37,10 @@ jobs:
           $info = (Get-Item release-stage/GpuSuite.App.exe).VersionInfo
           if ($info.FileVersion -ne "$expected.0") { throw "GpuSuite.App.exe file version '$($info.FileVersion)' does not match tag '$expected'." }
           if (-not $info.ProductVersion.StartsWith("$expected+", [StringComparison]::Ordinal)) { throw "GpuSuite.App.exe product version '$($info.ProductVersion)' does not match tag '$expected'." }
-      - name: Generate and validate installer runtime attribution
+      - name: Stage verified PresentMon 2.6.0 release input
         shell: pwsh
-        run: |
-          tools/Generate-ThirdPartyNotices.ps1 -ReleaseStage release-stage -OutputDirectory audit
-          tools/Test-InstallerAttribution.ps1 -AuditDirectory audit -ReleaseStage release-stage
-      - name: Stage verified public runtime content
+        run: tools/PresentMon/Stage-VerifiedPresentMon.ps1 -ReleaseStage release-stage
+      - name: Stage public runtime content
         shell: pwsh
         run: |
           Copy-Item profiles release-stage\profiles -Recurse -Force
@@ -50,9 +48,17 @@ jobs:
           Copy-Item REQUIREMENTS.txt release-stage -Force
           Copy-Item LICENSE,NOTICE release-stage -Force
           Copy-Item LICENSES release-stage\LICENSES -Recurse -Force
+          Copy-Item tools\PresentMon\README.md release-stage\tools\PresentMon -Force
+      - name: Generate and validate installer runtime attribution
+        shell: pwsh
+        run: |
+          tools/Generate-ThirdPartyNotices.ps1 -ReleaseStage release-stage -OutputDirectory audit
+          tools/Test-InstallerAttribution.ps1 -AuditDirectory audit -ReleaseStage release-stage
           Copy-Item audit\THIRD-PARTY-NOTICES.md release-stage -Force
           if (Test-Path audit\licenses) { Copy-Item audit\licenses release-stage\THIRD-PARTY-LICENSES -Recurse -Force }
-          Copy-Item tools\PresentMon release-stage\tools\PresentMon -Recurse -Force
+      - name: Set installer version
+        shell: pwsh
+        run: |
           "#define MyAppVersion `"${{ github.ref_name }}`"" | Set-Content installer\version.iss -NoNewline
       - run: iscc installer\GpuTestSuite.iss
       - name: Smoke package layout
@@ -67,6 +73,10 @@ jobs:
           if ($installer.ExitCode -ne 0) { throw "Installer smoke setup failed with exit code $($installer.ExitCode)." }
           $app = Join-Path $smokeRoot 'GpuSuite.App.exe'
           if (-not (Test-Path -LiteralPath $app)) { throw 'Installed executable smoke check failed: GpuSuite.App.exe is missing.' }
+          $presentMon = Join-Path $smokeRoot 'tools/PresentMon/PresentMon.exe'
+          if (-not (Test-Path -LiteralPath $presentMon)) { throw 'Installed PresentMon 2.6.0 is missing.' }
+          if ((Get-FileHash -LiteralPath $presentMon -Algorithm SHA256).Hash.ToLowerInvariant() -ne 'b2a706bc6ad475749e3b7e3409263aa1e6906d45bdcf993f6dbc0f660188f1af') { throw 'Installed PresentMon 2.6.0 SHA-256 mismatch.' }
+          if (-not (Test-Path -LiteralPath (Join-Path $smokeRoot 'LICENSES/PresentMon-MIT.txt'))) { throw 'Installed PresentMon license notice is missing.' }
           $process = Start-Process $app -PassThru
           Start-Sleep -Seconds 5
           if ($process.HasExited) { throw 'Installed executable exited before launch smoke completed.' }
