@@ -1,7 +1,4 @@
 {
-  "sourceRevision": "retained privately",
-  "generatedUtc": "2026-09-27T13:32:45.6930005Z",
-  "schema": 1,
   "files": [
     {
       "path": ".gitattributes",
@@ -50,8 +47,8 @@
     },
     {
       "path": ".github/workflows/ci.yml",
-      "sha256": "bb9db0233f8ce80b131978e803719c3dae3e72f8e8221cc443208a6ede23f8f1",
-      "bytes": 1587
+      "sha256": "f1d36b80240fc59abc637785ede3637508217c001e0951c3d7f877f793014808",
+      "bytes": 1754
     },
     {
       "path": ".github/workflows/codeql.yml",
@@ -70,8 +67,8 @@
     },
     {
       "path": ".github/workflows/release.yml",
-      "sha256": "72485e325b727ab62f869f88c66c05a6deb50e4bf4845181baf55e59a233567a",
-      "bytes": 5350
+      "sha256": "e9b8cf79f127921b55211124383d66cc773ee4b13b342a6fc9801ffe3b93bc69",
+      "bytes": 6150
     },
     {
       "path": ".gitignore",
@@ -100,13 +97,13 @@
     },
     {
       "path": "docs/LICENSE-POLICY.md",
-      "sha256": "1d824c4b29212adfec1a896dcb248d070dc9209466eeae3e3b84ebbc7e14cc68",
-      "bytes": 1184
+      "sha256": "38e0d54e5e779907f6f24187002b28b648ecfda00b3b0111b1072992a30fd169",
+      "bytes": 1439
     },
     {
       "path": "docs/RELEASE-RUNBOOK.md",
-      "sha256": "578e430542b8e21eded99f78208607a80bc909caa083cb15f6262719a77bc331",
-      "bytes": 646
+      "sha256": "72d0467a8e89d92a9cd4b83a87b996565e9f3a02d7ecd2f7cf9d752960cf9238",
+      "bytes": 850
     },
     {
       "path": "docs/report-template-example.html",
@@ -144,9 +141,14 @@
       "bytes": 18657
     },
     {
+      "path": "LICENSES/PresentMon-MIT.txt",
+      "sha256": "4c949341b1893c8c6ad82f7fb4eedf622cd1fd9c22a9af8f19b2dac19d1947b6",
+      "bytes": 1067
+    },
+    {
       "path": "NOTICE",
-      "sha256": "61c815cd8d2abba44107db6cd72fbfddf07b3b1a15987dbde25dfdc161cae979",
-      "bytes": 1041
+      "sha256": "296cd609fbaecd24ad5caf7a0100e22a6e268ba19689e6050f1c34a46149da91",
+      "bytes": 1514
     },
     {
       "path": "profiles/alan-wake-2.json",
@@ -330,8 +332,8 @@
     },
     {
       "path": "README.md",
-      "sha256": "1bc08f554d6ecc1dc3424bf4fee6ffd673f57b5b8be4f17dcc019e12bb37f595",
-      "bytes": 3796
+      "sha256": "533ed5d7aa33e26ca3449791a85f5118f44e1c879a931ddcd9c259e7c829fadf",
+      "bytes": 4038
     },
     {
       "path": "REQUIREMENTS.txt",
@@ -345,7 +347,7 @@
     },
     {
       "path": "settings.example.json",
-      "sha256": "0a292318b866e5c5d5e0397b8b7a8c0136c7a67be161fc228e78a1eb0a5b2439",
+      "sha256": "30446fc5ea309c9eaafc0edebf2fe0f535b1d12109c81d145d81d871331044aa",
       "bytes": 717
     },
     {
@@ -1510,8 +1512,8 @@
     },
     {
       "path": "tools/Generate-ThirdPartyNotices.ps1",
-      "sha256": "6a71db0f3cecff82be1373efc6097478c956532e4e77a2bcd62915e02958de6a",
-      "bytes": 6294
+      "sha256": "0ef70934ac48a6cfab929a22809c1bbfe4596a71ef5282b780eff7c374fca21e",
+      "bytes": 7998
     },
     {
       "path": "tools/PresentMon/Install-PresentMon.ps1",
@@ -1520,14 +1522,22 @@
     },
     {
       "path": "tools/PresentMon/README.md",
-      "sha256": "68eeb87c596b507eb71f75754ca58be4c3cd300e48c3f885e5d6d06cd8abaad4",
-      "bytes": 626
+      "sha256": "2c4f8d9b7a3eb7bd780c8893db6aeb3e423efc166ac4ddab6cfa93e7eb468214",
+      "bytes": 862
+    },
+    {
+      "path": "tools/PresentMon/Stage-VerifiedPresentMon.ps1",
+      "sha256": "6c4b6afb1693fcf850960a7b0fdcdcc853f645de5bb1e8c9b39ea2cab2332faf",
+      "bytes": 1762
     },
     {
       "path": "tools/Test-InstallerAttribution.ps1",
-      "sha256": "254e6869a352111fb79f0742863b9aa94fa832c1cfabf5114a6e9ab25b1e0e40",
-      "bytes": 2137
+      "sha256": "b284cac8d4719381145328c57c0ad667cd6a0b816801c4aee1524e8ae31a73fc",
+      "bytes": 3154
     }
   ],
-  "publicRepository": "https://github.com/Hardware-Busters/hardware-busters-gpu-test-suite"
+  "generatedUtc": "2026-09-27T14:04:52.5164172Z",
+  "publicRepository": "https://github.com/Hardware-Busters/hardware-busters-gpu-test-suite",
+  "sourceRevision": "retained privately",
+  "schema": 1
 }

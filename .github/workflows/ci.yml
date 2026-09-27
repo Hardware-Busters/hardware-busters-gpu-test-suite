@@ -36,5 +36,8 @@ jobs:
           Set-Content release-stage\GpuSuite.App.exe '' -NoNewline
           Copy-Item REQUIREMENTS.txt release-stage -Force
           "#define MyAppVersion `"ci`"" | Set-Content installer\version.iss -NoNewline
+      - name: Stage verified PresentMon 2.6.0 release input
+        shell: pwsh
+        run: tools/PresentMon/Stage-VerifiedPresentMon.ps1 -ReleaseStage release-stage
       - name: Compile installer contract
         run: iscc installer\GpuTestSuite.iss

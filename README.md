@@ -41,7 +41,7 @@ bypass runtime validation: invalid runs are still rejected.
 
 ## PresentMon
 
-PresentMon is not distributed in this repository. Follow [tools/PresentMon/README.md](tools/PresentMon/README.md) to obtain a verified upstream release and place it locally. Its license and attribution are recorded in [NOTICE](NOTICE).
+The source repository does not commit PresentMon binaries. The [published installer](https://github.com/Hardware-Busters/hardware-busters-gpu-test-suite/releases) includes the official, checksum-verified PresentMon 2.6.0 standalone executable and its MIT license notice. For a source checkout, follow [tools/PresentMon/README.md](tools/PresentMon/README.md) to obtain the same verified upstream release locally. License and attribution details are recorded in [NOTICE](NOTICE).
 
 ## Profiles
 
