@@ -1,6 +1,4 @@
 {
-  "serialNumber": "urn:uuid:7eca6bef-3bec-481e-9e15-77cf4c63956a",
-  "version": 1,
   "bomFormat": "CycloneDX",
   "metadata": {
     "component": {
@@ -9,6 +7,8 @@
       "name": "hardware-busters-gpu-test-suite"
     }
   },
+  "serialNumber": "urn:uuid:8d43f1f9-ce1a-40bb-ab12-305c4394d651",
+  "version": 1,
   "specVersion": "1.5",
   "components": []
 }

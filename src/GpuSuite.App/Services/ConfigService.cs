@@ -9,7 +9,12 @@ namespace GpuSuite.App.Services;
 /// </summary>
 public sealed class ConfigService
 {
-    public SuiteConfig Load(string path) => Json.Load<SuiteConfig>(path) ?? new SuiteConfig();
+    public SuiteConfig Load(string path)
+    {
+        var config = Json.Load<SuiteConfig>(path) ?? new SuiteConfig();
+        config.MigrateBundledToolPaths();
+        return config;
+    }
 
     public void Save(string path, SuiteConfig cfg) => Json.Save(path, cfg);
 }
