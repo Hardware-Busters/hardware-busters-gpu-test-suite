@@ -1,8 +1,7 @@
 {
   "sourceRevision": "retained privately",
-  "generatedUtc": "2026-09-22T06:27:53.4166738Z",
+  "generatedUtc": "2026-09-27T13:32:45.6930005Z",
   "schema": 1,
-  "publicRepository": "https://github.com/Hardware-Busters/hardware-busters-gpu-test-suite",
   "files": [
     {
       "path": ".gitattributes",
@@ -346,7 +345,7 @@
     },
     {
       "path": "settings.example.json",
-      "sha256": "048bc7eb1d075e1e528b2b85f1f3371659d6683bbf51130748770a4730f76101",
+      "sha256": "0a292318b866e5c5d5e0397b8b7a8c0136c7a67be161fc228e78a1eb0a5b2439",
       "bytes": 717
     },
     {
@@ -406,8 +405,8 @@
     },
     {
       "path": "src/GpuSuite.App/Services/ConfigService.cs",
-      "sha256": "a9c1b0ad165134c1f3f47e97020d96ba3453b7b30b4b835d108144038e2deaf1",
-      "bytes": 520
+      "sha256": "4e0937a4b514f9a40adfd557b95988636b94a368c8530ff72d7c124c55bf0a77",
+      "bytes": 620
     },
     {
       "path": "src/GpuSuite.App/Services/CoolerService.cs",
@@ -891,8 +890,8 @@
     },
     {
       "path": "src/GpuSuite.Cli/Program.cs",
-      "sha256": "106530363d82cbe10c83fe9ed8c2c66c6ef54516fe9cdaf6557fecb85df6f96f",
-      "bytes": 48146
+      "sha256": "6e744d21f0fcdf902ffe104f99ff6a67f319882bda80d7d77f22a3273c8e7a70",
+      "bytes": 48186
     },
     {
       "path": "src/GpuSuite.Cli/ResilienceSelfTest.cs",
@@ -916,8 +915,8 @@
     },
     {
       "path": "src/GpuSuite.Core/Config/SuiteConfig.cs",
-      "sha256": "b77087fb511c258ece9777333f85c17b20aa4c395dfd8a3663ad865b75bbe13b",
-      "bytes": 29327
+      "sha256": "cba53f5343fd8e7e9a755bc7335d5c7d53088413b4772176d44b2b7854738166",
+      "bytes": 30156
     },
     {
       "path": "src/GpuSuite.Core/Diagnostics/RunLogger.cs",
@@ -1381,8 +1380,8 @@
     },
     {
       "path": "src/GpuSuite.Measurement/Real/PresentMonFrameProvider.cs",
-      "sha256": "c9837a98a5ee972ecb40a4262bc505960157b802c1ff8199c40523ee81bb629c",
-      "bytes": 18826
+      "sha256": "a8bff09d5effe2c1c83e4d7206b4ca822be8fef57d06973dc32b46847b8a5e45",
+      "bytes": 18824
     },
     {
       "path": "src/GpuSuite.Measurement/Real/RtssFrameProvider.cs",
@@ -1521,13 +1520,14 @@
     },
     {
       "path": "tools/PresentMon/README.md",
-      "sha256": "1d4bdfa182bcfece94d7319c5c75d94cabe0fa7f05d2068fd07a5bc7739853ad",
-      "bytes": 464
+      "sha256": "68eeb87c596b507eb71f75754ca58be4c3cd300e48c3f885e5d6d06cd8abaad4",
+      "bytes": 626
     },
     {
       "path": "tools/Test-InstallerAttribution.ps1",
       "sha256": "254e6869a352111fb79f0742863b9aa94fa832c1cfabf5114a6e9ab25b1e0e40",
       "bytes": 2137
     }
-  ]
+  ],
+  "publicRepository": "https://github.com/Hardware-Busters/hardware-busters-gpu-test-suite"
 }

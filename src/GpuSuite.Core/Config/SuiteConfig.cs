@@ -5,6 +5,9 @@ namespace GpuSuite.Core.Config;
 /// <summary>Global suite configuration + validation thresholds. Serialized to settings.json.</summary>
 public sealed class SuiteConfig
 {
+    public const string BundledPresentMonPath = "tools/PresentMon/PresentMon.exe";
+    public const string PreviousBundledPresentMonPath = "tools/PresentMon/PresentMon.exe";
+
     public string ResultsRoot { get; set; } = "Results";
     public string ProfilesDir { get; set; } = "profiles";
 
@@ -61,7 +64,21 @@ public sealed class SuiteConfig
     public int CooldownSeconds { get; set; } = 20;
 
     /// <summary>Path to the PresentMon executable; resolved relative to app dir if not absolute.</summary>
-    public string PresentMonPath { get; set; } = "tools/PresentMon/PresentMon.exe";
+    public string PresentMonPath { get; set; } = BundledPresentMonPath;
+
+    /// <summary>
+    /// Moves only the prior bundled default to the current bundled executable. Installer upgrades retain
+    /// settings.json, so this must happen at load time. Absolute and otherwise customized paths are untouched.
+    /// </summary>
+    public bool MigrateBundledToolPaths()
+    {
+        if (!string.Equals(PresentMonPath, PreviousBundledPresentMonPath, StringComparison.OrdinalIgnoreCase) &&
+            !string.Equals(PresentMonPath, PreviousBundledPresentMonPath.Replace('/', '\\'), StringComparison.OrdinalIgnoreCase))
+            return false;
+
+        PresentMonPath = BundledPresentMonPath;
+        return true;
+    }
 
     /// <summary>Preferred Powenetics COM port (e.g. "COM9"). Probed directly when set.</summary>
     public string PoweneticsComPort { get; set; } = "";

@@ -595,6 +595,7 @@ internal static partial class Program
     {
         var path = a.Get("--config") ?? "settings.json";
         var cfg = Json.Load<SuiteConfig>(path) ?? new SuiteConfig();
+        cfg.MigrateBundledToolPaths();
         if (a.Get("--results") is { } r) cfg.ResultsRoot = r;
         if (a.Get("--profiles") is { } pf) cfg.ProfilesDir = pf;
         if (a.GetInt("--repeats") is { } rep) { cfg.RepeatsPerScene = rep; cfg.RepeatsOverride = rep; }   // honored EXACTLY (incl. 1) — bypasses the ≥3 floor for fast iteration

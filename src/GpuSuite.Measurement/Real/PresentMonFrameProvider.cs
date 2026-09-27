@@ -41,7 +41,7 @@ public sealed class PresentMonFrameProvider : IFrameCaptureProvider
             RedirectStandardError = true,
             UseShellExecute = false,
             CreateNoWindow = true,
-            // UTF-8, NOT Unicode: PresentMon 2.4.1 emits stderr as plain ASCII — decoding it as UTF-16LE
+            // UTF-8, NOT Unicode: PresentMon 2.x emits stderr as plain ASCII — decoding it as UTF-16LE
             // turned the 0-frame forensics into CJK mojibake (byte pairs 'wa'→U+6177 etc.; live 2026-07-09,
             // the garbled text was actually "warning: PresentMon requires elevated privilege ... short-running").
             // If some build DOES emit UTF-16LE, UTF-8-decoding it yields interleaved NULs — stripped in
