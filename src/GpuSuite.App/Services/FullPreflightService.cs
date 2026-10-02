@@ -86,7 +86,7 @@ public sealed class FullPreflightService
         {
             Id = "machine",
             Name = "Machine & services",
-            Description = "Runtime, FPS/frametime tools, FFmpeg vision input, qualified capture card, controller driver, and AI services.",
+            Description = "Runtime, FPS/frametime tools, FFmpeg vision input, capture-card admission, controller driver, and AI services.",
             Checks = BuildMachineChecks(doctor)
         };
 
@@ -159,13 +159,13 @@ public sealed class FullPreflightService
     {
         var checks = new[] { model, stream }.Where(c => c is not null).Cast<DoctorCheck>().ToArray();
         if (checks.Length == 0)
-            return new GameCheck("Vision hardware — Elgato Game Capture 4K Pro", CheckStatus.Info, "Not reported by this pre-flight run.", null);
+            return new GameCheck("Vision hardware — capture card", CheckStatus.Info, "Not reported by this pre-flight run.", null);
 
         var mapped = checks.Select(MapDoctorCheck).ToArray();
         CheckStatus status = mapped.Select(c => c.Status).OrderByDescending(StatusRank).First();
         string detail = string.Join("  ", mapped.Select(c => c.Detail));
         string? hint = mapped.Select(c => c.Fix).FirstOrDefault(h => !string.IsNullOrWhiteSpace(h));
-        return new GameCheck("Vision hardware — Elgato Game Capture 4K Pro", status, detail, hint);
+        return new GameCheck("Vision hardware — capture card", status, detail, hint);
     }
 
     private static int StatusRank(CheckStatus status) => status switch
@@ -184,7 +184,7 @@ public sealed class FullPreflightService
             DoctorStatus.Missing => CheckStatus.Blocker,
             DoctorStatus.Warn => CheckStatus.Warn,
             // A capture-card Hardware finding is a hard Blocker: the full automated workflow cannot run
-            // without the qualified card, so it must never be softened to Info the way ordinary
+            // without an admitted working card, so it must never be softened to Info the way ordinary
             // absent-hardware rows are. Keyed off the shared constant so the escalation cannot be lost to
             // a rename on the DoctorService side.
             DoctorStatus.Hardware when check.Component.StartsWith(DoctorComponents.CaptureCardPrefix, StringComparison.OrdinalIgnoreCase)
