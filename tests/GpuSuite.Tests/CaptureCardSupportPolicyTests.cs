@@ -7,15 +7,17 @@ namespace GpuSuite.Tests;
 
 public sealed class CaptureCardSupportPolicyTests
 {
-    [Fact]
-    public void ExactQualifiedModelConfiguredAndEnumeratedPasses()
+    [Theory]
+    [InlineData("Elgato 4K Pro")]
+    [InlineData("Elgato 4K X")]
+    public void ExactPermittedModelConfiguredAndEnumeratedPasses(string deviceName)
     {
         var result = CaptureCardSupportPolicy.Evaluate(
-            CaptureCardSupportPolicy.QualifiedDeviceName,
-            [CaptureCardSupportPolicy.QualifiedDeviceName]);
+            deviceName,
+            [deviceName]);
 
         Assert.True(result.IsQualified);
-        Assert.Contains(CaptureCardSupportPolicy.QualifiedDeviceName, result.Detail);
+        Assert.Contains(deviceName, result.Detail);
     }
 
     [Theory]
@@ -23,6 +25,8 @@ public sealed class CaptureCardSupportPolicyTests
     [InlineData(" Elgato 4K Pro")]
     [InlineData("  Elgato 4K Pro  ")]
     [InlineData("\tElgato 4K Pro\r\n")]
+    [InlineData(" Elgato 4K X ")]
+    [InlineData("\tElgato 4K X\r\n")]
     public void SurroundingWhitespaceIsToleratedBecauseTheGrabberTrimsToo(string configuredDevice)
     {
         // Regression: the policy compared untrimmed while CaptureCardGrabber trims before calling ffmpeg,
@@ -41,9 +45,12 @@ public sealed class CaptureCardSupportPolicyTests
     [InlineData("Elgato 4K60 Pro MK.2")]
     [InlineData("Elgato 4K Pro (Video)")]
     [InlineData("elgato 4k pro")]
-    public void EmptyGenericAndUnqualifiedModelsFail(string configuredDevice)
+    [InlineData("elgato 4k x")]
+    [InlineData("Elgato 4K X (Video)")]
+    [InlineData(null)]
+    public void EmptyGenericAndUnqualifiedModelsFail(string? configuredDevice)
     {
-        var result = CaptureCardSupportPolicy.Evaluate(configuredDevice, [configuredDevice]);
+        var result = CaptureCardSupportPolicy.Evaluate(configuredDevice, [configuredDevice ?? ""]);
 
         Assert.False(result.IsQualified);
         Assert.Contains(CaptureCardSupportPolicy.QualifiedDeviceName, result.Detail);
@@ -58,6 +65,42 @@ public sealed class CaptureCardSupportPolicyTests
 
         Assert.False(result.IsQualified);
         Assert.Contains("not enumerated", result.Detail, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Theory]
+    [InlineData("Elgato 4K X", "Elgato 4K Pro")]
+    [InlineData("Elgato 4K Pro", "Elgato 4K X")]
+    public void ConfiguredDeviceDoesNotPassWhenOnlyTheOtherPermittedDeviceWasEnumerated(
+        string configuredDevice, string enumeratedDevice)
+    {
+        var result = CaptureCardSupportPolicy.Evaluate(
+            configuredDevice,
+            [enumeratedDevice]);
+
+        Assert.False(result.IsQualified);
+        Assert.Contains(configuredDevice, result.Detail);
+        Assert.Contains("not enumerated", result.Detail, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void FourKXAdmissionExplicitlyReportsExperimentalStatus()
+    {
+        var result = CaptureCardSupportPolicy.Evaluate(
+            CaptureCardSupportPolicy.ExperimentalDeviceName,
+            [CaptureCardSupportPolicy.QualifiedDeviceName, CaptureCardSupportPolicy.ExperimentalDeviceName]);
+
+        Assert.True(result.IsQualified);
+        Assert.Contains("Experimental support", result.Detail);
+        Assert.Contains("not independently qualified", result.Detail);
+    }
+
+    [Theory]
+    [InlineData("Elgato 4K Pro")]
+    [InlineData("Elgato 4K X")]
+    public void MissingEnumerationFails(string configuredDevice)
+    {
+        Assert.False(CaptureCardSupportPolicy.Evaluate(configuredDevice, null).IsQualified);
+        Assert.False(CaptureCardSupportPolicy.Evaluate(configuredDevice, []).IsQualified);
     }
 
     [Fact]
@@ -98,10 +141,10 @@ public sealed class CaptureCardSupportPolicyTests
             "FPS / frametime — PresentMon",
             "FPS / frametime — RTSS",
             "Vision transport — FFmpeg",
-            "Vision hardware — Elgato Game Capture 4K Pro"
+            "Vision hardware — Elgato 4K Pro / 4K X (experimental)"
         }, rows.Take(4).Select(r => r.Name));
         Assert.Equal(2, rows.Count(r => r.Name.StartsWith("FPS / frametime —", StringComparison.Ordinal)));
-        Assert.Single(rows, r => r.Name == "Vision hardware — Elgato Game Capture 4K Pro");
+        Assert.Single(rows, r => r.Name == "Vision hardware — Elgato 4K Pro / 4K X (experimental)");
         Assert.Contains("bounded stream probe; no image retained", rows[3].Detail);
     }
 }

@@ -294,7 +294,7 @@ public sealed class DoctorService
             [
                 new(DoctorComponents.CaptureCardModel, DoctorStatus.Hardware,
                     "not checked — FFmpeg is unavailable, so DirectShow devices cannot be enumerated.",
-                    "Install/configure FFmpeg first, then re-run full pre-flight. The supported workflow requires the exact Elgato 4K Pro."),
+                    $"Install/configure FFmpeg first, then re-run full pre-flight. Permitted devices: {CaptureCardSupportPolicy.PermittedDeviceNamesText} (4K X support is experimental)."),
                 new(DoctorComponents.CaptureCardStream, DoctorStatus.Hardware,
                     "not checked — FFmpeg is unavailable.",
                     "Install/configure FFmpeg first. This is the vision/OCR input, not the FPS / frametime backend.")
@@ -307,8 +307,8 @@ public sealed class DoctorService
                 return
                 [
                     new(DoctorComponents.CaptureCardModel, DoctorStatus.Hardware,
-                        "no DirectShow video devices found — is the Elgato Game Capture 4K Pro connected and powered?",
-                        $"The full supported workflow requires the exact DirectShow name \"{CaptureCardSupportPolicy.QualifiedDeviceName}\"."),
+                        "no DirectShow video devices found — is the Elgato capture card connected and powered?",
+                        $"Permitted exact DirectShow names: {CaptureCardSupportPolicy.PermittedDeviceNamesText} (4K X support is experimental)."),
                     new(DoctorComponents.CaptureCardStream, DoctorStatus.Hardware,
                         "not checked because no DirectShow video device was enumerated.")
                 ];
@@ -326,9 +326,9 @@ public sealed class DoctorService
             [
                 new(DoctorComponents.CaptureCardModel, DoctorStatus.Hardware,
                     qualification.Detail,
-                    FixHint: $"Set settings.captureCardDevice to exactly \"{CaptureCardSupportPolicy.QualifiedDeviceName}\" and confirm it appears in `gpusuite grab --list`. Other cards remain available for diagnostics but are not qualified for the full automated workflow."),
+                    FixHint: $"Set settings.captureCardDevice to exactly {CaptureCardSupportPolicy.PermittedDeviceNamesText} and confirm it appears in `gpusuite grab --list`. Elgato 4K X support is experimental, not independent hardware qualification."),
                 new(DoctorComponents.CaptureCardStream, DoctorStatus.Hardware,
-                    "not probed until the exact qualified Elgato 4K Pro is configured and enumerated.",
+                    "not probed until an exact permitted capture device is configured and enumerated.",
                     "This probe briefly consumes frames to FFmpeg's null sink; no image is written or retained, and it never launches a game.")
             ];
         }
@@ -356,11 +356,11 @@ public sealed class DoctorService
         bool timedOut = probeCts.IsCancellationRequested;
         return live
             ? new(DoctorComponents.CaptureCardStream, DoctorStatus.Ok,
-                "qualified Elgato bounded stream probe passed; no image retained.")
+                "configured Elgato bounded stream probe passed; no image retained.")
             : new(DoctorComponents.CaptureCardStream, DoctorStatus.Hardware,
                 timedOut
-                    ? "qualified Elgato was enumerated but its bounded stream probe did not complete within 8 seconds."
-                    : "qualified Elgato was enumerated but its bounded stream probe failed — typically the device is already open in another application, there is no input signal, or ffmpeg rejected the device. See the run log for ffmpeg's exact error.",
+                    ? "configured Elgato was enumerated but its bounded stream probe did not complete within 8 seconds."
+                    : "configured Elgato was enumerated but its bounded stream probe failed — typically the device is already open in another application, there is no input signal, or ffmpeg rejected the device. See the run log for ffmpeg's exact error.",
                 "Check the HDMI source/cable, power, input signal, that nothing else holds the card, and the 60 Hz validated bench path; then re-run full pre-flight. This is vision/OCR input, not FPS / frametime capture.");
     }
 

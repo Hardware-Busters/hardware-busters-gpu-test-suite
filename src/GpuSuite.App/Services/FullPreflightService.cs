@@ -159,13 +159,13 @@ public sealed class FullPreflightService
     {
         var checks = new[] { model, stream }.Where(c => c is not null).Cast<DoctorCheck>().ToArray();
         if (checks.Length == 0)
-            return new GameCheck("Vision hardware — Elgato Game Capture 4K Pro", CheckStatus.Info, "Not reported by this pre-flight run.", null);
+            return new GameCheck("Vision hardware — Elgato 4K Pro / 4K X (experimental)", CheckStatus.Info, "Not reported by this pre-flight run.", null);
 
         var mapped = checks.Select(MapDoctorCheck).ToArray();
         CheckStatus status = mapped.Select(c => c.Status).OrderByDescending(StatusRank).First();
         string detail = string.Join("  ", mapped.Select(c => c.Detail));
         string? hint = mapped.Select(c => c.Fix).FirstOrDefault(h => !string.IsNullOrWhiteSpace(h));
-        return new GameCheck("Vision hardware — Elgato Game Capture 4K Pro", status, detail, hint);
+        return new GameCheck("Vision hardware — Elgato 4K Pro / 4K X (experimental)", status, detail, hint);
     }
 
     private static int StatusRank(CheckStatus status) => status switch

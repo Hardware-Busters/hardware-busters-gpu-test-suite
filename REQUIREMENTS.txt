@@ -1,14 +1,16 @@
 Hardware Busters GPU Test Suite — full automated game-benchmark workflow requirements
 
-Elgato Game Capture 4K Pro is required for the full supported automated game-benchmark workflow and is the only capture-card model currently qualified by this project.
+Elgato Game Capture 4K Pro remains the only capture-card model currently qualified by this project. Elgato 4K X is additionally permitted for experimental automated vision capture; it is not independently qualified by Hardware Busters.
 
 Official product identification: Elgato Game Capture 4K Pro, SKU 10GBK9901 — https://www.elgato.com/us/en/p/game-capture-4k-pro
-This identifies the required product; the qualification statement above is this project's compatibility policy.
+This identifies the qualified product; the qualification statement above is this project's compatibility policy.
 
-Configure settings.captureCardDevice to the exact DirectShow name: Elgato 4K Pro.
+Configure settings.captureCardDevice to the exact DirectShow name: Elgato 4K Pro (the unchanged default), or Elgato 4K X for experimental support.
 Confirm the exact name with: gpusuite grab --list
 
-Elgato 4K60 Pro, Elgato 4K60 Pro MK.2, generic devices, and other cards are unqualified for that workflow. They are not necessarily incompatible: offline authoring, builds, and diagnostic capture commands may still work.
+The configured device itself must be enumerated and pass the bounded stream probe. Having the other permitted model connected does not satisfy this check.
+
+Elgato 4K60 Pro, Elgato 4K60 Pro MK.2, generic devices, and other cards are not permitted for full automation. They are not necessarily incompatible: offline authoring, builds, and diagnostic capture commands may still work.
 
 Full pre-flight checks the enabled roster's PresentMon/RTSS FPS and frametime requirement separately from FFmpeg and the Elgato vision stream. It runs a bounded stream probe; no image is retained, and this vision input is never used as an FPS source. An advanced launch override cannot bypass runtime frame validation.
 
