@@ -705,7 +705,7 @@ public sealed class SceneRunner
     {
         if (!realGame || string.IsNullOrWhiteSpace(_cfg.CaptureCardDevice)) return null;
         if (!Diagnostics.CaptureCardSupportPolicy.IsQualifiedDeviceName(_cfg.CaptureCardDevice))
-            log.Warn("Bot", $"captureCardDevice '{_cfg.CaptureCardDevice?.Trim()}' is not the qualified '{Diagnostics.CaptureCardSupportPolicy.QualifiedDeviceName}' — vision runs blind-degraded; preflight should have blocked this.");
+            log.Warn("Bot", $"captureCardDevice '{_cfg.CaptureCardDevice?.Trim()}' is not permitted ({Diagnostics.CaptureCardSupportPolicy.PermittedDeviceNamesText}) — vision runs blind-degraded; preflight should have blocked this.");
         var grabber = new CaptureCardGrabber(_cfg.FfmpegPath, _cfg.CaptureCardDevice, log);
         if (!grabber.FfmpegResolved) return null;
         var reader = new ScreenReader(grabber, log);
