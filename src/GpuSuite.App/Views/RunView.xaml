@@ -200,7 +200,7 @@
                                    Foreground="{Binding ReadinessVerdict, Converter={StaticResource CheckStatusToBrush}}"/>
                     </StackPanel>
                 </Grid>
-                <TextBlock Text="One launch-clearance pass across the machine, live measurement bench, launcher login/update state, and whole benchmark roster. It checks the enabled roster's PresentMon/RTSS FPS and frametime path separately from FFmpeg + the exact qualified Elgato 4K Pro vision stream (bounded stream probe; no image retained). Other cards are unqualified for full automation. Start runs this automatically; long campaigns recheck each game immediately before its turn. No game is launched and no profile is changed."
+                <TextBlock Text="One launch-clearance pass across the machine, live measurement bench, launcher login/update state, and whole benchmark roster. It checks PresentMon/RTSS FPS and frametimes separately from the configured Elgato vision stream (bounded stream probe; no image retained). Elgato 4K Pro is qualified; Elgato 4K X is admitted experimentally with a warning, not independently qualified by Hardware Busters. Missing/mismatched devices and failed streams still block automation. Start runs this automatically; long campaigns recheck each game before its turn. No game is launched and no profile is changed."
                            Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" Margin="0,0,0,6"/>
                 <CheckBox IsChecked="{Binding AllowBlockedStart, Mode=TwoWay}" Margin="0,5,0,6"
                           Visibility="{Binding HasBlockingPreflight, Converter={StaticResource BoolToVis}}"

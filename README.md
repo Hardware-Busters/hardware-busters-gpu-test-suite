@@ -32,10 +32,10 @@ dotnet test tests/GpuSuite.Tests/GpuSuite.Tests.csproj -c Release -p:Platform=x6
 
 Copy `settings.example.json` to `settings.json` and configure only your own local tools and hardware. Do not commit it.
 
-**Elgato Game Capture 4K Pro is required for the full supported automated game-benchmark workflow and is the only capture-card model currently qualified by this project.** Set `captureCardDevice` to the exact DirectShow name `Elgato 4K Pro`. Elgato 4K60 Pro/MK.2 and other cards are unqualified for that workflow, although offline authoring, builds, and diagnostics may still work. See [REQUIREMENTS.txt](REQUIREMENTS.txt); the 60 Hz safety setting is this validated bench path, not a general product limit.
+**Elgato Game Capture 4K Pro is the only capture-card model currently qualified by this project. Elgato 4K X is permitted for experimental automated vision capture and is not independently qualified by Hardware Busters.** Set `captureCardDevice` to the exact DirectShow name `Elgato 4K Pro` (the unchanged default) or `Elgato 4K X`, as reported by `gpusuite grab --list`. Experimental 4K X admission shows a warning; a missing/mismatched device or failed stream still blocks automation. Other cards remain diagnostic-only. See [REQUIREMENTS.txt](REQUIREMENTS.txt); the 60 Hz safety setting is this validated bench path, not a general product limit.
 
 Full pre-flight checks the enabled roster's **PresentMon/RTSS FPS and frametime** requirement separately from the
-**FFmpeg + Elgato vision stream** used for OCR/navigation/motion. It confirms the exact qualified device with a
+**FFmpeg + Elgato vision stream** used for OCR/navigation/motion. It confirms the exact configured supported device with a
 bounded stream probe; no image is retained. The advanced launch override cannot create trustworthy frame evidence or
 bypass runtime validation: invalid runs are still rejected.
 

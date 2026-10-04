@@ -704,8 +704,10 @@ public sealed class SceneRunner
     private ScreenReader? BuildVision(bool realGame, RunLogger log)
     {
         if (!realGame || string.IsNullOrWhiteSpace(_cfg.CaptureCardDevice)) return null;
-        if (!Diagnostics.CaptureCardSupportPolicy.IsQualifiedDeviceName(_cfg.CaptureCardDevice))
-            log.Warn("Bot", $"captureCardDevice '{_cfg.CaptureCardDevice?.Trim()}' is not the qualified '{Diagnostics.CaptureCardSupportPolicy.QualifiedDeviceName}' — vision runs blind-degraded; preflight should have blocked this.");
+        if (!Diagnostics.CaptureCardSupportPolicy.IsSupportedDeviceName(_cfg.CaptureCardDevice))
+            log.Warn("Bot", $"captureCardDevice '{_cfg.CaptureCardDevice?.Trim()}' is not supported ({Diagnostics.CaptureCardSupportPolicy.PermittedDeviceNamesText}) — preflight should have blocked this.");
+        else if (Diagnostics.CaptureCardSupportPolicy.IsExperimentalDeviceName(_cfg.CaptureCardDevice))
+            log.Warn("Bot", "Elgato 4K X vision capture is experimental and is not independently qualified by Hardware Busters.");
         var grabber = new CaptureCardGrabber(_cfg.FfmpegPath, _cfg.CaptureCardDevice, log);
         if (!grabber.FfmpegResolved) return null;
         var reader = new ScreenReader(grabber, log);
