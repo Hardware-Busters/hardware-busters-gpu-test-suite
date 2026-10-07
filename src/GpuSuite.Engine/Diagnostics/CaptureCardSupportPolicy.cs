@@ -1,16 +1,19 @@
 namespace GpuSuite.Engine.Diagnostics;
 
 /// <summary>
-/// Qualification policy for the capture device used by the full automated game-benchmark workflow.
+/// Admission and qualification policy for automated vision capture.
 /// This deliberately evaluates only configured/enumerated DirectShow names; diagnostic capture commands
 /// remain free to use any device name supplied by the operator.
 /// </summary>
 public static class CaptureCardSupportPolicy
 {
     public const string QualifiedDeviceName = "Elgato 4K Pro";
+    public const string ExperimentalDeviceName = "Elgato 4K X";
 
     public const string PolicyStatement =
-        "Elgato Game Capture 4K Pro is required for the full supported automated game-benchmark workflow and is the only capture-card model currently qualified by this project.";
+        "Elgato Game Capture 4K Pro is the only capture-card model currently qualified by this project. Elgato 4K X is permitted for experimental automated vision capture and is not independently qualified by Hardware Busters.";
+
+    public static string PermittedDeviceNamesText => $"\"{QualifiedDeviceName}\" or \"{ExperimentalDeviceName}\"";
 
     /// <summary>
     /// Exact, case-sensitive match on the qualified DirectShow name — surrounding whitespace excepted.
@@ -22,23 +25,40 @@ public static class CaptureCardSupportPolicy
     public static bool IsQualifiedDeviceName(string? deviceName) =>
         string.Equals(deviceName?.Trim(), QualifiedDeviceName, StringComparison.Ordinal);
 
+    public static bool IsExperimentalDeviceName(string? deviceName) =>
+        string.Equals(deviceName?.Trim(), ExperimentalDeviceName, StringComparison.Ordinal);
+
+    public static bool IsSupportedDeviceName(string? deviceName) =>
+        IsQualifiedDeviceName(deviceName) || IsExperimentalDeviceName(deviceName);
+
     public static CaptureCardQualification Evaluate(string? configuredDevice, IEnumerable<string>? enumeratedDevices)
     {
-        if (!IsQualifiedDeviceName(configuredDevice))
+        if (!IsSupportedDeviceName(configuredDevice))
         {
             string configured = string.IsNullOrWhiteSpace(configuredDevice) ? "not set" : $"\"{configuredDevice.Trim()}\"";
             return new(false,
-                $"settings.captureCardDevice is {configured}; it must be exactly \"{QualifiedDeviceName}\". {PolicyStatement}");
+                $"settings.captureCardDevice is {configured}; it must be exactly {PermittedDeviceNamesText}. {PolicyStatement}");
         }
 
         var devices = (enumeratedDevices ?? Array.Empty<string>()).ToArray();
-        if (devices.Any(IsQualifiedDeviceName))
-            return new(true, $"qualified configured device present: \"{QualifiedDeviceName}\".");
+        string configuredName = configuredDevice!.Trim();
+        if (devices.Any(device => string.Equals(device?.Trim(), configuredName, StringComparison.Ordinal)))
+        {
+            if (IsExperimentalDeviceName(configuredName))
+                return new(false, $"experimental configured device present: \"{configuredName}\"; not independently qualified by Hardware Busters.")
+                { IsExperimental = true };
+            return new(true, $"qualified configured device present: \"{configuredName}\".");
+        }
 
         return new(false,
-            $"configured qualified device \"{QualifiedDeviceName}\" was not enumerated. Devices seen: " +
+            $"configured supported device \"{configuredName}\" was not enumerated. Devices seen: " +
             (devices.Length == 0 ? "none." : string.Join("; ", devices) + "."));
     }
 }
 
-public sealed record CaptureCardQualification(bool IsQualified, string Detail);
+public sealed record CaptureCardQualification(bool IsQualified, string Detail)
+{
+    /// <summary>An enumerated experimental device is admitted, but never independently qualified.</summary>
+    public bool IsExperimental { get; init; }
+    public bool IsSupported => IsQualified || IsExperimental;
+}

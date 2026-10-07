@@ -177,7 +177,7 @@ public sealed class SuiteConfig
     public string FfmpegPath { get; set; } = "";
 
     /// <summary>DirectShow VIDEO device name, exactly as listed by `gpusuite grab --list`. The full supported
-    /// automated game-benchmark workflow requires the exact qualified name "Elgato 4K Pro"; diagnostic capture
+    /// automated game-benchmark workflow admits "Elgato 4K Pro" (qualified) and "Elgato 4K X" (experimental); diagnostic capture
     /// commands may still use another device. Empty disables capture-card grabs.</summary>
     public string CaptureCardDevice { get; set; } = "";
 

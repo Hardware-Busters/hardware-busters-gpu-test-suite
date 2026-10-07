@@ -59,7 +59,7 @@ public sealed class InputAutomationEngine : IDisposable
     public int? MaxActionIterations { get; set; }
     /// <summary>Capture-card OCR "eye" used by <see cref="BotActionType.WaitForText"/> gates to wait until an
     /// expected on-screen string appears/disappears, instead of a blind fixed wait. Null (dry-run, or no
-    /// capture device wired) ⇒ WaitForText degrades to a bounded blind wait. Set by the scene runner /
+    /// capture device wired) ⇒ required real gates abort; optional/dry gates use a bounded blind wait. Set by the scene runner /
     /// CLI when a real game is the target so menu-nav bots are robust to variable load/shader-compile time.</summary>
     public ScreenReader? Vision { get; set; }
     /// <summary>When true, the virtual gamepad is NOT disconnected when <see cref="RunAsync"/> returns — it is
@@ -958,7 +958,7 @@ public sealed class InputAutomationEngine : IDisposable
     /// behind a multi-minute shader pre-compile. Best-effort: on timeout it logs a warning and PROCEEDS
     /// (a single missed OCR read shouldn't kill a run whose screen is actually correct; a genuinely wrong
     /// screen then fails validation and the orchestrator auto-repeats). Degrades to a bounded blind wait
-    /// when no OCR is wired (dry-run, or no capture device).
+    /// for optional gates or dry runs when no OCR is wired. Required real gates abort.
     /// </summary>
     private async Task WaitForTextAsync(BotAction a, CancellationToken ct)
     {
@@ -973,8 +973,10 @@ public sealed class InputAutomationEngine : IDisposable
         string target = string.Join(" | ", anchors);
         string label = a.Note is null ? "" : $" — {a.Note}";
 
-        // No OCR available (dry-run, or capture device not wired) ⇒ fall back to a blind wait. In dry-run
-        // FastForward caps this at 25ms; on a real run with no vision it preserves "wait long enough".
+        if (Inject && a.Required && (Vision is null || anchors.Length == 0))
+            throw new BotGateAbortException($"required WaitForText '{target}' cannot be evaluated: OCR reader or text anchors unavailable{label}");
+
+        // Only optional gates and dry runs may fall back to a bounded blind wait.
         if (!Inject || Vision is null || anchors.Length == 0)
         {
             if (Inject && Vision is null && anchors.Length > 0)
@@ -1107,7 +1109,7 @@ public sealed class InputAutomationEngine : IDisposable
     /// input, and a controller-detection tap can be silently eaten — a single blind press then misses and the
     /// rest of the macro runs on the wrong screen. CHECKS BEFORE each press (so it won't over-press once the
     /// target screen is up), then taps Key (pad or keyboard) and waits PollMs for the transition. Best-effort:
-    /// proceeds on timeout. Degrades to a single press + bounded blind wait when no OCR is wired (dry-run).
+    /// optional gates proceed on timeout. Required real gates abort when OCR, text or key is unavailable; dry runs retain the bounded fallback.
     /// </summary>
     private async Task PressUntilTextAsync(BotAction a, CancellationToken ct)
     {
@@ -1115,6 +1117,9 @@ public sealed class InputAutomationEngine : IDisposable
         int pollMs = a.PollMs > 0 ? a.PollMs : 2500;
         string? key = a.Key, text = a.Text;
         string label = a.Note is null ? "" : $" — {a.Note}";
+
+        if (Inject && a.Required && (Vision is null || string.IsNullOrWhiteSpace(text) || string.IsNullOrWhiteSpace(key)))
+            throw new BotGateAbortException($"required PressUntilText '{text}' cannot be evaluated: OCR reader, text or key unavailable{label}");
 
         if (!Inject || Vision is null || string.IsNullOrWhiteSpace(text) || string.IsNullOrWhiteSpace(key))
         {

@@ -35,6 +35,8 @@ jobs:
           New-Item -ItemType Directory -Path release-stage -Force | Out-Null
           Set-Content release-stage\GpuSuite.App.exe '' -NoNewline
           Copy-Item REQUIREMENTS.txt release-stage -Force
+          New-Item -ItemType Directory -Path release-stage/tools/vision -Force | Out-Null
+          Copy-Item tools/vision/ocr.ps1 release-stage/tools/vision/ocr.ps1 -Force
           "#define MyAppVersion `"ci`"" | Set-Content installer\version.iss -NoNewline
       - name: Stage verified PresentMon 2.6.0 release input
         shell: pwsh

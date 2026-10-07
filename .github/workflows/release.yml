@@ -46,6 +46,8 @@ jobs:
           Copy-Item profiles release-stage\profiles -Recurse -Force
           Copy-Item settings.example.json release-stage\settings.json -Force
           Copy-Item REQUIREMENTS.txt release-stage -Force
+          New-Item -ItemType Directory -Path release-stage/tools/vision -Force | Out-Null
+          Copy-Item tools/vision/ocr.ps1 release-stage/tools/vision/ocr.ps1 -Force
           Copy-Item LICENSE,NOTICE release-stage -Force
           Copy-Item LICENSES release-stage\LICENSES -Recurse -Force
           Copy-Item tools\PresentMon\README.md release-stage\tools\PresentMon -Force
@@ -73,6 +75,9 @@ jobs:
           if ($installer.ExitCode -ne 0) { throw "Installer smoke setup failed with exit code $($installer.ExitCode)." }
           $app = Join-Path $smokeRoot 'GpuSuite.App.exe'
           if (-not (Test-Path -LiteralPath $app)) { throw 'Installed executable smoke check failed: GpuSuite.App.exe is missing.' }
+          $installedOcr = Join-Path $smokeRoot 'tools/vision/ocr.ps1'
+          if (-not (Test-Path -LiteralPath $installedOcr)) { throw 'Installed Windows OCR helper is missing.' }
+          if ((Get-FileHash $installedOcr).Hash -ne (Get-FileHash release-stage/tools/vision/ocr.ps1).Hash) { throw 'Installed OCR helper differs from the staged source.' }
           $presentMon = Join-Path $smokeRoot 'tools/PresentMon/PresentMon.exe'
           if (-not (Test-Path -LiteralPath $presentMon)) { throw 'Installed PresentMon 2.6.0 is missing.' }
           if ((Get-FileHash -LiteralPath $presentMon -Algorithm SHA256).Hash.ToLowerInvariant() -ne 'b2a706bc6ad475749e3b7e3409263aa1e6906d45bdcf993f6dbc0f660188f1af') { throw 'Installed PresentMon 2.6.0 SHA-256 mismatch.' }

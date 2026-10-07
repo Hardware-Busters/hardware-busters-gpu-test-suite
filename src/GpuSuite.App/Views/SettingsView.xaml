@@ -262,7 +262,7 @@
                             <StackPanel Grid.Column="1">
                                 <TextBlock Text="CAPTURE CARD DEVICE (FULL AUTOMATION)" Style="{StaticResource LabelTextStyle}"/>
                                 <TextBox Text="{Binding Config.CaptureCardDevice, UpdateSourceTrigger=LostFocus, TargetNullValue=''}"/>
-                                <TextBlock Text="Must be exactly Elgato 4K Pro for the supported automated game-benchmark workflow. Full pre-flight checks the model and runs a bounded stream probe; no image is retained. Other cards may still be used for diagnostics; they are not qualified for full automation." Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                                <TextBlock Text="Use the exact DirectShow name Elgato 4K Pro (qualified default) or Elgato 4K X (experimental, not independently qualified by Hardware Busters). Full pre-flight checks the configured device and runs a bounded stream probe; no image is retained. A 4K X retains a warning; missing/mismatched devices and failed streams still block automation." Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" Margin="0,4,0,0"/>
                             </StackPanel>
                         </Grid>
                     </StackPanel>

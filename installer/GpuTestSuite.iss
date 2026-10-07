@@ -5,6 +5,9 @@
 #ifnexist SourceDir + "\REQUIREMENTS.txt"
   #error The staged public release is missing REQUIREMENTS.txt
 #endif
+#ifnexist SourceDir + "\tools\vision\ocr.ps1"
+  #error The staged public release is missing tools/vision/ocr.ps1
+#endif
 [Setup]
 AppId={{7B9DFCEF-E825-4A85-87D4-9B2E8797CC17}
 AppName={#MyAppName}
