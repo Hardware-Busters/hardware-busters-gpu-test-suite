@@ -1,3 +1,4 @@
+using GpuSuite.Measurement.Monitoring;
 using GpuSuite.Core.Config;
 using GpuSuite.Core;
 using GpuSuite.Core.Diagnostics;
@@ -21,6 +22,7 @@ internal static partial class Program
     private static async Task<int> Main(string[] args)
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
+        if (args.FirstOrDefault() == "monitor") return Monitor(args);
         Console.WriteLine($"{GpuSuite.BuildInfo.DisplayVersion}  (build {GpuSuite.BuildInfo.BuildTimestamp}, commit {GpuSuite.BuildInfo.CommitHash})");
         var a = new ArgMap(args);
         string? verbArg = args.FirstOrDefault(x => !x.StartsWith('-'));
@@ -53,6 +55,8 @@ internal static partial class Program
         }
         Directory.SetCurrentDirectory(root);
 
+        if (verb == "monitor") return Monitor(args);
+        using var monitoring = MonitoringPool.TryStart();
         var cfg = LoadConfig(a);
 
         if (verb is "help" or "-h" or "--help") { PrintHelp(); return 0; }
@@ -678,6 +682,8 @@ Usage:
                                   set programmatically (NVIDIA/AMD via LHM) unless --manual-fan. Pair --lock-clock
                                   + Powenetics on the elevated bench for precise heat-load control. Writes a
                                   matching HTML report next to the JSON (add --open to view).
+  gpusuite monitor [--pid PID]     Discover local monitoring pools, or read one JSON snapshot by PID.
+                                  Read-only; never starts providers, probes instruments or launches games.
   gpusuite cooler-report [--in file.json] [--out file.html] [--open]
                                   Render a saved cooler-sweep JSON to a self-contained HTML report (temp-vs-power
                                   curves + reference-power bars). Defaults --in to the newest cooler_*.json.

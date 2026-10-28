@@ -1,3 +1,4 @@
+using GpuSuite.Core.Diagnostics;
 using GpuSuite.Core.Models;
 
 namespace GpuSuite.Measurement.Real;
@@ -41,6 +42,7 @@ public sealed class LhmPowerProvider : IPowerProvider
 
     private sealed class Session : ISampleSession<PowerSample>
     {
+        private readonly SampleMonitor _monitor = new("power", "LibreHardwareMonitor (approximate)", DataSourceMode.Live);
         private readonly LhmTelemetryProvider _lhm;
         private readonly List<PowerSample> _samples = new();
         private readonly object _lock = new();
@@ -64,6 +66,7 @@ public sealed class LhmPowerProvider : IPowerProvider
                         var s = new PowerSample { TimeSec = _sw.Elapsed.TotalSeconds };
                         if (_lhm.TryReadGpuBoardPowerW(out var w)) s.GpuTotalW = w;
                         lock (_lock) _samples.Add(s);
+                        _monitor.Commit(s, s.TimeSec);
                         await Task.Delay(delay, _cts.Token).ConfigureAwait(false);
                     }
                 }
@@ -77,6 +80,7 @@ public sealed class LhmPowerProvider : IPowerProvider
 
         public async Task<IReadOnlyList<PowerSample>> StopAsync()
         {
+            _monitor.Dispose();
             _cts.Cancel();
             try { await _task.ConfigureAwait(false); } catch (OperationCanceledException) { }
             lock (_lock) return _samples.ToList();

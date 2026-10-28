@@ -1,3 +1,4 @@
+using GpuSuite.Core.Diagnostics;
 using GpuSuite.Core.Models;
 using GpuSuite.Measurement;
 
@@ -121,6 +122,7 @@ public sealed class CoolerTestRunner
     /// </summary>
     public async Task<CoolerSweepResult> RunAsync(CoolerSweepOptions opt, Action<PowerTick>? onTick, CancellationToken ct)
     {
+        using var monitoringOperation = new MonitoringOperationScope(new("cooler-preparing"));
         var result = new CoolerSweepResult
         {
             GpuName = _load.GpuName,
@@ -140,6 +142,7 @@ public sealed class CoolerTestRunner
             {
                 if (ct.IsCancellationRequested) break;
 
+                MonitoringState.Operation(new("cooler-noise", NoiseDba: noise.TargetDba));
                 var level = new CoolerNoiseLevel { TargetDba = noise.TargetDba, FanPercent = noise.FanPercent };
 
                 if (_fan?.CanControl == true)
@@ -191,12 +194,14 @@ public sealed class CoolerTestRunner
             try { _fan?.ResetAuto(); } catch { /* best-effort restore of the auto fan curve */ }
         }
 
+        monitoringOperation.Complete(ct.IsCancellationRequested ? "cancelled" : "finished");
         return result;
     }
 
     /// <summary>Drive to <paramref name="targetW"/> and soak until the GPU-temp slope settles (or max-soak).</summary>
     private async Task<CoolerStep> SoakStepAsync(double targetW, CoolerSweepOptions opt, Action<PowerTick>? onTick, CancellationToken ct)
     {
+        MonitoringState.Operation(MonitoringState.Read().Operation with { State = "cooler-soaking", TargetPowerW = targetW });
         var samples = new List<SoakSample>();
         using var stepCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
         bool settled = false;

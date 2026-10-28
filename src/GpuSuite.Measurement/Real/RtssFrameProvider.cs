@@ -1,3 +1,4 @@
+using GpuSuite.Core.Diagnostics;
 using System.Diagnostics;
 using System.IO.MemoryMappedFiles;
 using System.Runtime.InteropServices;
@@ -128,6 +129,7 @@ public sealed class RtssFrameProvider : IFrameCaptureProvider
 
     private sealed class Session : ISampleSession<FrameSample>
     {
+        private readonly SampleMonitor _monitor = new("frames", "RTSS", DataSourceMode.Live);
         private readonly int? _pid;
         private readonly string _procName;
         private readonly List<FrameSample> _frames = new();
@@ -194,7 +196,11 @@ public sealed class RtssFrameProvider : IFrameCaptureProvider
                                 uint idx = (lastBufPos + k) % FrameTimeBufLen;
                                 uint ftUs = acc.ReadUInt32((int)entryBase + A_FRAMETIME_BUF + (int)idx * 4);
                                 if (ftUs > 0 && ftUs < 10_000_000)
-                                    lock (_lock) _frames.Add(new FrameSample(now, ftUs / 1000.0));
+                                {
+                                    var sample = new FrameSample(now, ftUs / 1000.0);
+                                    lock (_lock) _frames.Add(sample);
+                                    _monitor.Commit(sample, sample.TimeSec);
+                                }
                             }
                             lastBufPos = bufPos;
                             GpuSuite.Core.RunHeartbeat.Ping();   // frames are presenting = the game is alive and rendering
@@ -219,6 +225,7 @@ public sealed class RtssFrameProvider : IFrameCaptureProvider
 
         public async Task<IReadOnlyList<FrameSample>> StopAsync()
         {
+            _monitor.Dispose();
             _cts.Cancel();
             try { await Task.Run(() => _thread.Join(2000)).ConfigureAwait(false); } catch { }
             lock (_lock) return _frames.ToList();

@@ -1,3 +1,4 @@
+using GpuSuite.Core.Diagnostics;
 using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
@@ -133,6 +134,7 @@ public sealed class PresentMonFrameProvider : IFrameCaptureProvider
 
     private sealed class Session : ISampleSession<FrameSample>
     {
+        private readonly SampleMonitor _monitor = new("frames", "PresentMon", DataSourceMode.Live);
         private readonly Process _proc;
         private readonly string _sessionName;   // our unique ETW realtime session — explicitly stopped on teardown (see StopAsync)
         private readonly string? _startupDiagnostics;
@@ -225,6 +227,7 @@ public sealed class PresentMonFrameProvider : IFrameCaptureProvider
                     GpuBusyMs = _iGpu >= 0 ? NGet(c, _iGpu) : null
                 };
                 lock (_lock) _frames.Add(f);
+                _monitor.Commit(f, f.TimeSec);
                 GpuSuite.Core.RunHeartbeat.Ping();   // frames are presenting = the game is alive and rendering
             }
         }
@@ -273,6 +276,7 @@ public sealed class PresentMonFrameProvider : IFrameCaptureProvider
         // never denied for our own session.
         public async Task<IReadOnlyList<FrameSample>> StopAsync()
         {
+            _monitor.Dispose();
             Volatile.Write(ref _stopped, 1);
             // Stop the named realtime ETW session before touching the host process. Hard-killing
             // PresentMon first can strand the kernel session and poison later captures with dropped
