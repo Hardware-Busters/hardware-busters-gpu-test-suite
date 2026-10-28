@@ -1,3 +1,4 @@
+using GpuSuite.Core.Diagnostics;
 using System.IO.Ports;
 using GpuSuite.Core.Models;
 using GpuSuite.Measurement.Real.Powenetics;
@@ -134,6 +135,7 @@ public sealed class PoweneticsPowerProvider : IPowerProvider
 
     private sealed class Session : ISampleSession<PowerSample>
     {
+        private readonly SampleMonitor _monitor = new("power", "Powenetics V2", DataSourceMode.Live);
         private readonly PoweneticsSerialClient _client;
         private readonly List<PowerSample> _samples = new();
         private readonly object _lock = new();
@@ -141,7 +143,7 @@ public sealed class PoweneticsPowerProvider : IPowerProvider
         public Session(string port, int minIntervalMs)
         {
             _client = new PoweneticsSerialClient(port, minIntervalMs);
-            _client.Open(s => { lock (_lock) _samples.Add(s); });
+            _client.Open(s => { lock (_lock) _samples.Add(s); _monitor.Commit(s, s.TimeSec); });
         }
 
         public DataSourceMode Mode => DataSourceMode.Live;
@@ -150,10 +152,11 @@ public sealed class PoweneticsPowerProvider : IPowerProvider
 
         public Task<IReadOnlyList<PowerSample>> StopAsync()
         {
+            _monitor.Dispose();
             _client.Close();
             lock (_lock) return Task.FromResult<IReadOnlyList<PowerSample>>(_samples.ToList());
         }
 
-        public ValueTask DisposeAsync() { _client.Dispose(); return ValueTask.CompletedTask; }
+        public ValueTask DisposeAsync() { _monitor.Dispose(); _client.Dispose(); return ValueTask.CompletedTask; }
     }
 }

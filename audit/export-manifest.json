@@ -1,4 +1,5 @@
 {
+  "sourceRevision": "retained privately",
   "files": [
     {
       "path": ".gitattributes",
@@ -347,7 +348,7 @@
     },
     {
       "path": "settings.example.json",
-      "sha256": "97139bb7c321b6486465a162e6d1d62c0bde5850b0c7817340e80f407abc1492",
+      "sha256": "e236acb71165a2d79ce77872fcdefa65f8f357c74112753e2086525416d31f63",
       "bytes": 717
     },
     {
@@ -362,8 +363,8 @@
     },
     {
       "path": "src/GpuSuite.App/App.xaml.cs",
-      "sha256": "0f013af40f77e716c7cfe4dc4a0247ad1ecb169c71341e0fe7b8964edbcf870c",
-      "bytes": 6361
+      "sha256": "5802727136cc973fbd0f4af9f19690d2e5f25ae3f3637388bb81d5b54a1205cc",
+      "bytes": 6526
     },
     {
       "path": "src/GpuSuite.App/Converters/Converters.cs",
@@ -886,14 +887,19 @@
       "bytes": 10159
     },
     {
+      "path": "src/GpuSuite.Cli/MonitoringCommands.cs",
+      "sha256": "ea1392e417c7a5cb1419b7af5bc30ea0d9e76a2dcec8f16f2cb21e654967ca2b",
+      "bytes": 1659
+    },
+    {
       "path": "src/GpuSuite.Cli/OcrGuardSelfTest.cs",
       "sha256": "45785027a603b8d7887c5d1df06c6dc8257d818135ddf88c419238ae310623a9",
       "bytes": 3139
     },
     {
       "path": "src/GpuSuite.Cli/Program.cs",
-      "sha256": "6e744d21f0fcdf902ffe104f99ff6a67f319882bda80d7d77f22a3273c8e7a70",
-      "bytes": 48186
+      "sha256": "1ae7dadfdf4bca88240b8b15e6dabb8300d15c673ea6f79409511cb95cf3de7e",
+      "bytes": 48621
     },
     {
       "path": "src/GpuSuite.Cli/ResilienceSelfTest.cs",
@@ -921,9 +927,14 @@
       "bytes": 30174
     },
     {
+      "path": "src/GpuSuite.Core/Diagnostics/MonitoringState.cs",
+      "sha256": "817d6913aad88dcba4f018b62c973a4f17428c66cac6a57bc62810846a29cdd8",
+      "bytes": 5939
+    },
+    {
       "path": "src/GpuSuite.Core/Diagnostics/RunLogger.cs",
-      "sha256": "0706ded543a9f42132ecdb46e7605e035a69183657305f125e1d2e637d99e109",
-      "bytes": 3925
+      "sha256": "28eb30efd23f1e177403c69f17a62dabdf39632aa9081f5cad7bd1a473cf02aa",
+      "bytes": 4118
     },
     {
       "path": "src/GpuSuite.Core/GpuSuite.Core.csproj",
@@ -1242,8 +1253,8 @@
     },
     {
       "path": "src/GpuSuite.Engine/Scenes/SceneRunner.cs",
-      "sha256": "d4938986071bfbe854ea4c39bc1b559db5d72fd9c42baac83c5ab3ed47c141b8",
-      "bytes": 75254
+      "sha256": "a187594ebae0e5c17865e2bd2ee3168603831e69b854797d3d121965aed07205",
+      "bytes": 75625
     },
     {
       "path": "src/GpuSuite.Engine/Scenes/SettingsNavigator.cs",
@@ -1302,8 +1313,8 @@
     },
     {
       "path": "src/GpuSuite.Load/CoolerTestRunner.cs",
-      "sha256": "dc82d45b0c9b6778fd7ef808baf50f3939a9d83fdb1789b46fef3359263bd8cc",
-      "bytes": 16299
+      "sha256": "7880225d2b97db059e34d02faec5a4c89537d52e03c86667142bbd2ab50711c7",
+      "bytes": 16743
     },
     {
       "path": "src/GpuSuite.Load/GpuSuite.Load.csproj",
@@ -1341,6 +1352,11 @@
       "bytes": 25415
     },
     {
+      "path": "src/GpuSuite.Measurement/Monitoring/MonitoringPool.cs",
+      "sha256": "2a2b168652cc0f2d96ace6be58dccc0877bdf5c95369c06ceca635d9fae63bd6",
+      "bytes": 7412
+    },
+    {
       "path": "src/GpuSuite.Measurement/Properties/AssemblyInfo.cs",
       "sha256": "35aa8c8e1f63d68f09fbaeceab39729434c4e604fb9c2b9420b2f706f2728c34",
       "bytes": 92
@@ -1357,13 +1373,13 @@
     },
     {
       "path": "src/GpuSuite.Measurement/Real/LhmPowerProvider.cs",
-      "sha256": "594ddfc0865d4bffc40c8b4dda8bec84bc87738ae279ef0afa43f4296781c490",
-      "bytes": 4154
+      "sha256": "183d825b0b03f68954b5cd0aac01cb8ab44b274b2faa7ff379d29e308736e90a",
+      "bytes": 4401
     },
     {
       "path": "src/GpuSuite.Measurement/Real/LhmTelemetryProvider.cs",
-      "sha256": "f975ff6960f9cbfc04b4b068f8a736c89f77a3252ab88d5503a11e1fd24355fa",
-      "bytes": 18622
+      "sha256": "997f5dfa49693bba589e3306a2a19acdd93bb44919ec9ab90f49609319666332",
+      "bytes": 18869
     },
     {
       "path": "src/GpuSuite.Measurement/Real/Powenetics/PoweneticsProtocol.cs",
@@ -1377,18 +1393,18 @@
     },
     {
       "path": "src/GpuSuite.Measurement/Real/PoweneticsPowerProvider.cs",
-      "sha256": "a349f51f0285e4996c543d0994ce7fe2881cb2b40f3242f1c991e10da05e3f87",
-      "bytes": 8290
+      "sha256": "aef4c1cca4528615dc0a5612e53fb73a23f50c80edeb92cc1126b9ec445f95fb",
+      "bytes": 8511
     },
     {
       "path": "src/GpuSuite.Measurement/Real/PresentMonFrameProvider.cs",
-      "sha256": "a8bff09d5effe2c1c83e4d7206b4ca822be8fef57d06973dc32b46847b8a5e45",
-      "bytes": 18824
+      "sha256": "cea374bc62f5fd5b9756a1469dc8fe199fd589110f7ed569a5962a830b0138d8",
+      "bytes": 19040
     },
     {
       "path": "src/GpuSuite.Measurement/Real/RtssFrameProvider.cs",
-      "sha256": "b20254abc115603ddb0b40671d8608a9575c9ccf15a2ad8177f059a1cf28b733",
-      "bytes": 12679
+      "sha256": "d0bb5662295525a36f3b610fbc18711c5c2413149b17e47e403e4335b3640330",
+      "bytes": 13047
     },
     {
       "path": "src/GpuSuite.Measurement/Real/RtssOsdWriter.cs",
@@ -1397,8 +1413,8 @@
     },
     {
       "path": "src/GpuSuite.Measurement/Synthetic/SyntheticProviders.cs",
-      "sha256": "865e0bca19031ab9e6909e90c85d75c9f1224d37400f259320b61b183840c74d",
-      "bytes": 10530
+      "sha256": "20f1377f30b83c581f4d1b3281c22d929236100a347844a89af534dd71840a3e",
+      "bytes": 11262
     },
     {
       "path": "src/GpuSuite.Reporting/CoolerReportGenerator.cs",
@@ -1469,6 +1485,11 @@
       "path": "tests/GpuSuite.Tests/GpuSuite.Tests.csproj",
       "sha256": "7c5e0c205a51713e6774f0f1b5030cc4036daaed62ebaef91d096ab1ec2964fd",
       "bytes": 1630
+    },
+    {
+      "path": "tests/GpuSuite.Tests/MonitoringPoolTests.cs",
+      "sha256": "e241f0db2dde99c436461f183f086065f8d6e8710e6bcc25a005106509ac7df7",
+      "bytes": 8523
     },
     {
       "path": "tests/GpuSuite.Tests/PowerMeasurementTests.cs",
@@ -1547,7 +1568,6 @@
     }
   ],
   "schema": 1,
-  "publicRepository": "https://github.com/Hardware-Busters/hardware-busters-gpu-test-suite",
-  "sourceRevision": "retained privately",
-  "generatedUtc": "2026-10-04T06:10:18.6306185Z"
+  "generatedUtc": "2026-10-28T13:22:56.8028158Z",
+  "publicRepository": "https://github.com/Hardware-Busters/hardware-busters-gpu-test-suite"
 }

@@ -44,6 +44,7 @@ public sealed class SceneRunner
         ProviderSet providers, WorkloadHint hint, bool gameLaunchedOrSimulated, bool realGame, int? gamePid,
         string gpuName, RunPaths paths, RunLogger log, CancellationToken ct, bool reRun = false, IGamepad? sharedPad = null)
     {
+        using var monitorOperation = new MonitoringOperationScope(new("preparing", game.Id, scene.Id, res.Name, repeat, totalRepeats));
         var runDir = paths.EnsureRunDir(game.Id, scene.Id, res.Name, repeat, variant?.Id);
         var run = new RunResult
         {
@@ -69,6 +70,7 @@ public sealed class SceneRunner
             run.EndedUtc = DateTime.UtcNow;
             Persist(runDir, run);
             log.Error("Scene", $"Run {repeat} INVALID — game process absent; skipping readiness, capture, and bot deadline.");
+            monitorOperation.Complete(run.Verdict.ToString());
             return run;
         }
 
@@ -81,6 +83,7 @@ public sealed class SceneRunner
             run.EndedUtc = DateTime.UtcNow;
             Persist(runDir, run);
             log.Warn("Validate", $"Run {repeat} INVALID — {string.Join("; ", settings.Issues)}");
+            monitorOperation.Complete(run.Verdict.ToString());
             return run;
         }
 
@@ -97,6 +100,7 @@ public sealed class SceneRunner
             await GpuSuite.Engine.Automation.GameWindowManager.ForceBorderlessFullscreenAsync(bpid, log, ct, waitForWindowSeconds: 90).ConfigureAwait(false);
 
         // (6/7) continuous telemetry + power for the whole scene
+        monitorOperation.State("capturing");
         log.Info("Capture", $"Starting telemetry ({providers.Telemetry.Name}) + power ({providers.Power.Name}).");
         await using var telSession = await providers.Telemetry.StartAsync(_cfg.TelemetryIntervalMs, hint, ct).ConfigureAwait(false);
         await using var pwrSession = await providers.Power.StartAsync(_cfg.PowerLogIntervalMs, hint, ct).ConfigureAwait(false);
@@ -515,6 +519,7 @@ public sealed class SceneRunner
         var lvl = run.Verdict == RunVerdict.Valid ? LogLevel.Info : LogLevel.Warn;
         log.Log(lvl, "Validate", $"Run {repeat} verdict: {run.Verdict}" +
             (run.ValidationIssues.Count > 0 ? " — " + string.Join("; ", run.ValidationIssues) : ""));
+        monitorOperation.Complete(run.Verdict.ToString());
         return run;
     }
 

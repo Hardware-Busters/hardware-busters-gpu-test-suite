@@ -67,7 +67,11 @@ public sealed class RunLogger : IDisposable
                 Console.ForegroundColor = prev;
             }
         }
-        EntryLogged?.Invoke(entry);   // outside the lock — a handler must not be able to deadlock the writer
+        MonitoringState.Logged(entry);
+        var observers = EntryLogged;
+        if (observers is not null)
+            foreach (Action<TimelineEntry> observer in observers.GetInvocationList())
+                try { observer(entry); } catch { /* A UI/monitor observer cannot fail a benchmark. */ }
     }
 
     public void Trace(string stage, string m) => Log(LogLevel.Trace, stage, m);

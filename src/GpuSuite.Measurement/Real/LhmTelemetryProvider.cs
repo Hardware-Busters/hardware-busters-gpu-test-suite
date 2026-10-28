@@ -1,3 +1,4 @@
+using GpuSuite.Core.Diagnostics;
 using GpuSuite.Core.Models;
 using LibreHardwareMonitor.Hardware;
 
@@ -343,6 +344,7 @@ public sealed class LhmTelemetryProvider : ITelemetryProvider, IDisposable
 
     private sealed class Session : ISampleSession<TelemetrySample>
     {
+        private readonly SampleMonitor _monitor = new("telemetry", "LibreHardwareMonitor", DataSourceMode.Live);
         private readonly LhmTelemetryProvider _p;
         private readonly List<TelemetrySample> _samples = new();
         private readonly object _lock = new();
@@ -361,6 +363,7 @@ public sealed class LhmTelemetryProvider : ITelemetryProvider, IDisposable
                     {
                         var sample = _p.ReadSample(_sw.Elapsed.TotalSeconds);
                         lock (_lock) _samples.Add(sample);
+                        _monitor.Commit(sample, sample.TimeSec);
                         await Task.Delay(Math.Max(50, intervalMs), _cts.Token).ConfigureAwait(false);
                     }
                 }
@@ -374,6 +377,7 @@ public sealed class LhmTelemetryProvider : ITelemetryProvider, IDisposable
 
         public async Task<IReadOnlyList<TelemetrySample>> StopAsync()
         {
+            _monitor.Dispose();
             _cts.Cancel();
             try { await _task.ConfigureAwait(false); } catch (OperationCanceledException) { }
             lock (_lock) return _samples.ToList();

@@ -1,3 +1,4 @@
+using GpuSuite.Core.Diagnostics;
 using System.Diagnostics;
 using GpuSuite.Core.Models;
 
@@ -68,6 +69,7 @@ public sealed class SyntheticFrameProvider : IFrameCaptureProvider
 
     private sealed class Session : ISampleSession<FrameSample>
     {
+        private readonly SampleMonitor _monitor = new("frames", "Synthetic-frames", DataSourceMode.Synthetic);
         private readonly List<FrameSample> _frames = new();
         private readonly object _lock = new();
         private readonly Random _r;
@@ -111,6 +113,7 @@ public sealed class SyntheticFrameProvider : IFrameCaptureProvider
                     {
                         GpuBusyMs = ft * (0.7 + _r.NextDouble() * 0.2)
                     });
+                    _monitor.Commit(_frames[^1], _frames[^1].TimeSec);
                 }
                 _ticks++;
             }
@@ -118,11 +121,12 @@ public sealed class SyntheticFrameProvider : IFrameCaptureProvider
 
         public async Task<IReadOnlyList<FrameSample>> StopAsync()
         {
+            _monitor.Dispose();
             await _loop.StopAsync().ConfigureAwait(false);
             lock (_lock) return _frames.ToList();
         }
 
-        public ValueTask DisposeAsync() => _loop.DisposeAsync();
+        public async ValueTask DisposeAsync() { _monitor.Dispose(); await _loop.DisposeAsync(); }
     }
 }
 
@@ -135,6 +139,7 @@ public sealed class SyntheticTelemetryProvider : ITelemetryProvider
 
     private sealed class Session : ISampleSession<TelemetrySample>
     {
+        private readonly SampleMonitor _monitor = new("telemetry", "Synthetic-telemetry", DataSourceMode.Synthetic);
         private readonly List<TelemetrySample> _s = new();
         private readonly object _lock = new();
         private readonly Random _r;
@@ -180,15 +185,17 @@ public sealed class SyntheticTelemetryProvider : ITelemetryProvider
                 CpuClockMhz = 4800
             };
             lock (_lock) _s.Add(s);
+            _monitor.Commit(s, s.TimeSec);
         }
 
         public async Task<IReadOnlyList<TelemetrySample>> StopAsync()
         {
+            _monitor.Dispose();
             await _loop.StopAsync().ConfigureAwait(false);
             lock (_lock) return _s.ToList();
         }
 
-        public ValueTask DisposeAsync() => _loop.DisposeAsync();
+        public async ValueTask DisposeAsync() { _monitor.Dispose(); await _loop.DisposeAsync(); }
     }
 }
 
@@ -210,6 +217,7 @@ public sealed class SyntheticPowerProvider : IPowerProvider
 
     private sealed class Session : ISampleSession<PowerSample>
     {
+        private readonly SampleMonitor _monitor = new("power", "Synthetic-power", DataSourceMode.Synthetic);
         private readonly List<PowerSample> _s = new();
         private readonly object _lock = new();
         private readonly Random _r;
@@ -247,14 +255,16 @@ public sealed class SyntheticPowerProvider : IPowerProvider
                 SystemTotalW = Math.Round(total + 130 + Rng.Gauss(_r, 0, 8), 2)
             };
             lock (_lock) _s.Add(s);
+            _monitor.Commit(s, s.TimeSec);
         }
 
         public async Task<IReadOnlyList<PowerSample>> StopAsync()
         {
+            _monitor.Dispose();
             await _loop.StopAsync().ConfigureAwait(false);
             lock (_lock) return _s.ToList();
         }
 
-        public ValueTask DisposeAsync() => _loop.DisposeAsync();
+        public async ValueTask DisposeAsync() { _monitor.Dispose(); await _loop.DisposeAsync(); }
     }
 }
