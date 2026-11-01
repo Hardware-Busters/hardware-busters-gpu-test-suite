@@ -6,3 +6,10 @@ settings.json
 tools/PresentMon/PresentMon.exe
 *.user
 *.log
+
+# Agent scratch folders
+/.codex-tmp/
+/.worktrees/
+/.claude/worktrees/
+/NuGetScratch/
+/.build-tmp/
