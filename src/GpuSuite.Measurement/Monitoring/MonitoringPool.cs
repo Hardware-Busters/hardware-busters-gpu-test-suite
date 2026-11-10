@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.IO.MemoryMappedFiles;
 using System.Text.Json;
-using System.Threading.Channels;
 using GpuSuite.Core.Diagnostics;
 
 namespace GpuSuite.Measurement.Monitoring;
@@ -31,14 +30,10 @@ public sealed class MonitoringPool : IDisposable
     public const int HeaderSize = 32;
     public const int Magic = 0x4754534D;
     public static string Name(int pid) => $"Local\\HwbGpuSuite.Telemetry.v1.{pid}";
-    private readonly Channel<byte> _signals = Channel.CreateBounded<byte>(new BoundedChannelOptions(1)
-        { FullMode = BoundedChannelFullMode.DropWrite, SingleReader = true, SingleWriter = false });
-    private readonly CancellationTokenSource _heartbeatStop = new();
     private readonly Guid _instance = Guid.NewGuid();
     private readonly MemoryMappedFile _mapping;
     private readonly MemoryMappedViewAccessor _view;
-    private readonly Task _worker;
-    private readonly Task _heartbeat;
+    private readonly LatestStatePump _pump;
     private long _generation;
     private int _disposed;
     private volatile string? _lastError;
@@ -48,30 +43,7 @@ public sealed class MonitoringPool : IDisposable
     {
         _mapping = MemoryMappedFile.CreateNew(Name(Environment.ProcessId), Capacity);
         _view = _mapping.CreateViewAccessor(0, Capacity, MemoryMappedFileAccess.ReadWrite);
-        _worker = Task.Run(DrainAsync);
-        MonitoringState.Changed += Request;
-        _heartbeat = Task.Run(HeartbeatAsync);
-        Request();
-    }
-
-    private void Request() => _signals.Writer.TryWrite(0);
-
-    private async Task HeartbeatAsync()
-    {
-        try
-        {
-            using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(200));
-            while (await timer.WaitForNextTickAsync(_heartbeatStop.Token).ConfigureAwait(false)) Request();
-        }
-        catch (OperationCanceledException) { }
-    }
-
-    private async Task DrainAsync()
-    {
-        await foreach (var _ in _signals.Reader.ReadAllAsync().ConfigureAwait(false))
-            Publish(online: true);
-        // Producers detached, queue completed and drained before the offline record is written.
-        Publish(online: false);
+        _pump = new LatestStatePump(Publish, TimeSpan.FromMilliseconds(200));
     }
 
     private void Publish(bool online)
@@ -80,12 +52,7 @@ public sealed class MonitoringPool : IDisposable
         {
             var state = MonitoringState.Read();
             var now = DateTimeOffset.UtcNow;
-            var channels = state.Channels.Select(c => c with
-            {
-                SourceAgeMs = c.ReceivedTicks != 0 ? Stopwatch.GetElapsedTime(c.ReceivedTicks).TotalMilliseconds : null,
-                Fresh = online && c.Valid && c.Status == "sampling" && c.ReceivedTicks != 0 &&
-                    Stopwatch.GetElapsedTime(c.ReceivedTicks) <= TimeSpan.FromSeconds(2)
-            }).ToArray();
+            var channels = ChannelFreshness.Evaluate(state.Channels, online);
             var snapshot = new MonitoringSnapshot(1, Environment.ProcessId, _instance,
                 now, online, state.Operation, channels)
                 { LastEvent = MonitoringState.LastEvent, LastFault = MonitoringState.LastFault };
@@ -121,14 +88,9 @@ public sealed class MonitoringPool : IDisposable
     public void Dispose()
     {
         if (Interlocked.Exchange(ref _disposed, 1) != 0) return;
-        MonitoringState.Changed -= Request;
-        _heartbeatStop.Cancel();
-        _signals.Writer.TryComplete();
-        _heartbeat.GetAwaiter().GetResult();
-        _worker.GetAwaiter().GetResult();
+        _pump.Dispose();
         _view.Dispose();
         _mapping.Dispose();
-        _heartbeatStop.Dispose();
     }
 
     /// <summary>Nonblocking, read-only, bounded optimistic read. Never creates a mapping or actuates hardware.</summary>

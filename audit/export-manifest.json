@@ -1,4 +1,5 @@
 {
+  "publicRepository": "https://github.com/Hardware-Busters/hardware-busters-gpu-test-suite",
   "sourceRevision": "retained privately",
   "files": [
     {
@@ -73,8 +74,8 @@
     },
     {
       "path": ".gitignore",
-      "sha256": "661a7335cb34d5c860bfa29b97c8348f6baad63ca6e51f97d0112c1b31e00427",
-      "bytes": 89
+      "sha256": "d67c382a543c58728c4ca7ff0ca92221ec25927fff4b9f1abc916d8dbee0506f",
+      "bytes": 188
     },
     {
       "path": "build/Update-BuildInfo.ps1",
@@ -348,7 +349,7 @@
     },
     {
       "path": "settings.example.json",
-      "sha256": "e236acb71165a2d79ce77872fcdefa65f8f357c74112753e2086525416d31f63",
+      "sha256": "39d67e99843056e4540c05086652840c601142351a78a6c250c57767cf40308e",
       "bytes": 717
     },
     {
@@ -363,8 +364,8 @@
     },
     {
       "path": "src/GpuSuite.App/App.xaml.cs",
-      "sha256": "5802727136cc973fbd0f4af9f19690d2e5f25ae3f3637388bb81d5b54a1205cc",
-      "bytes": 6526
+      "sha256": "eb1c32c0b842449b4ee0b7cd1c3ca8befc0708160e035b697bee07cb94e3e9ef",
+      "bytes": 6712
     },
     {
       "path": "src/GpuSuite.App/Converters/Converters.cs",
@@ -898,8 +899,8 @@
     },
     {
       "path": "src/GpuSuite.Cli/Program.cs",
-      "sha256": "1ae7dadfdf4bca88240b8b15e6dabb8300d15c673ea6f79409511cb95cf3de7e",
-      "bytes": 48621
+      "sha256": "bc1a6abd6faa3a45fd39c62b7a9c0efb694471d8641b58712a897808aabf14da",
+      "bytes": 48721
     },
     {
       "path": "src/GpuSuite.Cli/ResilienceSelfTest.cs",
@@ -927,9 +928,14 @@
       "bytes": 30174
     },
     {
+      "path": "src/GpuSuite.Core/Diagnostics/MonitoringMethod.cs",
+      "sha256": "95fd5fb5e008b8c7ca822e514d84434d577aed1aae0706014144f2845193e7bd",
+      "bytes": 1942
+    },
+    {
       "path": "src/GpuSuite.Core/Diagnostics/MonitoringState.cs",
-      "sha256": "817d6913aad88dcba4f018b62c973a4f17428c66cac6a57bc62810846a29cdd8",
-      "bytes": 5939
+      "sha256": "f613affd06ddfdab219c1f5e7b474d388c35c09852e3e7102239ede14d899ec7",
+      "bytes": 6220
     },
     {
       "path": "src/GpuSuite.Core/Diagnostics/RunLogger.cs",
@@ -1202,14 +1208,24 @@
       "bytes": 5605
     },
     {
+      "path": "src/GpuSuite.Engine/Orchestration/MethodStateTracker.cs",
+      "sha256": "eb19cd05c1a0381019656947cdcc724bbd90ab5f84f7e5c4ed79346f8ff51b71",
+      "bytes": 9128
+    },
+    {
+      "path": "src/GpuSuite.Engine/Orchestration/MethodTextScrubber.cs",
+      "sha256": "27cd8ff48799f394239b63c32c247c3a23ff2be056788dd28f283ec4810592e2",
+      "bytes": 1049
+    },
+    {
       "path": "src/GpuSuite.Engine/Orchestration/RunStateManager.cs",
       "sha256": "de977427d31a6f893a1ba00802f48033dae64b3b47d344fa7004f42c61141c22",
       "bytes": 10323
     },
     {
       "path": "src/GpuSuite.Engine/Orchestration/TestOrchestrator.cs",
-      "sha256": "f4003b47310798354d509cf49e88fa5144e763a687e2f9099263aad277713e9b",
-      "bytes": 73423
+      "sha256": "10e619bc79b0b81a660229ee36fb3b5d92ba487534c207577652bf4a02d77a21",
+      "bytes": 74995
     },
     {
       "path": "src/GpuSuite.Engine/Profiles/ProfileAssetLocator.cs",
@@ -1352,9 +1368,59 @@
       "bytes": 25415
     },
     {
+      "path": "src/GpuSuite.Measurement/Monitoring/ChannelFreshness.cs",
+      "sha256": "e8c87406a321bb7bd0bd0f819d4daf2172722339ba368b96abfffd8d427acc5a",
+      "bytes": 737
+    },
+    {
+      "path": "src/GpuSuite.Measurement/Monitoring/FamilyMethodBlock.cs",
+      "sha256": "34114cb17701820bdd492b3c34c3a3e108a35aa9b2701735a792178470b62407",
+      "bytes": 8120
+    },
+    {
+      "path": "src/GpuSuite.Measurement/Monitoring/FamilyMethodValues.cs",
+      "sha256": "5846bf0a6ff07fb868336b352e9e18199ac0326cdca14fe1fff15b4009653340",
+      "bytes": 2187
+    },
+    {
+      "path": "src/GpuSuite.Measurement/Monitoring/FamilyTelemetryData.cs",
+      "sha256": "967cc080bab977615bce7178aee6be7f402ccdc0156247cd03770ae6cb4f8338",
+      "bytes": 6184
+    },
+    {
+      "path": "src/GpuSuite.Measurement/Monitoring/FamilyTelemetryPublisher.cs",
+      "sha256": "d09b2d34577b2434ca5b30f4207319a91ee2996800dcfa9141bd778ae665ef8a",
+      "bytes": 2232
+    },
+    {
+      "path": "src/GpuSuite.Measurement/Monitoring/FamilyTransport/CurrentUserOnlySecurity.cs",
+      "sha256": "65e4fca80ea130dc6309fcd33eac33301115157411d8e258f89a5c2c1a596dc9",
+      "bytes": 1760
+    },
+    {
+      "path": "src/GpuSuite.Measurement/Monitoring/FamilyTransport/FamilyTelemetryAccess.cs",
+      "sha256": "5598fa22f2ba587d1ede13972d5fbf7e6e05d7384a92f7a404e6ea9b5dbd44cf",
+      "bytes": 2246
+    },
+    {
+      "path": "src/GpuSuite.Measurement/Monitoring/FamilyTransport/FamilyTelemetryWriter.cs",
+      "sha256": "beb51d019ad41ccf401426355084431bee9eaebb9dc661f4012b3eebeb838d2e",
+      "bytes": 6865
+    },
+    {
+      "path": "src/GpuSuite.Measurement/Monitoring/FamilyTransport/IFamilyFrameWriter.cs",
+      "sha256": "da361fb7369742f5bdc439e7d0f6bdcc27d915511e60a7f42dd559d8f51a22c5",
+      "bytes": 403
+    },
+    {
+      "path": "src/GpuSuite.Measurement/Monitoring/LatestStatePump.cs",
+      "sha256": "713cc2b673353c6e971233cade4908e6f7a1af7503aac5df4f60c374e0bdab19",
+      "bytes": 2426
+    },
+    {
       "path": "src/GpuSuite.Measurement/Monitoring/MonitoringPool.cs",
-      "sha256": "2a2b168652cc0f2d96ace6be58dccc0877bdf5c95369c06ceca635d9fae63bd6",
-      "bytes": 7412
+      "sha256": "e44bc239898da10c6b61197c58b82f97ca13462e7146b2c77fa254bdf4a30152",
+      "bytes": 5747
     },
     {
       "path": "src/GpuSuite.Measurement/Properties/AssemblyInfo.cs",
@@ -1477,6 +1543,31 @@
       "bytes": 21835
     },
     {
+      "path": "tests/GpuSuite.Tests/FamilyFrameReader.cs",
+      "sha256": "880d66ca227aab9600bd4f1cda9090aa5bc250ac62a2264996d41acca726b071",
+      "bytes": 4499
+    },
+    {
+      "path": "tests/GpuSuite.Tests/FamilyMethodBlockTests.cs",
+      "sha256": "836da4a2155a18bde87e1d348d17649005778eb483c6602c6ae72788d8dd4ac9",
+      "bytes": 24782
+    },
+    {
+      "path": "tests/GpuSuite.Tests/FamilyTelemetryDataTests.cs",
+      "sha256": "e596a4c36fb84f24ee67845569116e1d5313e8dd16bd65b1b0bac4afa6c89e75",
+      "bytes": 14147
+    },
+    {
+      "path": "tests/GpuSuite.Tests/FamilyTelemetryPublisherTests.cs",
+      "sha256": "829b2b9f9a3a126b5588eaa26ca789657bef124fc345faf0cc4fa51f49fbfbde",
+      "bytes": 10022
+    },
+    {
+      "path": "tests/GpuSuite.Tests/FamilyTelemetryWriterTests.cs",
+      "sha256": "f173b869952670383a2f8b2265e51e4707b830af261a5d2c281e7216324c1869",
+      "bytes": 10530
+    },
+    {
       "path": "tests/GpuSuite.Tests/FrameCapturePreflightPolicyTests.cs",
       "sha256": "14d22458d6ed16333e44a0b671b54c7b96dac1c1fe197c8c8c92c8d04068be5b",
       "bytes": 8176
@@ -1485,6 +1576,21 @@
       "path": "tests/GpuSuite.Tests/GpuSuite.Tests.csproj",
       "sha256": "7c5e0c205a51713e6774f0f1b5030cc4036daaed62ebaef91d096ab1ec2964fd",
       "bytes": 1630
+    },
+    {
+      "path": "tests/GpuSuite.Tests/MethodBlockRules.cs",
+      "sha256": "b165a1dfe6c1483e8c7f75b836d87bc9c9a26a84152a5645116cc2b305b7240e",
+      "bytes": 13063
+    },
+    {
+      "path": "tests/GpuSuite.Tests/MethodStateTrackerTests.cs",
+      "sha256": "333d1f691dc3e5e140588277bbb8c0b742d13869c2bf8f33eab65d1f132eb47d",
+      "bytes": 13268
+    },
+    {
+      "path": "tests/GpuSuite.Tests/MethodTextScrubberTests.cs",
+      "sha256": "9c27192158c7af90a42b5900cfaa3969043b057f6ac49529c8c837bd8adc1245",
+      "bytes": 1638
     },
     {
       "path": "tests/GpuSuite.Tests/MonitoringPoolTests.cs",
@@ -1568,6 +1674,5 @@
     }
   ],
   "schema": 1,
-  "generatedUtc": "2026-10-28T13:22:56.8028158Z",
-  "publicRepository": "https://github.com/Hardware-Busters/hardware-busters-gpu-test-suite"
+  "generatedUtc": "2026-11-10T16:20:40.5847399Z"
 }
