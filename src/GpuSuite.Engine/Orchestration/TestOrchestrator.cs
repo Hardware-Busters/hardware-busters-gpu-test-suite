@@ -43,6 +43,7 @@ public sealed class TestOrchestrator
     private readonly ResultAggregator _aggregator;
     private readonly RunLogger _log;
     private readonly Action<BenchmarkProgress>? _progress;
+    private MethodStateTracker? _method;
 
     public TestOrchestrator(SuiteConfig cfg, MeasurementFactory factory, RunValidator validator, ResultAggregator aggregator, RunLogger log,
         Action<BenchmarkProgress>? progress = null)
@@ -89,11 +90,11 @@ public sealed class TestOrchestrator
 
         _log.Info("Suite", $"GPU: {gpuName} | Games: {games.Count} | Default resolutions: {string.Join(", ", resolutions.Select(r => r.Name))}");
 
-        int totalCells = games.Sum(game =>
-            game.Scenes.Count
-            * ResolveGameVariants(game, EffectiveVariantSelection(game)).Count
-            * ResolveGameResolutions(game, resolutions).Count);
+        var plannedSteps = PlannedSteps(games, resolutions);
+        int totalCells = plannedSteps.Count;
         int cellIndex = 0;
+        using var method = MethodStateTracker.Begin(system, plannedSteps, UsesSimulatedSources);
+        _method = method;
 
         // Before any benchmark: auto-select where the menu-nav VISION model runs. Check if the GX10 is active —
         // if so, select it (off-bench); if not, drop to the local GPU. One upfront probe + announcement; the
@@ -133,9 +134,7 @@ public sealed class TestOrchestrator
                 stateMgr?.RecordGameOutcome(skip);
                 continue;
             }
-            int repeats = _cfg.RepeatsOverride is int ovr && ovr >= 1
-                ? ovr
-                : Math.Max(3, game.Repeats <= 0 ? _cfg.RepeatsPerScene : game.Repeats);
+            int repeats = RepeatsFor(game);
 
             // Graphics variants ("extra models") to benchmark this game in. A null entry = the implicit
             // profile-default model (game has no variants, or only the default applies).
@@ -263,6 +262,7 @@ public sealed class TestOrchestrator
                                 if (reloaded is not null)
                                 {
                                     aggregates.Add(reloaded);
+                                    method.CellResumed(reloaded, repeats);
                                     PublishProgress(game, scene, variant, res, reloaded.ValidRuns, repeats,
                                         cellIndex, totalCells, "Resumed", cellCompleted: true);
                                     _log.Info("Resume", $"Skipping completed cell {cellKey} — {reloaded.ValidRuns}/{reloaded.TotalRuns} valid, avg {reloaded.AvgFps:0.0} fps (from checkpoint).");
@@ -275,6 +275,7 @@ public sealed class TestOrchestrator
                                 ? await RunSceneResolutionSingleLaunchAsync(game, scene, variant, res, repeats, gpuName, paths, sceneRunner, launcher, cellIndex, totalCells, gameCts.Token).ConfigureAwait(false)
                                 : await RunSceneResolutionAsync(game, scene, variant, res, repeats, gpuName, paths, sceneRunner, launcher, cellIndex, totalCells, gameCts.Token).ConfigureAwait(false);
                             aggregates.Add(agg);
+                            method.CellMeasured(agg, repeats);
                             PublishProgress(game, scene, variant, res, Math.Min(repeats, agg.ValidRuns), repeats,
                                 cellIndex, totalCells, "Completed", cellCompleted: true);
                             Json.Save(aggPath, agg);
@@ -348,6 +349,7 @@ public sealed class TestOrchestrator
 
         var suite = SaveSuiteSnapshot(paths, system, aggregates, outcomes,
             rosterCompleted: true, visionComputeLabel);
+        method.Complete();
         _log.Info("Suite", $"Overall performance index: {suite.OverallPerformanceIndex:0.0} (geo-mean avg FPS).");
         _log.Info("Suite", $"Roster: {outcomes.Count(o => o.Status == GameStatus.Passed)} passed, " +
             $"{outcomes.Count(o => o.Status == GameStatus.Failed)} failed, {outcomes.Count(o => o.Status == GameStatus.Skipped)} skipped.");
@@ -501,13 +503,41 @@ public sealed class TestOrchestrator
         return intersect;
     }
 
+    // An explicit CLI --repeats N (RepeatsOverride) is honored EXACTLY, including 1; otherwise the default/profile value floors at 3.
+    private int RepeatsFor(GameProfile game)
+        => _cfg.RepeatsOverride is int ovr && ovr >= 1
+            ? ovr
+            : Math.Max(3, game.Repeats <= 0 ? _cfg.RepeatsPerScene : game.Repeats);
+
+    private bool UsesSimulatedSources
+        => _cfg.SimulateLaunch || _cfg.ForceSyntheticFrames || _cfg.ForceSyntheticPower || _cfg.ForceSyntheticTelemetry;
+
+    /// <summary>One line per planned cell: its identity and how it is executed, so a changed repeat count changes the plan.</summary>
+    private List<string> PlannedSteps(IReadOnlyList<GameProfile> games, IReadOnlyList<Resolution> resolutions)
+    {
+        var steps = new List<string>();
+        foreach (var game in games)
+        {
+            var variants = ResolveGameVariants(game, EffectiveVariantSelection(game));
+            var gameResolutions = ResolveGameResolutions(game, resolutions);
+            int repeats = RepeatsFor(game);
+            foreach (var scene in game.Scenes)
+                foreach (var variant in variants)
+                    foreach (var res in gameResolutions)
+                        steps.Add($"{RunStateManager.Cell(game.Id, scene.Id, variant?.Id, res.Name)}|repeats={repeats}|warmups={scene.WarmupRepeats}");
+        }
+        return steps;
+    }
+
     private void PublishProgress(GameProfile game, SceneProfile scene, GameVariant? variant, Resolution res,
         int repeatIndex, int repeatTarget, int cellIndex, int totalCells, string phase, bool cellCompleted)
     {
-        _progress?.Invoke(new BenchmarkProgress(
+        var progress = new BenchmarkProgress(
             game.Id, game.Name, scene.Id, scene.Name, variant?.Id ?? "default", res.Name,
             Math.Max(0, repeatIndex), Math.Max(1, repeatTarget), Math.Max(1, cellIndex), Math.Max(1, totalCells),
-            phase, cellCompleted));
+            phase, cellCompleted);
+        _method?.Progress(progress);
+        _progress?.Invoke(progress);
     }
 
     private async Task<SceneResolutionAggregate> RunSceneResolutionAsync(

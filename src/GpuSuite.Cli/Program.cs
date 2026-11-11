@@ -57,6 +57,7 @@ internal static partial class Program
 
         if (verb == "monitor") return Monitor(args);
         using var monitoring = MonitoringPool.TryStart();
+        using var familyTelemetry = FamilyTelemetryPublisher.TryStart(GpuSuite.BuildInfo.Version);
         var cfg = LoadConfig(a);
 
         if (verb is "help" or "-h" or "--help") { PrintHelp(); return 0; }
