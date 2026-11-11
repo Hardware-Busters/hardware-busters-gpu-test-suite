@@ -1,7 +1,4 @@
 {
-  "generatedUtc": "2026-11-11T07:18:07.5663014Z",
-  "schema": 1,
-  "sourceRevision": "retained privately",
   "files": [
     {
       "path": ".gitattributes",
@@ -350,7 +347,7 @@
     },
     {
       "path": "settings.example.json",
-      "sha256": "561954d9ebd31b2f50318e618c7cd267105133abfae3d46762ddb3bd8639a733",
+      "sha256": "995bdabeac257cc93acfc5e7dbc76b5a69ab98a27832688e1c70a7aa612a8bb0",
       "bytes": 717
     },
     {
@@ -930,8 +927,8 @@
     },
     {
       "path": "src/GpuSuite.Core/Diagnostics/MonitoringMethod.cs",
-      "sha256": "95fd5fb5e008b8c7ca822e514d84434d577aed1aae0706014144f2845193e7bd",
-      "bytes": 1942
+      "sha256": "10519329f2c1e802d0efe7548af49d4e40ba5f3fdb555a52766ca7c3daab9e39",
+      "bytes": 2343
     },
     {
       "path": "src/GpuSuite.Core/Diagnostics/MonitoringState.cs",
@@ -1210,13 +1207,18 @@
     },
     {
       "path": "src/GpuSuite.Engine/Orchestration/MethodStateTracker.cs",
-      "sha256": "eb19cd05c1a0381019656947cdcc724bbd90ab5f84f7e5c4ed79346f8ff51b71",
-      "bytes": 9128
+      "sha256": "86f62727f953ffac7c2b25d33bc561840888ce0e0c2ad0292b29697176b64c1d",
+      "bytes": 13132
     },
     {
       "path": "src/GpuSuite.Engine/Orchestration/MethodTextScrubber.cs",
       "sha256": "f5ae962c48fd3c530d2905cee15c768619ae614920dae3ef55e635565c303c96",
       "bytes": 1264
+    },
+    {
+      "path": "src/GpuSuite.Engine/Orchestration/PlannedStep.cs",
+      "sha256": "6244c591c8d01943b4a37f4de32216195bc652c2e96fc6a7f5ca7e88991961c5",
+      "bytes": 746
     },
     {
       "path": "src/GpuSuite.Engine/Orchestration/RunStateManager.cs",
@@ -1225,8 +1227,8 @@
     },
     {
       "path": "src/GpuSuite.Engine/Orchestration/TestOrchestrator.cs",
-      "sha256": "10e619bc79b0b81a660229ee36fb3b5d92ba487534c207577652bf4a02d77a21",
-      "bytes": 74995
+      "sha256": "e4572b4ffe3b51f76510f0076f5dd556f9c7e6fad5370f545dbca4d6bbc2c1f8",
+      "bytes": 75111
     },
     {
       "path": "src/GpuSuite.Engine/Profiles/ProfileAssetLocator.cs",
@@ -1375,13 +1377,13 @@
     },
     {
       "path": "src/GpuSuite.Measurement/Monitoring/FamilyMethodBlock.cs",
-      "sha256": "34114cb17701820bdd492b3c34c3a3e108a35aa9b2701735a792178470b62407",
-      "bytes": 8120
+      "sha256": "7ec121b9a30915dfcb30c6ad3f1972d69b622494ed7dcfad022eb8422db89a58",
+      "bytes": 10827
     },
     {
       "path": "src/GpuSuite.Measurement/Monitoring/FamilyMethodValues.cs",
-      "sha256": "5846bf0a6ff07fb868336b352e9e18199ac0326cdca14fe1fff15b4009653340",
-      "bytes": 2187
+      "sha256": "d03e89f1d8131e8e0764dc9bb56b3d701f69afc8f61a4c228bad784e38e849ea",
+      "bytes": 2232
     },
     {
       "path": "src/GpuSuite.Measurement/Monitoring/FamilyTelemetryData.cs",
@@ -1550,8 +1552,8 @@
     },
     {
       "path": "tests/GpuSuite.Tests/FamilyMethodBlockTests.cs",
-      "sha256": "836da4a2155a18bde87e1d348d17649005778eb483c6602c6ae72788d8dd4ac9",
-      "bytes": 24782
+      "sha256": "f62dd6b897df0d67514f83142ce49a6fc557ac62f2ed366ad2dce552b65b4b2b",
+      "bytes": 42867
     },
     {
       "path": "tests/GpuSuite.Tests/FamilyTelemetryDataTests.cs",
@@ -1580,13 +1582,13 @@
     },
     {
       "path": "tests/GpuSuite.Tests/MethodBlockRules.cs",
-      "sha256": "b165a1dfe6c1483e8c7f75b836d87bc9c9a26a84152a5645116cc2b305b7240e",
-      "bytes": 13063
+      "sha256": "ec96bebf9202bd0295d87b7f9c6d2241b498df74e963cf16b6c3a1d0c93edfac",
+      "bytes": 15826
     },
     {
       "path": "tests/GpuSuite.Tests/MethodStateTrackerTests.cs",
-      "sha256": "333d1f691dc3e5e140588277bbb8c0b742d13869c2bf8f33eab65d1f132eb47d",
-      "bytes": 13268
+      "sha256": "74f877eb8ca10e651f0d116782e5011d8f3a563ba35ee340b53c0d756c8b03f6",
+      "bytes": 28714
     },
     {
       "path": "tests/GpuSuite.Tests/MethodTextScrubberTests.cs",
@@ -1674,5 +1676,8 @@
       "bytes": 2782
     }
   ],
-  "publicRepository": "https://github.com/Hardware-Busters/hardware-busters-gpu-test-suite"
+  "generatedUtc": "2026-11-11T18:07:06.1817046Z",
+  "publicRepository": "https://github.com/Hardware-Busters/hardware-busters-gpu-test-suite",
+  "sourceRevision": "retained privately",
+  "schema": 1
 }

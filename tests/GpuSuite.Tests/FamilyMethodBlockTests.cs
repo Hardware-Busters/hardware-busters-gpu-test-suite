@@ -10,7 +10,7 @@ namespace GpuSuite.Tests;
 
 public sealed class FamilyMethodBlockTests
 {
-    private const int MaxBlockBytes = 16_384;
+    private const int MaxBlockBytes = 32_768;
     private static readonly DateTime Now = new(2026, 11, 10, 9, 41, 37, 500, DateTimeKind.Utc);
     private static readonly JsonSerializerOptions WriterOptions = new() { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
 
@@ -22,13 +22,14 @@ public sealed class FamilyMethodBlockTests
         new MethodResults(new Dictionary<string, object?> { ["completedCells"] = 411, ["averageFps"] = 91.84 }, false),
         [], new Dictionary<string, object?>(), Now.AddSeconds(-30));
 
-    private static JsonElement Build(MonitoringMethod? method, bool online = true)
+    private static JsonElement Build(MonitoringMethod? method, bool online = true, int maxBlockBytes = MaxBlockBytes)
     {
-        byte[] json = JsonSerializer.SerializeToUtf8Bytes(FamilyMethodBlock.Build(method, online, Now), WriterOptions);
+        byte[] json = JsonSerializer.SerializeToUtf8Bytes(FamilyMethodBlock.Build(method, online, Now, maxBlockBytes), WriterOptions);
         Assert.True(json.Length <= MaxBlockBytes);
         using var parsed = JsonDocument.Parse(json);
         var block = parsed.RootElement.Clone();
         Assert.Empty(MethodBlockRules.Validate(block));
+        if (block.GetProperty("available").GetBoolean()) Assert.True(json.Length <= maxBlockBytes);
         return block;
     }
 
@@ -267,7 +268,7 @@ public sealed class FamilyMethodBlockTests
     {
         var method = Running();
         var block = Build(method with { Unit = method.Unit with { Hash = new string('h', 65) } });
-        Assert.Equal(new string('h', 63) + "…", block.GetProperty("unit").GetProperty("hash").GetString());
+        Assert.Equal(new string('h', 63) + "\u2026", block.GetProperty("unit").GetProperty("hash").GetString());
     }
 
     [Fact]
@@ -342,65 +343,247 @@ public sealed class FamilyMethodBlockTests
         Assert.Equal(0, block.GetProperty("progress").GetProperty("total").GetInt32());
     }
 
+    [Fact]
+    public void PlanStepsArePublishedInPlanOrderWithAllFourStateWords()
+    {
+        var method = Running();
+        MethodStep[] steps = [new("first", StepState.Done), new("second", StepState.Now), new("third", StepState.Todo), new("fourth", StepState.Skipped)];
+        var block = Build(method with
+        {
+            Plan = method.Plan with { Steps = steps }, Session = method.Session with { Index = 2 },
+            Progress = new MethodProgress(1, method.Plan.TotalSteps)
+        });
+        var actual = block.GetProperty("plan").GetProperty("steps").EnumerateArray().ToArray();
+        Assert.Equal(steps.Select(step => step.Label), actual.Select(step => step.GetProperty("label").GetString()));
+        Assert.Equal(["done", "now", "todo", "skipped"], actual.Select(step => step.GetProperty("state").GetString()));
+    }
+
+    [Fact]
+    public void PlanStepsAreNullWhenThePlanHasNoList()
+    {
+        Assert.Equal(JsonValueKind.Null, Build(Running()).GetProperty("plan").GetProperty("steps").ValueKind);
+    }
+
+    [Theory]
+    [InlineData(96)]
+    [InlineData(97)]
+    public void StepLabelsAreCleanedAndClippedLikeTheSessionStep(int length)
+    {
+        var method = Running();
+        string label = "before\n\t" + new string('x', length - 8);
+        var block = Build(method with
+        {
+            Plan = method.Plan with { Steps = [new(label, StepState.Todo)] },
+            Session = method.Session with { Step = label }, Progress = new MethodProgress(0, method.Plan.TotalSteps)
+        });
+        string expected = "before  " + new string('x', Math.Min(length, 96) - 8 - (length > 96 ? 1 : 0)) + (length > 96 ? "\u2026" : "");
+        Assert.Equal(expected, block.GetProperty("plan").GetProperty("steps")[0].GetProperty("label").GetString());
+        Assert.Equal(expected, block.GetProperty("session").GetProperty("step").GetString());
+    }
+
+    [Fact]
+    public void StepLabelsAreClippedWithoutSplittingASurrogatePair()
+    {
+        var method = Running();
+        string label = new string('x', 94) + "\ud83d\ude00x";
+        var block = Build(method with
+        {
+            Plan = method.Plan with { Steps = [new(label, StepState.Todo)] }, Progress = new MethodProgress(0, method.Plan.TotalSteps)
+        });
+        Assert.Equal(new string('x', 94) + "\u2026", block.GetProperty("plan").GetProperty("steps")[0].GetProperty("label").GetString());
+    }
+
+    [Theory]
+    [InlineData("tooLong", "The step list is longer than the plan.")]
+    [InlineData("emptyLabel", "A plan step has no label or an unknown state.")]
+    [InlineData("blankLabel", "A plan step has no label or an unknown state.")]
+    [InlineData("controlLabel", "A plan step has no label or an unknown state.")]
+    [InlineData("unknownState", "A plan step has no label or an unknown state.")]
+    [InlineData("twoNow", "More than one plan step is in progress.")]
+    [InlineData("doneNow", "A plan step is in progress although the run is not.")]
+    [InlineData("doneTodo", "A finished run still has a plan step waiting.")]
+    [InlineData("abortedNow", "A plan step is in progress although the run is not.")]
+    [InlineData("wrongIndex", "The step in progress is not the one the session names.")]
+    public void InvalidStepsPublishTheQuietFormWithASpecificError(string failure, string expectedError)
+    {
+        var method = Running();
+        method = method with
+        {
+            Plan = method.Plan with { Steps = [new("first", StepState.Now)] }, Session = method.Session with { Index = 1 },
+            Progress = new MethodProgress(0, method.Plan.TotalSteps)
+        };
+        method = failure switch
+        {
+            "tooLong" => method with { Plan = method.Plan with { TotalSteps = 0 }, Progress = new MethodProgress(0, 0), Session = method.Session with { Index = null } },
+            "emptyLabel" => method with { Plan = method.Plan with { Steps = [new("", StepState.Todo)] } },
+            "blankLabel" => method with { Plan = method.Plan with { Steps = [new("   ", StepState.Todo)] } },
+            "controlLabel" => method with { Plan = method.Plan with { Steps = [new("\n\t", StepState.Todo)] } },
+            "unknownState" => method with { Plan = method.Plan with { Steps = [new("first", (StepState)99)] } },
+            "twoNow" => method with { Plan = method.Plan with { Steps = [new("first", StepState.Now), new("second", StepState.Now)] } },
+            "doneNow" => method with { Session = method.Session with { State = MethodState.Done } },
+            "doneTodo" => method with
+            {
+                Plan = method.Plan with { Steps = [new("first", StepState.Todo)] },
+                Session = method.Session with { State = MethodState.Done }
+            },
+            "abortedNow" => method with { Session = method.Session with { State = MethodState.Aborted } },
+            "wrongIndex" => method with { Session = method.Session with { Index = 2 } },
+            _ => throw new ArgumentOutOfRangeException(nameof(failure))
+        };
+        var block = Build(method);
+        Quiet(block, "invalid");
+        Assert.NotEmpty(block.GetProperty("error").GetString()!);
+        Assert.Equal(expectedError, block.GetProperty("error").GetString());
+    }
+
+    [Fact]
+    public void ALongPlanPublishesOnlyItsFirst256Steps()
+    {
+        var method = Running();
+        var steps = Enumerable.Range(1, 300).Select(i => new MethodStep("step " + i, StepState.Todo)).ToArray();
+        var actual = Build(method with
+        {
+            Plan = method.Plan with { Steps = steps }, Progress = new MethodProgress(0, method.Plan.TotalSteps)
+        }).GetProperty("plan").GetProperty("steps");
+        Assert.Equal(256, actual.GetArrayLength());
+        Assert.Equal(steps.Take(256).Select(step => step.Label), actual.EnumerateArray().Select(step => step.GetProperty("label").GetString()));
+    }
+
+    [Fact]
+    public void InvalidStepsBeyondThePublishedPrefixAreStillRejected()
+    {
+        var method = Running();
+        var steps = Enumerable.Range(1, 257).Select(i => new MethodStep("step " + i, StepState.Todo)).ToArray();
+        steps[^1] = new MethodStep("", StepState.Todo);
+        Quiet(Build(method with
+        {
+            Plan = method.Plan with { Steps = steps }, Progress = new MethodProgress(0, method.Plan.TotalSteps)
+        }), "invalid");
+    }
+
     private static Dictionary<string, object?> Fields(int count, string text) =>
         Enumerable.Range(0, count).ToDictionary(i => "field" + i, _ => (object?)text);
 
-    private static MonitoringMethod Large(int resultFields, int detailFields, int issueCount, int extraFields)
+    private static MonitoringMethod ShrinkFixture()
     {
         var method = Running();
-        string wide = new('\u4e00', 240);
+        string text = new('x', 120);
         return method with
         {
-            Unit = method.Unit with { Details = Fields(detailFields, wide) },
-            Results = new MethodResults(Fields(resultFields, wide), false), Extra = Fields(extraFields, wide),
-            Issues = Enumerable.Range(0, issueCount).Select(i => new MethodIssue("issue" + i, wide, Now.AddSeconds(i))).ToArray()
+            Plan = method.Plan with { Steps = [new("finished", StepState.Done), new("next", StepState.Todo), new("last", StepState.Todo)] },
+            Progress = new MethodProgress(1, method.Plan.TotalSteps),
+            Unit = method.Unit with { Details = Fields(3, text) },
+            Extra = Fields(3, text),
+            Issues = Enumerable.Range(0, 3).Select(i => new MethodIssue("issue" + i, text, Now.AddSeconds(i))).ToArray()
         };
+    }
+
+    // Derive an exact byte budget from the expected document, so only the requested reductions can fit.
+    private static JsonElement ShrinkTo(MonitoringMethod method, Action<JsonNode> reduce)
+    {
+        var expected = JsonNode.Parse(Build(method).GetRawText())!;
+        reduce(expected);
+        string json = expected.ToJsonString(WriterOptions);
+        int limit = System.Text.Encoding.UTF8.GetByteCount(json);
+        var actual = Build(method, maxBlockBytes: limit);
+        Assert.Equal(json, actual.GetRawText());
+        return actual;
     }
 
     [Fact]
     public void SizeReductionDropsExtraFromTheEndBeforeIssuesOrDetails()
     {
-        var block = Build(Large(8, 4, 3, 32));
-        var names = block.GetProperty("extra").EnumerateObject().Select(p => p.Name).ToArray();
-        Assert.InRange(names.Length, 1, 31);
-        Assert.Equal(Enumerable.Range(0, names.Length).Select(i => "field" + i), names);
+        var block = ShrinkTo(ShrinkFixture(), expected =>
+        {
+            expected["plan"]!["steps"] = null;
+            expected["extra"]!.AsObject().Remove("field2");
+        });
+        Assert.Equal(JsonValueKind.Null, block.GetProperty("plan").GetProperty("steps").ValueKind);
+        Assert.Equal(["field0", "field1"], block.GetProperty("extra").EnumerateObject().Select(p => p.Name));
         Assert.Equal(3, block.GetProperty("issues").GetArrayLength());
-        Assert.Equal(4, block.GetProperty("unit").GetProperty("details").EnumerateObject().Count());
+        Assert.Equal(3, block.GetProperty("unit").GetProperty("details").EnumerateObject().Count());
     }
 
     [Fact]
     public void SizeReductionDropsOldestIssuesBeforeDetails()
     {
-        var block = Build(Large(10, 4, 10, 1));
+        var block = ShrinkTo(ShrinkFixture(), expected =>
+        {
+            expected["plan"]!["steps"] = null;
+            expected["extra"] = new JsonObject();
+            expected["issues"]!.AsArray().RemoveAt(0);
+        });
         Assert.Empty(block.GetProperty("extra").EnumerateObject());
-        var issues = block.GetProperty("issues").EnumerateArray().ToArray();
-        Assert.InRange(issues.Length, 1, 9);
-        Assert.Equal(Enumerable.Range(10 - issues.Length, issues.Length).Select(i => "issue" + i), issues.Select(i => i.GetProperty("field").GetString()));
-        Assert.Equal(4, block.GetProperty("unit").GetProperty("details").EnumerateObject().Count());
+        Assert.Equal(["issue1", "issue2"], block.GetProperty("issues").EnumerateArray().Select(i => i.GetProperty("field").GetString()));
+        Assert.Equal(3, block.GetProperty("unit").GetProperty("details").EnumerateObject().Count());
     }
 
     [Fact]
     public void SizeReductionFinallyDropsDetailsFromTheEnd()
     {
-        var block = Build(Large(16, 16, 10, 1));
+        var block = ShrinkTo(ShrinkFixture(), expected =>
+        {
+            expected["plan"]!["steps"] = null;
+            expected["extra"] = new JsonObject();
+            expected["issues"] = new JsonArray();
+            expected["unit"]!["details"]!.AsObject().Remove("field2");
+        });
         Assert.Empty(block.GetProperty("extra").EnumerateObject());
         Assert.Empty(block.GetProperty("issues").EnumerateArray());
-        var names = block.GetProperty("unit").GetProperty("details").EnumerateObject().Select(p => p.Name).ToArray();
-        Assert.InRange(names.Length, 1, 15);
-        Assert.Equal(Enumerable.Range(0, names.Length).Select(i => "field" + i), names);
-        Assert.Equal(16, block.GetProperty("results").GetProperty("provisional").EnumerateObject().Count());
+        Assert.Equal(["field0", "field1"], block.GetProperty("unit").GetProperty("details").EnumerateObject().Select(p => p.Name));
     }
 
     [Fact]
     public void IrreducibleOversizePublishesTheRequiredInvalidError()
     {
-        var method = Large(16, 16, 10, 32);
-        // An unassigned code point is written as a six-byte \uXXXX escape, so the values alone outgrow the limit.
-        string escaped = new('\uffff', 240);
-        Assert.True(JsonSerializer.SerializeToUtf8Bytes(escaped, WriterOptions).Length > 6 * escaped.Length);
-        var block = Build(method with { Results = new MethodResults(Fields(16, escaped), false) });
+        var block = Build(ShrinkFixture(), maxBlockBytes: 1);
         Quiet(block, "invalid");
         Assert.Equal("Method block too large.", block.GetProperty("error").GetString());
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    public void SizeReductionDropsTrailingTodoEntriesOneAtATimeKeepingAPrefix(int retained)
+    {
+        var method = ShrinkFixture();
+        var block = ShrinkTo(method, expected =>
+        {
+            var steps = expected["plan"]!["steps"]!.AsArray();
+            while (steps.Count > retained) steps.RemoveAt(steps.Count - 1);
+        });
+        Assert.Equal(method.Plan.Steps!.Take(retained).Select(step => step.Label),
+            block.GetProperty("plan").GetProperty("steps").EnumerateArray().Select(step => step.GetProperty("label").GetString()));
+    }
+
+    [Theory]
+    [InlineData(StepState.Done)]
+    [InlineData(StepState.Now)]
+    [InlineData(StepState.Skipped)]
+    public void SizeReductionDropsTheWholeListWhenItsLastEntryIsNotTodo(StepState lastState)
+    {
+        var method = ShrinkFixture();
+        method = method with
+        {
+            Plan = method.Plan with { Steps = [new("earlier todo", StepState.Todo), new("last", lastState)] },
+            Session = method.Session with { Index = 2 },
+            Progress = new MethodProgress(lastState == StepState.Done ? 1 : 0, method.Plan.TotalSteps)
+        };
+        var block = ShrinkTo(method, expected => expected["plan"]!["steps"] = null);
+        Assert.Equal(JsonValueKind.Null, block.GetProperty("plan").GetProperty("steps").ValueKind);
+    }
+
+    [Fact]
+    public void SizeReductionDropsAnEmptyListBeforeExtra()
+    {
+        var method = ShrinkFixture();
+        method = method with { Plan = method.Plan with { Steps = [] }, Progress = new MethodProgress(0, method.Plan.TotalSteps) };
+        // [] is smaller than null; a smaller budget must also drop the final extra member.
+        ShrinkTo(method, expected =>
+        {
+            expected["plan"]!["steps"] = null;
+            expected["extra"]!.AsObject().Remove("field2");
+        });
     }
 
     [Theory]
@@ -422,6 +605,7 @@ public sealed class FamilyMethodBlockTests
     [InlineData(16)]
     [InlineData(17)]
     [InlineData(18)]
+    [InlineData(19)]
     public void IndependentCheckerDetectsEachContractRule(int rule)
     {
         var node = JsonNode.Parse(Build(Running()).GetRawText())!;
@@ -445,9 +629,189 @@ public sealed class FamilyMethodBlockTests
             case 16: node["issues"] = new JsonArray(new JsonObject { ["field"] = null, ["message"] = "", ["utc"] = "wrong" }); break;
             case 17: node["extra"]!["bad-name"] = true; break;
             case 18: node["unknown"] = "control\ncharacter"; break;
+            case 19: node["plan"]!["steps"] = new JsonArray(new JsonObject { ["label"] = "", ["state"] = "todo" }); break;
         }
         using var parsed = JsonDocument.Parse(node.ToJsonString(WriterOptions));
         Assert.Contains(MethodBlockRules.Validate(parsed.RootElement), violation => violation.StartsWith($"Rule {rule}:", StringComparison.Ordinal));
+    }
+
+    [Theory]
+    [InlineData("notArray")]
+    [InlineData("tooMany")]
+    [InlineData("longerThanPlan")]
+    [InlineData("notObject")]
+    [InlineData("missingLabel")]
+    [InlineData("emptyLabel")]
+    [InlineData("longLabel")]
+    [InlineData("nonTextLabel")]
+    [InlineData("missingState")]
+    [InlineData("unknownState")]
+    [InlineData("twoNow")]
+    [InlineData("inactiveNow")]
+    [InlineData("wrongIndex")]
+    [InlineData("doneTodo")]
+    [InlineData("fewerCompletedThanDone")]
+    [InlineData("moreCompletedThanDoneAndSkipped")]
+    public void IndependentCheckerRejectsEveryStepRuleViolation(string failure)
+    {
+        var node = JsonNode.Parse(Build(Running()).GetRawText())!;
+        node["plan"]!["steps"] = new JsonArray(new JsonObject { ["label"] = "first", ["state"] = "todo" });
+        node["progress"]!["completed"] = 0;
+        var steps = node["plan"]!["steps"]!.AsArray();
+        switch (failure)
+        {
+            case "notArray": node["plan"]!["steps"] = new JsonObject(); break;
+            case "tooMany":
+                while (steps.Count <= 256) steps.Add(new JsonObject { ["label"] = "step", ["state"] = "todo" });
+                break;
+            case "longerThanPlan": node["plan"]!["totalSteps"] = 0; break;
+            case "notObject": steps[0] = "step"; break;
+            case "missingLabel": steps[0]!.AsObject().Remove("label"); break;
+            case "emptyLabel": steps[0]!["label"] = ""; break;
+            case "longLabel": steps[0]!["label"] = new string('x', 97); break;
+            case "nonTextLabel": steps[0]!["label"] = 1; break;
+            case "missingState": steps[0]!.AsObject().Remove("state"); break;
+            case "unknownState": steps[0]!["state"] = "pending"; break;
+            case "twoNow":
+                steps[0]!["state"] = "now";
+                steps.Add(new JsonObject { ["label"] = "second", ["state"] = "now" });
+                break;
+            case "inactiveNow": steps[0]!["state"] = "now"; node["session"]!["state"] = "done"; break;
+            case "wrongIndex": steps[0]!["state"] = "now"; break;
+            case "doneTodo": node["session"]!["state"] = "done"; break;
+            case "fewerCompletedThanDone": steps[0]!["state"] = "done"; break;
+            case "moreCompletedThanDoneAndSkipped": node["progress"]!["completed"] = 1; break;
+            default: throw new ArgumentOutOfRangeException(nameof(failure));
+        }
+        using var parsed = JsonDocument.Parse(node.ToJsonString(WriterOptions));
+        Assert.Contains(MethodBlockRules.Validate(parsed.RootElement), violation => violation.StartsWith("Rule 19:", StringComparison.Ordinal));
+    }
+
+    [Theory]
+    [InlineData("absent")]
+    [InlineData("null")]
+    [InlineData("empty")]
+    [InlineData("prefix")]
+    [InlineData("maximum")]
+    [InlineData("labelLimit")]
+    [InlineData("running")]
+    [InlineData("paused")]
+    [InlineData("waitingForPerson")]
+    [InlineData("unnumbered")]
+    [InlineData("noPlan")]
+    public void IndependentCheckerAcceptsOptionalListsPrefixesAndActiveStates(string scenario)
+    {
+        var node = JsonNode.Parse(Build(Running()).GetRawText())!;
+        node["plan"]!["steps"] = new JsonArray(new JsonObject { ["label"] = "first", ["state"] = "todo" });
+        node["progress"]!["completed"] = 0;
+        switch (scenario)
+        {
+            case "absent": node["plan"]!.AsObject().Remove("steps"); break;
+            case "null": node["plan"]!["steps"] = null; break;
+            case "empty": node["plan"]!["steps"] = new JsonArray(); break;
+            case "prefix": break;
+            case "maximum":
+                var steps = node["plan"]!["steps"]!.AsArray();
+                while (steps.Count < 256) steps.Add(new JsonObject { ["label"] = "step", ["state"] = "todo" });
+                break;
+            case "labelLimit": node["plan"]!["steps"]![0]!["label"] = new string('x', 96); break;
+            case "noPlan":
+                node["plan"] = null;
+                node["session"]!["state"] = "done";
+                node["session"]!["index"] = null;
+                break;
+            default:
+                node["plan"]!["steps"]![0]!["state"] = "now";
+                node["session"]!["state"] = scenario == "unnumbered" ? "running" : scenario;
+                node["session"]!["index"] = scenario == "unnumbered" ? null : JsonValue.Create(1);
+                if (scenario == "waitingForPerson") node["session"]!["personNeeded"] = new JsonObject { ["kind"] = "confirm", ["text"] = "Continue" };
+                break;
+        }
+        using var parsed = JsonDocument.Parse(node.ToJsonString(WriterOptions));
+        Assert.Empty(MethodBlockRules.Validate(parsed.RootElement));
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    public void IndependentCheckerAcceptsProgressWithinDoneAndSkippedCounts(int completed)
+    {
+        var node = JsonNode.Parse(Build(Running()).GetRawText())!;
+        node["plan"]!["steps"] = new JsonArray(
+            new JsonObject { ["label"] = "finished", ["state"] = "done" },
+            new JsonObject { ["label"] = "cancelled", ["state"] = "skipped" });
+        node["progress"]!["completed"] = completed;
+        using var parsed = JsonDocument.Parse(node.ToJsonString(WriterOptions));
+
+        Assert.Empty(MethodBlockRules.Validate(parsed.RootElement));
+    }
+
+    [Theory]
+    [InlineData(256, true)]
+    [InlineData(257, false)]
+    public void IndependentCheckerEnforcesTheNewExtraArrayLimit(int count, bool valid)
+    {
+        var node = JsonNode.Parse(Build(Running()).GetRawText())!;
+        node["extra"]!["items"] = new JsonArray(Enumerable.Range(0, count).Select(i => (JsonNode?)JsonValue.Create(i)).ToArray());
+        using var parsed = JsonDocument.Parse(node.ToJsonString(WriterOptions));
+        var violations = MethodBlockRules.Validate(parsed.RootElement);
+        if (valid) Assert.Empty(violations);
+        else Assert.Contains(violations, violation => violation.StartsWith("Rule 17:", StringComparison.Ordinal));
+    }
+
+    private static MonitoringMethod OversizedChecklistFixture()
+    {
+        const int stepCount = 256;
+        const int labelLength = 96;
+        var steps = Enumerable.Range(1, stepCount).Select(i => new MethodStep(
+            i.ToString("D3", CultureInfo.InvariantCulture).PadRight(labelLength, 'x'),
+            i switch { 1 => StepState.Done, 2 => StepState.Now, 3 => StepState.Skipped, _ => StepState.Todo })).ToArray();
+        var method = Running();
+        return method with
+        {
+            Plan = method.Plan with { TotalSteps = stepCount, Steps = steps },
+            Progress = new MethodProgress(1, stepCount), Session = method.Session with { Index = 2 },
+            Extra = Fields(32, new string('e', 240))
+        };
+    }
+
+    private static void AssertOnlyTrailingTodoStepsWereRemoved(MonitoringMethod method, JsonElement block)
+    {
+        Assert.True(block.GetProperty("available").GetBoolean());
+        var actual = block.GetProperty("plan").GetProperty("steps").EnumerateArray().ToArray();
+        var input = method.Plan.Steps!;
+        Assert.InRange(actual.Length, 3, input.Count - 1);
+        Assert.Equal(input.Take(actual.Length).Select(step => step.Label), actual.Select(step => step.GetProperty("label").GetString()));
+        Assert.Equal(input.Take(actual.Length).Select(step => step.State.ToString().ToLowerInvariant()),
+            actual.Select(step => step.GetProperty("state").GetString()));
+        Assert.All(input.Skip(actual.Length), step => Assert.Equal(StepState.Todo, step.State));
+        Assert.Equal(method.Extra.Keys, block.GetProperty("extra").EnumerateObject().Select(property => property.Name));
+        Assert.All(block.GetProperty("extra").EnumerateObject(), property => Assert.Equal(method.Extra[property.Name], property.Value.GetString()));
+    }
+
+    [Fact]
+    public void TheDefaultByteLimitTrimsAFullLengthAsciiChecklistToAPrefix()
+    {
+        var method = OversizedChecklistFixture();
+
+        var published = FamilyMethodBlock.Build(method, online: true, Now);
+        byte[] json = JsonSerializer.SerializeToUtf8Bytes(published, WriterOptions);
+        using var document = JsonDocument.Parse(json);
+
+        Assert.True(json.Length <= MaxBlockBytes);
+        Assert.Empty(MethodBlockRules.Validate(document.RootElement));
+        AssertOnlyTrailingTodoStepsWereRemoved(method, document.RootElement);
+    }
+
+    [Fact]
+    public void TheSizeSeamCannotRaiseThePublishedByteLimit()
+    {
+        var method = OversizedChecklistFixture();
+
+        var block = Build(method, maxBlockBytes: MaxBlockBytes * 2);
+
+        AssertOnlyTrailingTodoStepsWereRemoved(method, block);
+        Assert.Equal(Build(method).GetRawText(), block.GetRawText());
     }
 
     private sealed class UnreadableValues : IReadOnlyDictionary<string, object?>

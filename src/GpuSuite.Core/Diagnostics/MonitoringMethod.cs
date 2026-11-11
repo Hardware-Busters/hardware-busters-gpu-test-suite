@@ -25,7 +25,13 @@ public sealed record MonitoringMethod(
 /// <summary>The unit under test. <paramref name="Details"/> holds scalar values only (string, number, bool or null).</summary>
 public sealed record MethodUnit(string Id, string? Hash, IReadOnlyDictionary<string, object?> Details);
 
-public sealed record MethodPlan(string Id, string? Hash, int TotalSteps);
+/// <param name="Steps">The plan as a checklist, in plan order; a prefix of the plan when it is longer than the block can list, or null.</param>
+public sealed record MethodPlan(string Id, string? Hash, int TotalSteps, IReadOnlyList<MethodStep>? Steps = null);
+
+public enum StepState { Done, Now, Todo, Skipped }
+
+/// <summary>One entry of the checklist: a short label and where the step stands.</summary>
+public sealed record MethodStep(string Label, StepState State);
 
 /// <summary><paramref name="Index"/> is the 1-based number of the step in progress, or null when none is.</summary>
 public sealed record MethodSession(MethodState State, string? Step, string? Phase, int? Index);
