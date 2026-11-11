@@ -8,6 +8,7 @@ public static class MonitoringState
     private static readonly object Gate = new();
     private static readonly Dictionary<string, MonitoringChannel> Channels = new();
     private static MonitoringOperation _operation = new("idle");
+    private static MonitoringMethod? _method;
     public static MonitoringEvent? LastEvent { get; private set; }
     public static MonitoringEvent? LastFault { get; private set; }
     public static event Action? Changed;
@@ -37,6 +38,12 @@ public static class MonitoringState
         Signal();
     }
 
+    public static void Method(MonitoringMethod? method)
+    {
+        lock (Gate) _method = method;
+        Signal();
+    }
+
     public static void Logged(TimelineEntry entry)
     {
         // Deliberately omit raw log messages: timeline text may contain private launch arguments/paths.
@@ -51,6 +58,11 @@ public static class MonitoringState
     public static (MonitoringOperation Operation, MonitoringChannel[] Channels) Read()
     {
         lock (Gate) return (_operation, Channels.Values.ToArray());
+    }
+
+    public static MonitoringMethod? ReadMethod()
+    {
+        lock (Gate) return _method;
     }
 
     private static void Signal()

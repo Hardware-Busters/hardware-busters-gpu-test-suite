@@ -30,6 +30,7 @@ public partial class App : Application
     private const string ShowWindowEventName = "GpuSuite.App.ShowWindow.v1";
     private Mutex? _singleInstanceMutex;
     private MonitoringPool? _monitoring;
+    private FamilyTelemetryPublisher? _familyTelemetry;
     private EventWaitHandle? _showWindowEvent;
 
     protected override void OnStartup(StartupEventArgs e)
@@ -49,6 +50,7 @@ public partial class App : Application
 
         base.OnStartup(e);
         _monitoring = MonitoringPool.TryStart();
+        _familyTelemetry = FamilyTelemetryPublisher.TryStart(GpuSuite.BuildInfo.Version);
 
         // Listen for later launches that ask us to come to the foreground (auto-reset = one pulse per launch).
         _showWindowEvent = new EventWaitHandle(false, EventResetMode.AutoReset, ShowWindowEventName);
@@ -93,6 +95,7 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        _familyTelemetry?.Dispose();
         _monitoring?.Dispose();
         try { _singleInstanceMutex?.ReleaseMutex(); } catch { /* not owned / already gone */ }
         _singleInstanceMutex?.Dispose();
