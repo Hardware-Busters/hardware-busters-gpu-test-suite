@@ -8,6 +8,9 @@ namespace GpuSuite.Tests;
 
 internal sealed class MethodBlockRules
 {
+    private const int MaxBlockBytes = 32_768;
+    private const int MaxArrayItems = 256;
+    private const int StepLabelLimit = 96;
     private readonly List<string> _violations = [];
     private static readonly JsonSerializerOptions WriterOptions = new() { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
 
@@ -45,7 +48,7 @@ internal sealed class MethodBlockRules
     private void Document(JsonElement block)
     {
         Check(block.ValueKind == JsonValueKind.Object &&
-            Encoding.UTF8.GetByteCount(JsonSerializer.Serialize(block, WriterOptions)) <= 16_384, 1, "Object or size");
+            Encoding.UTF8.GetByteCount(JsonSerializer.Serialize(block, WriterOptions)) <= MaxBlockBytes, 1, "Object or size");
         Check(Word(Member(block, "schema", 2), "faganas-method/v1"), 2, "Schema");
         var freshness = Member(block, "freshness", 3);
         var available = Member(block, "available", 3);
@@ -74,6 +77,7 @@ internal sealed class MethodBlockRules
         if (!IsNull(unit)) Unit(unit);
         if (!IsNull(plan)) Plan(plan);
         Session(session, plan);
+        Steps(plan, session, progress);
         Progress(progress);
         Window(Member(windows, "last", 14));
         Results(results);
@@ -123,6 +127,50 @@ internal sealed class MethodBlockRules
         Check(Word(Member(plan, "status", 9), "preview", "sealed", "running", "done"), 9, "Plan status");
         foreach (string name in new[] { "runs", "totalSteps", "estimatedSeconds" })
             Check(Integer(Member(plan, name, 9), nullable: name == "estimatedSeconds"), 9, "Plan " + name);
+    }
+
+    private void Steps(JsonElement plan, JsonElement session, JsonElement progress)
+    {
+        if (plan.ValueKind != JsonValueKind.Object || !plan.TryGetProperty("steps", out var steps) || IsNull(steps)) return;
+        Check(steps.ValueKind == JsonValueKind.Array, 19, "Step array");
+        if (steps.ValueKind != JsonValueKind.Array) return;
+        int count = steps.GetArrayLength();
+        var total = Member(plan, "totalSteps", 19);
+        Check(count <= MaxArrayItems && Integer(total) && count <= total.GetInt32(), 19, "Step count");
+        int nowCount = 0;
+        int nowPosition = 0;
+        int position = 0;
+        foreach (var step in steps.EnumerateArray())
+        {
+            position++;
+            Check(step.ValueKind == JsonValueKind.Object, 19, "Step object");
+            Check(Text(Member(step, "label", 19), StepLabelLimit, nonempty: true), 19, "Step label");
+            var state = Member(step, "state", 19);
+            Check(Word(state, "done", "now", "todo", "skipped"), 19, "Step state");
+            if (!Word(state, "now")) continue;
+            nowCount++;
+            nowPosition = position;
+        }
+        ChecklistAgreement(steps, session, progress);
+        Check(nowCount <= 1, 19, "At most one current step");
+        if (nowCount == 0) return;
+        Check(Word(Member(session, "state", 19), "running", "paused", "waitingForPerson"), 19, "Current step requires an active session");
+        var index = Member(session, "index", 19);
+        Check(IsNull(index) || Integer(index, 1) && index.GetInt32() == nowPosition, 19, "Current step position");
+    }
+
+    // These producer obligations supplement the package validator's structural rule 19.
+    private void ChecklistAgreement(JsonElement steps, JsonElement session, JsonElement progress)
+    {
+        var states = steps.EnumerateArray().Where(step => step.ValueKind == JsonValueKind.Object && step.TryGetProperty("state", out _))
+            .Select(step => step.GetProperty("state")).ToArray();
+        int done = states.Count(state => Word(state, "done"));
+        int skipped = states.Count(state => Word(state, "skipped"));
+        var completed = Member(progress, "completed", 19);
+        Check(Integer(completed) && done <= completed.GetInt32() && completed.GetInt32() <= done + skipped,
+            19, "Checklist progress agreement");
+        Check(!Word(Member(session, "state", 19), "done") || !states.Any(state => Word(state, "todo")),
+            19, "Finished checklist has no waiting steps");
     }
 
     private void Session(JsonElement session, JsonElement plan)
@@ -217,7 +265,7 @@ internal sealed class MethodBlockRules
         }
         else if (value.ValueKind == JsonValueKind.Array)
         {
-            Check(value.GetArrayLength() <= 32, 17, "Extra array");
+            Check(value.GetArrayLength() <= MaxArrayItems, 17, "Extra array");
             foreach (var item in value.EnumerateArray()) Extra(item, depth + 1);
         }
         else if (value.ValueKind == JsonValueKind.String) Check(Text(value, 240), 17, "Extra text");

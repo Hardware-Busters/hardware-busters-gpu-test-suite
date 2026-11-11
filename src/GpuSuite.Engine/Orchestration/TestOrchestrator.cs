@@ -96,6 +96,14 @@ public sealed class TestOrchestrator
         using var method = MethodStateTracker.Begin(system, plannedSteps, UsesSimulatedSources);
         _method = method;
 
+        // Every game ends here, however it ends: its steps that did not finish are cancelled, not left waiting or in progress.
+        void RecordOutcome(GameOutcome outcome)
+        {
+            outcomes.Add(outcome);
+            stateMgr?.RecordGameOutcome(outcome);
+            method.GameEnded(outcome.GameId);
+        }
+
         // Before any benchmark: auto-select where the menu-nav VISION model runs. Check if the GX10 is active —
         // if so, select it (off-bench); if not, drop to the local GPU. One upfront probe + announcement; the
         // per-game supervisor re-checks, so if the box drops mid-roster the next game falls back automatically.
@@ -130,8 +138,7 @@ public sealed class TestOrchestrator
                     $"are supported by this profile [{string.Join(",", game.SupportedResolutions)}]";
                 _log.Warn("Game", $"=== {game.Name} ({game.Id}) === {reason} — skipped honestly.");
                 var skip = GameOutcome.Skipped(game.Id, game.Name, reason);
-                outcomes.Add(skip);
-                stateMgr?.RecordGameOutcome(skip);
+                RecordOutcome(skip);
                 continue;
             }
             int repeats = RepeatsFor(game);
@@ -144,8 +151,7 @@ public sealed class TestOrchestrator
             {
                 _log.Warn("Game", $"=== {game.Name} ({game.Id}) === no matching/enabled variants for selection [{string.Join(",", variantSelection)}] — skipped.");
                 var skip = GameOutcome.Skipped(game.Id, game.Name, "no enabled/matching variants for the model selection");
-                outcomes.Add(skip);
-                stateMgr?.RecordGameOutcome(skip);
+                RecordOutcome(skip);
                 continue;
             }
             stateMgr?.SetCurrentGame(game.Id);
@@ -173,8 +179,7 @@ public sealed class TestOrchestrator
             // into a PresentMon run. Nothing below this point may launch or create providers for the game.
             if (anyCellPending && TryCreateBackendPrecheckFailure(game, backendReady, backendDetail, out var backendFailure))
             {
-                outcomes.Add(backendFailure);
-                stateMgr?.RecordGameOutcome(backendFailure);
+                RecordOutcome(backendFailure);
                 _log.Error("Game", $"=== {game.Id} ABORTED — {backendFailure.Reason}; continuing to the next game. ===");
                 continue;
             }
@@ -202,8 +207,7 @@ public sealed class TestOrchestrator
                         FailureClass = FailureClass.LauncherNotReady,
                         Reason = "just-in-time pre-flight failed — " + reason
                     };
-                    outcomes.Add(fail);
-                    stateMgr?.RecordGameOutcome(fail);
+                    RecordOutcome(fail);
                     _log.Error("Game", $"=== {game.Id} ABORTED — launcher/update/login pre-flight failed; continuing to the next game. ===");
                     continue;
                 }
@@ -220,8 +224,7 @@ public sealed class TestOrchestrator
                         FailureClass = FailureClass.HardwarePrecheck,
                         Reason = "hardware validation failed — " + hw.FailureReason
                     };
-                    outcomes.Add(fail);
-                    stateMgr?.RecordGameOutcome(fail);
+                    RecordOutcome(fail);
                     _log.Error("Game", $"=== {game.Id} ABORTED — hardware validation failed ({hw.FailureReason}); continuing to the next game. ===");
                     continue;
                 }
@@ -327,8 +330,7 @@ public sealed class TestOrchestrator
             int expectedConfigs = game.Scenes.Count * variants.Count * gameRes.Count;
             var outcome = BuildGameOutcome(game, gameAggs, variants, repeats, expectedConfigs,
                 caughtReason, watchdogCancel, unexpectedError);
-            outcomes.Add(outcome);
-            stateMgr?.RecordGameOutcome(outcome);
+            RecordOutcome(outcome);
             _log.Info("Game", outcome.Status == GameStatus.Passed
                 ? $"=== {game.Id}: PASSED — {outcome.Reason} ==="
                 : $"=== {game.Id}: FAILED [{FailureClassifier.Label(outcome.FailureClass)}] — {outcome.Reason} ===");
@@ -512,10 +514,9 @@ public sealed class TestOrchestrator
     private bool UsesSimulatedSources
         => _cfg.SimulateLaunch || _cfg.ForceSyntheticFrames || _cfg.ForceSyntheticPower || _cfg.ForceSyntheticTelemetry;
 
-    /// <summary>One line per planned cell: its identity and how it is executed, so a changed repeat count changes the plan.</summary>
-    private List<string> PlannedSteps(IReadOnlyList<GameProfile> games, IReadOnlyList<Resolution> resolutions)
+    private List<PlannedStep> PlannedSteps(IReadOnlyList<GameProfile> games, IReadOnlyList<Resolution> resolutions)
     {
-        var steps = new List<string>();
+        var steps = new List<PlannedStep>();
         foreach (var game in games)
         {
             var variants = ResolveGameVariants(game, EffectiveVariantSelection(game));
@@ -524,7 +525,11 @@ public sealed class TestOrchestrator
             foreach (var scene in game.Scenes)
                 foreach (var variant in variants)
                     foreach (var res in gameResolutions)
-                        steps.Add($"{RunStateManager.Cell(game.Id, scene.Id, variant?.Id, res.Name)}|repeats={repeats}|warmups={scene.WarmupRepeats}");
+                    {
+                        string key = RunStateManager.Cell(game.Id, scene.Id, variant?.Id, res.Name);
+                        steps.Add(new PlannedStep(key, game.Id, $"{key}|repeats={repeats}|warmups={scene.WarmupRepeats}",
+                            PlannedStep.LabelOf(game.Name, scene.Name, variant?.Id ?? "default", res.Name)));
+                    }
         }
         return steps;
     }

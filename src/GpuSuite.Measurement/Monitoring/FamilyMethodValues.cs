@@ -9,6 +9,7 @@ internal static class FamilyMethodValues
     internal const int TextLimit = 240;
     internal const int ScalarMemberLimit = 16;
     internal const int ExtraMemberLimit = 32;
+    internal const int PlanStepLimit = 256;
     private const int NameLimit = 32;
 
     internal static string? Text(string? value, int limit)

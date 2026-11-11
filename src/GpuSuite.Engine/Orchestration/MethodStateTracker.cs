@@ -16,31 +16,45 @@ internal sealed class MethodStateTracker : IDisposable
     private const string BetweenCellsPhase = "between cells";
     private const string UnknownGpuId = "unknown-gpu";
 
+    /// <summary>The contract lists at most this many steps in plan.steps; a longer plan is listed as a prefix.</summary>
+    internal const int MaxListedSteps = 256;
+
     private readonly object _gate = new();
     private readonly Func<DateTime> _utcNow;
     private readonly MethodUnit _unit;
     private readonly MethodPlan _plan;
+    private readonly IReadOnlyList<PlannedStep> _steps;
+    private readonly Dictionary<string, List<int>> _positionsByKey = [];
+    private readonly StepState[] _states;
     private readonly List<MethodIssue> _issues = [];
     private readonly ResultTally _tally = new();
     private MethodSession _session = new(MethodState.Running, null, null, null);
-    private IReadOnlyDictionary<string, object?> _extra = StepExtra(null);
+    private BenchmarkProgress? _latest;
     private MethodWindow? _lastWindow;
     private bool _ended;
     private bool _final;
 
-    private MethodStateTracker(MethodUnit unit, MethodPlan plan, Func<DateTime> utcNow)
+    private MethodStateTracker(MethodUnit unit, MethodPlan plan, IReadOnlyList<PlannedStep> steps, Func<DateTime> utcNow)
     {
         _unit = unit;
         _plan = plan;
+        _steps = steps;
         _utcNow = utcNow;
+        for (int i = 0; i < steps.Count; i++)
+        {
+            if (!_positionsByKey.TryGetValue(steps[i].Key, out var positions)) _positionsByKey[steps[i].Key] = positions = [];
+            positions.Add(i + 1);
+        }
+        _states = new StepState[steps.Count];
+        Array.Fill(_states, StepState.Todo);
     }
 
-    /// <summary>Starts tracking a run whose <paramref name="planSteps"/> each describe one cell, and publishes the initial state.</summary>
-    internal static MethodStateTracker Begin(SystemInfo system, IReadOnlyList<string> planSteps, bool simulated, Func<DateTime>? utcNow = null)
+    /// <summary>Starts tracking a run of <paramref name="steps"/>, one per cell, and publishes the initial state.</summary>
+    internal static MethodStateTracker Begin(SystemInfo system, IReadOnlyList<PlannedStep> steps, bool simulated, Func<DateTime>? utcNow = null)
     {
         var clock = utcNow ?? (() => DateTime.UtcNow);
-        var plan = new MethodPlan($"plan-{clock():yyyyMMdd-HHmmss}", Sha256(string.Join('\n', planSteps)), planSteps.Count);
-        var tracker = new MethodStateTracker(UnitFrom(system, simulated), plan, clock);
+        var plan = new MethodPlan($"plan-{clock():yyyyMMdd-HHmmss}", Sha256(string.Join('\n', steps.Select(step => step.Definition))), steps.Count);
+        var tracker = new MethodStateTracker(UnitFrom(system, simulated), plan, steps, clock);
         tracker.Update(NoChange);
         return tracker;
     }
@@ -50,27 +64,50 @@ internal sealed class MethodStateTracker : IDisposable
 
     internal void Progress(BenchmarkProgress progress) => Update(() =>
     {
+        // A game skipped by a precheck never gets a cell number, so the position in the plan, not the visit count, names the step.
+        int? position = Locate(RunStateManager.Cell(progress.GameId, progress.SceneId, progress.VariantId, progress.ResolutionName));
         _session = progress.CellCompleted
             ? _session with { Step = null, Phase = BetweenCellsPhase, Index = null }
             : _session with
             {
-                Step = $"{progress.GameName} / {progress.SceneName} / {progress.VariantId} / {progress.ResolutionName}",
+                Step = position is int planned
+                    ? _steps[planned - 1].Label
+                    : PlannedStep.LabelOf(progress.GameName, progress.SceneName, progress.VariantId, progress.ResolutionName),
                 Phase = progress.Phase,
-                Index = progress.CellIndex
+                Index = position
             };
-        _extra = StepExtra(progress);
+        if (!progress.CellCompleted) Start(position);
+        _latest = progress;
     });
 
     /// <summary>Adds a cell measured in this run: its counts, the verdict on its last run, and an issue for every run it rejected.</summary>
     internal void CellMeasured(SceneResolutionAggregate cell, int requiredRepeats) => Update(() =>
     {
+        Finish(cell);
         _tally.Add(cell, requiredRepeats);
         if (cell.Runs.LastOrDefault() is { } lastRun) _lastWindow = new MethodWindow(lastRun.IsValid, lastRun.IsValid ? null : Reason(lastRun));
         foreach (var run in cell.Runs.Where(run => !run.IsValid)) AddIssue(CellKey(cell), Reason(run));
     });
 
     /// <summary>Adds a cell reloaded from a checkpoint: it counts as finished, but nothing was measured or judged in this run.</summary>
-    internal void CellResumed(SceneResolutionAggregate cell, int requiredRepeats) => Update(() => _tally.Add(cell, requiredRepeats));
+    internal void CellResumed(SceneResolutionAggregate cell, int requiredRepeats) => Update(() =>
+    {
+        Finish(cell);
+        _tally.Add(cell, requiredRepeats);
+    });
+
+    /// <summary>Ends a game, however it ended: its steps that are still waiting or in progress were cancelled, not left open.</summary>
+    internal void GameEnded(string gameId) => Update(() =>
+    {
+        bool interrupted = false;
+        for (int i = 0; i < _steps.Count; i++)
+        {
+            if (_steps[i].GameId != gameId || _states[i] is not (StepState.Todo or StepState.Now)) continue;
+            interrupted |= _states[i] == StepState.Now;
+            _states[i] = StepState.Skipped;
+        }
+        if (interrupted) _session = _session with { Step = null, Phase = BetweenCellsPhase, Index = null };
+    });
 
     /// <summary>
     /// Marks the end of the roster after its result snapshot was saved. The run is done, and its result final, only when
@@ -79,7 +116,7 @@ internal sealed class MethodStateTracker : IDisposable
     internal void Complete() => Update(() =>
     {
         _ended = true;
-        _final = _tally.Cells == _plan.TotalSteps;
+        _final = _states.All(state => state == StepState.Done);
         _session = new MethodSession(_final ? MethodState.Done : MethodState.Aborted, null, null, null);
         if (!_final) AddIssue(null, $"The run ended after {_tally.Cells} of {_plan.TotalSteps} planned cells.");
     });
@@ -88,6 +125,7 @@ internal sealed class MethodStateTracker : IDisposable
     {
         if (_ended) return;
         _ended = true;
+        SkipInProgress();
         _session = _session with { State = MethodState.Aborted, Index = null };
     });
 
@@ -111,10 +149,51 @@ internal sealed class MethodStateTracker : IDisposable
         MonitoringState.Method(snapshot);
     }
 
-    private MonitoringMethod Snapshot() => new(RulesetId, _unit, _plan, _session,
+    private MonitoringMethod Snapshot() => new(RulesetId, _unit, _plan with { Steps = ListedSteps() }, _session,
         new MethodProgress(_tally.Cells, _plan.TotalSteps), _lastWindow,
         new MethodResults(_tally.Cells > 0 || _final ? _tally.ToProvisional() : null, _final),
-        [.. _issues], _extra, _utcNow());
+        [.. _issues], StepExtra(_latest), _utcNow());
+
+    // The contract wants done <= completed <= done + skipped. A listed prefix of a longer plan cannot honour that once more steps
+    // finished than it shows, and a list that disagrees with the counts would mislead: then no list is published.
+    private List<MethodStep>? ListedSteps()
+    {
+        var listed = _states.Take(MaxListedSteps).ToArray();
+        int done = listed.Count(state => state == StepState.Done);
+        int skipped = listed.Count(state => state == StepState.Skipped);
+        if (done > _tally.Cells || _tally.Cells > done + skipped) return null;
+        return _steps.Take(MaxListedSteps).Select((step, i) => new MethodStep(step.Label, _states[i])).ToList();
+    }
+
+    private void Finish(SceneResolutionAggregate cell)
+    {
+        if (Locate(CellKey(cell)) is int position) Reach(position, StepState.Done);
+    }
+
+    // A key can occur more than once in a plan (two spellings of one resolution): each occurrence is its own step, taken in order.
+    private int? Locate(string key)
+        => _positionsByKey.TryGetValue(key, out var positions) ? positions.FirstOrDefault(p => _states[p - 1] != StepState.Done, positions[^1]) : null;
+
+    // A step starts; one that was already in progress and never finished is skipped, and so is an unknown step's predecessor.
+    private void Start(int? position)
+    {
+        if (position is int step) Reach(step, StepState.Now);
+        else SkipInProgress();
+    }
+
+    // Steps run in plan order, so an earlier step that is still waiting or in progress was cancelled: a failed precheck, or a game that stopped.
+    private void Reach(int position, StepState state)
+    {
+        for (int i = 0; i < position - 1; i++)
+            if (_states[i] is StepState.Todo or StepState.Now) _states[i] = StepState.Skipped;
+        if (_states[position - 1] != StepState.Done) _states[position - 1] = state;
+    }
+
+    private void SkipInProgress()
+    {
+        for (int i = 0; i < _states.Length; i++)
+            if (_states[i] == StepState.Now) _states[i] = StepState.Skipped;
+    }
 
     private void AddIssue(string? field, string message)
     {
