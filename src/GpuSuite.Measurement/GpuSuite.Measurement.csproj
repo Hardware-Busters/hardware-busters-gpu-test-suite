@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.7-pre700" />
-    <PackageReference Include="System.IO.Ports" Version="10.0.9" />
+    <PackageReference Include="System.IO.Ports" Version="11.0.0" />
     <PackageReference Include="SerialPortStream" Version="2.4.2" />
     <!-- SerialPortStream's old transitive pins contain published security advisories. -->
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
