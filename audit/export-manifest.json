@@ -1,4 +1,5 @@
 {
+  "generatedUtc": "2026-11-24T06:58:48.1541032Z",
   "schema": 1,
   "sourceRevision": "retained privately",
   "files": [
@@ -64,7 +65,7 @@
     },
     {
       "path": ".github/workflows/dependency-review.yml",
-      "sha256": "a56fe3c72a549d47159574a05c6bec97e3bc041cb81220778fa3563d4cb31585",
+      "sha256": "c056954043af52769244d9621f012b9f8fdfe9be147a5ec2b0a8c574874f4c65",
       "bytes": 359
     },
     {
@@ -349,7 +350,7 @@
     },
     {
       "path": "settings.example.json",
-      "sha256": "96a40db03f11b512a884de2d4a188e5c358bf04334db86446cd7b31e89428fc5",
+      "sha256": "c91c543fa8de4dc97dafcf6120cdf0d973691ab14f37b8d60db05be05398b337",
       "bytes": 717
     },
     {
@@ -1579,7 +1580,7 @@
     },
     {
       "path": "tests/GpuSuite.Tests/GpuSuite.Tests.csproj",
-      "sha256": "c80c0cc1468485aec19df2eb6426c31ff2ed97bdd0a2ba018944046157c83f8a",
+      "sha256": "3f9f89d3f205f9d4e44e600a24e6b1148fc5ea4d99e9744ba136cfddd3eb9853",
       "bytes": 1630
     },
     {
@@ -1678,6 +1679,5 @@
       "bytes": 2782
     }
   ],
-  "generatedUtc": "2026-11-15T07:09:09.0994144Z",
   "publicRepository": "https://github.com/Hardware-Busters/hardware-busters-gpu-test-suite"
 }
