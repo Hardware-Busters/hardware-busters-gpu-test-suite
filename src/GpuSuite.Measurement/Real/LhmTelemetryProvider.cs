@@ -322,16 +322,13 @@ public sealed class LhmTelemetryProvider : ITelemetryProvider, IDisposable
                 case SensorType.Control:
                     s.FanPct1 ??= v;
                     break;
-                case SensorType.SmallData:
                 case SensorType.Data:
-                    if (n.Contains("Memory Used", StringComparison.OrdinalIgnoreCase) || n.Contains("VRAM Used", StringComparison.OrdinalIgnoreCase))
-                    {
-                        // LHM reports this sensor in GB on some GPUs and MB on others with no unit flag.
-                        // Values below 128 cannot plausibly be megabytes during a 3D workload (idle desktop
-                        // alone holds hundreds of MB), so interpret them as gigabytes and convert to MB.
-                        double mb = v < 128 ? v * 1024.0 : v;
-                        s.VramUsedMb ??= (float)mb;
-                    }
+                    // LibreHardwareMonitor 0.9.7-pre785 reports Data in bytes.
+                    const float bytesPerMebibyte = 1024f * 1024f;
+                    if (n.Equals("GPU Memory Used", StringComparison.OrdinalIgnoreCase))
+                        s.VramUsedMb = v / bytesPerMebibyte;
+                    else if (n.Equals("D3D Dedicated Memory Used", StringComparison.OrdinalIgnoreCase))
+                        s.VramUsedMb ??= v / bytesPerMebibyte;
                     break;
             }
         }

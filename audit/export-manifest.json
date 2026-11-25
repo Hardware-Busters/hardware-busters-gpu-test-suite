@@ -1,7 +1,7 @@
 {
-  "generatedUtc": "2026-11-24T06:58:48.1541032Z",
   "schema": 1,
-  "sourceRevision": "retained privately",
+  "publicRepository": "https://github.com/Hardware-Busters/hardware-busters-gpu-test-suite",
+  "generatedUtc": "2026-11-25T22:13:43.2543054Z",
   "files": [
     {
       "path": ".gitattributes",
@@ -350,7 +350,7 @@
     },
     {
       "path": "settings.example.json",
-      "sha256": "c91c543fa8de4dc97dafcf6120cdf0d973691ab14f37b8d60db05be05398b337",
+      "sha256": "8124061e604d3b8b06ac534bb3b978e4ae65b120b66d03af4e11e1956c2fdc38",
       "bytes": 717
     },
     {
@@ -1365,7 +1365,7 @@
     },
     {
       "path": "src/GpuSuite.Measurement/GpuSuite.Measurement.csproj",
-      "sha256": "89e4a4c58229f7cbbfaaabb16c8dfcb464b23b2a211a1d11a4196c1c0bf123be",
+      "sha256": "77bb522afe1c6c09f0039ebd22d18279463a8abb7183622416399a09d425fe4e",
       "bytes": 1013
     },
     {
@@ -1450,8 +1450,8 @@
     },
     {
       "path": "src/GpuSuite.Measurement/Real/LhmTelemetryProvider.cs",
-      "sha256": "997f5dfa49693bba589e3306a2a19acdd93bb44919ec9ab90f49609319666332",
-      "bytes": 18869
+      "sha256": "d37638fbba80e3d8b44487ca45bf4f62c3204226900968271dfab210c881ce34",
+      "bytes": 18657
     },
     {
       "path": "src/GpuSuite.Measurement/Real/Powenetics/PoweneticsProtocol.cs",
@@ -1679,5 +1679,5 @@
       "bytes": 2782
     }
   ],
-  "publicRepository": "https://github.com/Hardware-Busters/hardware-busters-gpu-test-suite"
+  "sourceRevision": "retained privately"
 }
